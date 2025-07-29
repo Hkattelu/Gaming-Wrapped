@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 5%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 346.8 77.2% 49.8%; /* Hot Pink */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 47.9 95.8% 53.1%; /* Electric Yellow */
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 346.8 77.2% 49.8%;
+    --chart-1: 346.8 77.2% 49.8%;
+    --chart-2: 47.9 95.8% 53.1%;
+    --chart-3: 193 96% 48%;
+    --chart-4: 275 100% 55%;
+    --chart-5: 160 60% 45%;
+    --radius: 0.8rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 5%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 346.8 77.2% 49.8%; /* Hot Pink */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 47.9 95.8% 53.1%; /* Electric Yellow */
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 346.8 77.2% 49.8%;
+    --chart-1: 346.8 77.2% 49.8%;
+    --chart-2: 47.9 95.8% 53.1%;
+    --chart-3: 193 96% 48%;
+    --chart-4: 275 100% 55%;
+    --chart-5: 160 60% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.bg-grid-white\/\[0\.05\] {
+    background-image: 
+      linear-gradient(to right, hsl(var(--primary)) 1px, transparent 1px), 
+      linear-gradient(to bottom, hsl(var(--primary)) 1px, transparent 1px);
+    background-size: 60px 60px;
+    background-color: hsl(var(--background));
+    background-position: center;
+    opacity: 0.1;
+}
