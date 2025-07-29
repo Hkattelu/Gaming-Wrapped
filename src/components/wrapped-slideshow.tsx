@@ -26,7 +26,7 @@ const platformColors = [
     "hsl(var(--chart-5))",
 ];
 
-export function WrappedSlideshow({ data }: { data: WrappedData }) {
+export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string | null }) {
   const { toast } = useToast();
   const { basicStats, aiResponse } = data;
 
@@ -41,11 +41,14 @@ export function WrappedSlideshow({ data }: { data: WrappedData }) {
   } satisfies ChartConfig
 
   const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    toast({
-      title: "LINK COPIED!",
-      description: "Your Game Rewind URL is ready to be shared.",
-    });
+    if (id) {
+      const shareUrl = `${window.location.origin}/wrapped?id=${id}`;
+      navigator.clipboard.writeText(shareUrl);
+      toast({
+        title: "LINK COPIED!",
+        description: "Your Game Rewind URL is ready to be shared.",
+      });
+    }
   };
 
   const slideBaseClass = "h-[550px] flex flex-col justify-center items-center text-center p-6 bg-card/80 backdrop-blur-sm border-primary/20 shadow-2xl shadow-primary/10 rounded-2xl";

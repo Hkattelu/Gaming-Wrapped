@@ -10,61 +10,56 @@ import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Loading from './loading';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 function WrappedPageContent() {
   const [data, setData] = useState<WrappedData | null>(null);
+  const [id, setId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const searchParams = useSearchParams();
   const router = useRouter();
 
   useEffect(() => {
-    // Check for data in session storage
-    const storedData = sessionStorage.getItem('wrappedData');
-    
-    if (storedData) {
-      try {
-        const parsedData: WrappedData = JSON.parse(storedData);
-        setData(parsedData);
-        // Optionally clear it after use
-        // sessionStorage.removeItem('wrappedData');
-      } catch (e) {
-        setError('Failed to load your Game Rewind. The data format is invalid.');
-      } finally {
+    const searchId = searchParams.get('id');
+
+    if (searchId) {
+      setId(searchId);
+      fetch(`/api/wrapped/${searchId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch wrapped data');
+          }
+          return response.json();
+        })
+        .then(data => {
+          setData(data.wrapped);
+          setIsLoading(false);
+        })
+        .catch(error => {
+          setError(error.message);
+          setIsLoading(false);
+        });
+    } else {
+      const storedData = sessionStorage.getItem('wrappedData');
+      const storedId = sessionStorage.getItem('wrappedId');
+      if (storedData && storedId) {
+        try {
+          const parsedData: WrappedData = JSON.parse(storedData);
+          setData(parsedData);
+          setId(storedId);
+          router.push(`/wrapped?id=${storedId}`);
+        } catch (e) {
+          setError('Failed to load your Game Rewind. The data format is invalid.');
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setError('No Game Rewind data found. Please start over.');
         setIsLoading(false);
       }
-    } else {
-      // If there's no data, maybe they landed here by mistake
-      setError('No Game Rewind data found. Please start over.');
-      setIsLoading(false);
     }
-    
-    // Cleanup sessionStorage when the user navigates away or closes the tab
-    const handleBeforeUnload = () => {
-        sessionStorage.removeItem('wrappedData');
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-
-  }, []);
-
-  const handleShare = () => {
-    const currentUrl = window.location.href;
-    if (data) {
-        const csvText = "Title,Platform,Review Score,Review Notes\n" // This is a placeholder for a more complex implementation
-        const encodedData = btoa(csvText);
-        const shareUrl = `${window.location.origin}/wrapped?data=${encodedData}`;
-        navigator.clipboard.writeText(shareUrl).then(() => {
-            alert('Shareable link copied to clipboard!');
-        }, () => {
-            alert('Failed to copy link.');
-        });
-    }
-  }
-
+  }, [searchParams, router]);
 
   if (isLoading) {
     return <Loading />;
@@ -86,16 +81,16 @@ function WrappedPageContent() {
   }
 
   if (data) {
-    return <WrappedSlideshow data={data} />;
+    return <WrappedSlideshow data={data} id={id} />;
   }
 
   return null;
 }
 
 export default function WrappedPage() {
-    return (
-        <Suspense fallback={<Loading />}>
-            <WrappedPageContent />
-        </Suspense>
-    )
+  return (
+    <Suspense fallback={<Loading />}>
+      <WrappedPageContent />
+    </Suspense>
+  );
 }

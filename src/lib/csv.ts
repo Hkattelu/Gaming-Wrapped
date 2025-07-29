@@ -1,4 +1,5 @@
 import { Game, BasicStats } from '@/types';
+import Papa from 'papaparse';
 
 function toCamelCase(str: string): string {
   // Converts "Review Score" to "reviewscore"
@@ -6,38 +7,38 @@ function toCamelCase(str: string): string {
 }
 
 export function parseCsv(csvText: string): Game[] {
-    const lines = csvText.trim().split('\n');
-    if (lines.length < 2) return [];
-
-    const headerLine = lines.shift()!.trim();
-    // More robustly handle headers that might be quoted
-    const headers = headerLine.split(',').map(h => toCamelCase(h.replace(/"/g, '')));
-    
-    const titleIndex = headers.indexOf('title');
-    const platformIndex = headers.indexOf('platform');
-    // Accomodate different column names for score and notes
-    const scoreIndex = headers.indexOf('reviewscore') > -1 ? headers.indexOf('reviewscore') : headers.indexOf('score');
-    const notesIndex = headers.indexOf('reviewnotes') > -1 ? headers.indexOf('reviewnotes') : headers.indexOf('notes');
-
-    if (titleIndex === -1 || platformIndex === -1) {
+  let games: Game[] = [];
+  Papa.parse(csvText, {
+    header: true,
+    skipEmptyLines: true,
+    transformHeader: header => toCamelCase(header),
+    complete: (results) => {
+      if (results.errors.length) {
+        console.error("Errors parsing CSV:", results.errors);
+        throw new Error('Error parsing CSV file.');
+      }
+      
+      const requiredHeaders = ['title', 'platform'];
+      const actualHeaders = results.meta.fields?.map(h => toCamelCase(h));
+      
+      if (!requiredHeaders.every(h => actualHeaders?.includes(h))) {
         throw new Error('CSV must contain "Title" and "Platform" headers.');
-    }
+      }
 
-    return lines.map(line => {
-        // This is a simple parser and will not handle commas within quoted fields.
-        // For data from sites like HowLongToBeat, this is usually sufficient.
-        const values = line.split(',');
-        
-        const scoreRaw = scoreIndex > -1 ? values[scoreIndex]?.trim() : 'N/A';
+      games = results.data.map((row: any) => {
+        const scoreRaw = row.reviewscore || row.score || 'N/A';
         const score = isNaN(parseFloat(scoreRaw)) ? scoreRaw : parseFloat(scoreRaw);
-
+        
         return {
-            title: values[titleIndex]?.trim() || 'Untitled',
-            platform: values[platformIndex]?.trim() || 'Unknown Platform',
-            score: score,
-            notes: notesIndex > -1 ? values.slice(notesIndex).join(',').trim() : '', // Handle commas in notes
+          title: row.title || 'Untitled',
+          platform: row.platform || 'Unknown Platform',
+          score: score,
+          notes: row.reviewnotes || row.notes || '',
         };
-    }).filter(game => game.title && game.title !== 'Untitled');
+      }).filter(game => game.title && game.title !== 'Untitled');
+    }
+  });
+  return games;
 }
 
 

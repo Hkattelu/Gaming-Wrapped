@@ -1,6 +1,5 @@
-"use server";
+'use server';
 
-import { generateGamingWrapped } from "@/ai/flows/generate-gaming-wrapped";
 import { calculateStats, parseCsv } from "@/lib/csv";
 import type { WrappedData } from "@/types";
 
@@ -13,17 +12,30 @@ export async function generateWrappedData(csvText: string): Promise<WrappedData>
 
     const basicStats = calculateStats(games);
 
-    const aiResponse = await generateGamingWrapped({ csvData: csvText });
-    
+    const response = await fetch('http://localhost:9002/api/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ games }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to generate wrapped content');
+    }
+
+    const { id, wrapped } = await response.json();
+
     return {
       basicStats,
-      aiResponse,
+      aiResponse: wrapped,
+      id,
     };
   } catch (error) {
     console.error("Error generating wrapped data:", error);
-    // Re-throw with a more user-friendly message
     if (error instanceof Error) {
-        throw new Error(`Failed to generate your Rewind. ${error.message}`);
+      throw new Error(`Failed to generate your Rewind. ${error.message}`);
     }
     throw new Error("An unknown error occurred while generating your Rewind.");
   }
