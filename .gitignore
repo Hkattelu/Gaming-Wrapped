@@ -149,7 +149,6 @@ vite.config.ts.timestamp-*
 
 node_modules
 node_modules/*
-apphosting.yaml
 firestore.indexes.json
 firestore.rules
 .firebaserc
