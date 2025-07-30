@@ -2,7 +2,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { NarrativeCard, WrappedData } from '@/types';
 
 const GenerateGamingWrappedInputSchema = z.object({
   games: z.array(z.object({
@@ -14,8 +13,7 @@ const GenerateGamingWrappedInputSchema = z.object({
 });
 export type GenerateGamingWrappedInput = z.infer<typeof GenerateGamingWrappedInputSchema>;
 
-const CARD_TYPES = ['platform_stats', 'top_game', 'summary', 'narrative'];
-
+const CARD_TYPES = ['platform_stats', 'top_game', 'summary', 'genre_breakdown', 'score_distribution', 'hidden_gem', 'narrative'];                                                                                               
 const PlatformStatsCardSchema = z.object({
   type: z.enum(CARD_TYPES),
   title: z.string().describe('Title for the platform stats card'),
@@ -52,20 +50,54 @@ const NarrativeCardSchema = z.object({
   content: z.string().describe("A short, engaging paragraph about the user's gaming year"),
 });
 
+const GenreBreakdownCardSchema = z.object({
+  type: z.enum(CARD_TYPES),
+  title: z.string().describe('Title for the genre breakdown card'),
+  description: z.string().describe('A short description of the genre breakdown'),
+  data: z.array(z.object({
+    genre: z.string(),
+    count: z.number(),
+  })).describe('Array of genre stats'),
+});
+
+const ScoreDistributionCardSchema = z.object({
+  type: z.enum(CARD_TYPES),
+  title: z.string().describe('Title for the score distribution card'),
+  description: z.string().describe('A short description of the score distribution'),
+  data: z.array(z.object({
+    range: z.string(),
+    count: z.number(),
+  })).describe('Array of score distribution stats'),
+});
+
+const HiddenGemCardSchema = z.object({
+  type: z.enum(CARD_TYPES),
+  title: z.string().describe('Title for the hidden gem card'),
+  description: z.string().describe('A short description of the hidden gem'),
+  game: z.object({
+    title: z.string(),
+    platform: z.string(),
+    score: z.union([z.string(), z.number()]),
+    notes: z.string(),
+  }),
+});
+
 const GenerateGamingWrappedOutputSchema = z.object({
   cards: z.array(z.union([
     PlatformStatsCardSchema,
     TopGameCardSchema,
     SummaryCardSchema,
     NarrativeCardSchema,
+    GenreBreakdownCardSchema,
+    ScoreDistributionCardSchema,
+    HiddenGemCardSchema,
   ])),
 });
 export type GenerateGamingWrappedOutput = z.infer<typeof GenerateGamingWrappedOutputSchema>;
 
-type AnyCard = z.infer<typeof PlatformStatsCardSchema>|z.infer<typeof TopGameCardSchema>|z.infer<typeof SummaryCardSchema>|z.infer<typeof NarrativeCardSchema>;
-export async function generateGamingWrapped(input: GenerateGamingWrappedInput): Promise<WrappedData> {
+export async function generateGamingWrapped(input: GenerateGamingWrappedInput): Promise<AiResponse> {
   const result = await generateGamingWrappedFlow(input);
-  return { cards: result.cards as AnyCard[] };
+  return { cards: result.cards as any };
 }
 
 const prompt = ai.definePrompt({
@@ -86,6 +118,9 @@ const prompt = ai.definePrompt({
   2.  **platform_stats**: A card with the distribution of games by platform.
   3.  **top_game**: A card with the user's top-rated game.
   4.  **narrative**: A card with a short, engaging paragraph about the user's gaming year.
+  5.  **genre_breakdown**: A card that analyzes the game titles and notes to show the user's most played genres.
+  6.  **score_distribution**: A chart that shows how many games fall into different score ranges (e.g., 9-10, 7-8, etc.).
+  7.  **hidden_gem**: A card that highlights a game that isn't the highest-rated but seems interesting based on the user's notes.
 
   You can create multiple narrative cards.
   `,

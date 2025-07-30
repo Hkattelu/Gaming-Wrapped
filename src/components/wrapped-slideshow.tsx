@@ -1,6 +1,7 @@
 'use client';
 
 import { WrappedData, WrappedCard } from "@/types";
+import { useEffect, useState } from 'react';
 import { 
   Carousel, 
   CarouselContent, 
@@ -16,11 +17,29 @@ import { PlatformStatsCard } from './cards/PlatformStatsCard';
 import { TopGameCard } from './cards/TopGameCard';
 import { SummaryCard } from './cards/SummaryCard';
 import { NarrativeCard } from './cards/NarrativeCard';
+import { GenreBreakdownCard } from './cards/GenreBreakdownCard';
+import { HiddenGemCard } from './cards/HiddenGemCard';
+import { ScoreDistributionCard } from './cards/ScoreDistributionCard';
 
 export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string | null }) {
   const { toast } = useToast();
   const { cards } = data;
-  console.log(cards);
+  const [api, setApi] = useState<any>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+ 
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
+ 
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+  }, [api]);
 
   const handleShare = () => {
     if (id) {
@@ -43,6 +62,12 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
         return <SummaryCard card={card} />;
       case 'narrative':
         return <NarrativeCard card={card} />;
+      case 'genre_breakdown':
+        return <GenreBreakdownCard card={card} />;
+      case 'score_distribution':
+        return <ScoreDistributionCard card={card} />;
+      case 'hidden_gem':
+        return <HiddenGemCard card={card} />;
       default:
         return null;
     }
@@ -52,7 +77,7 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
     <div className="w-full min-h-screen flex flex-col items-center justify-center p-4 relative font-body">
         <div className="absolute inset-0 bg-grid-white/[0.05] z-0" />
         <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
-      <Carousel className="w-full max-w-xl z-10">
+      <Carousel className="w-full max-w-xl z-10" setApi={setApi}>
         <CarouselContent>
           {/* Slide 1: Intro */}
           <CarouselItem>
@@ -84,8 +109,8 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
           </CarouselItem>
 
         </CarouselContent>
-        <CarouselPrevious className="left-[-50px] text-foreground h-10 w-10" />
-        <CarouselNext className="right-[-50px] text-foreground h-10 w-10" />
+        {current > 1 && <CarouselPrevious className="left-[-50px] text-foreground h-10 w-10" />}
+        {current < count && <CarouselNext className="right-[-50px] text-foreground h-10 w-10" />}
       </Carousel>
     </div>
   );

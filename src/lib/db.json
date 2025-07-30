@@ -107,5 +107,117 @@
         "type": "narrative"
       }
     ]
+  },
+  "f7bc84c9-f3ae-4fe9-b39f-774be6ac9004": {
+    "cards": [
+      {
+        "content": "As the credits roll on another year, it's time to look back at the virtual worlds you explored, the challenges you conquered, and the unforgettable stories you lived through. Your gaming journey in 2023 was a thrilling adventure, packed with epic triumphs and memorable moments!",
+        "title": "Your Gaming Year in Review",
+        "type": "narrative"
+      },
+      {
+        "averageScore": 8.2,
+        "description": "You explored a diverse range of titles, maintaining a high standard of quality in your gaming choices.",
+        "title": "Your Gaming Summary",
+        "totalGames": 45,
+        "type": "summary"
+      },
+      {
+        "data": [
+          {
+            "count": 20,
+            "platform": "PC"
+          },
+          {
+            "count": 15,
+            "platform": "PlayStation"
+          },
+          {
+            "count": 10,
+            "platform": "Nintendo Switch"
+          }
+        ],
+        "description": "PC remained your primary battleground, but you also found significant adventures on console.",
+        "title": "Where You Played",
+        "type": "platform_stats"
+      },
+      {
+        "description": "This masterpiece stood out as your absolute favorite, delivering an unforgettable experience.",
+        "game": {
+          "notes": "The redemption arc was incredible, and Night City truly came alive with its compelling story and vibrant world.",
+          "platform": "PC",
+          "score": "9.5",
+          "title": "Cyberpunk 2077"
+        },
+        "title": "Your Top-Rated Game",
+        "type": "top_game"
+      },
+      {
+        "data": [
+          {
+            "count": 15,
+            "genre": "RPG"
+          },
+          {
+            "count": 12,
+            "genre": "Action-Adventure"
+          },
+          {
+            "count": 8,
+            "genre": "Indie"
+          },
+          {
+            "count": 5,
+            "genre": "Strategy"
+          },
+          {
+            "count": 5,
+            "genre": "Horror"
+          }
+        ],
+        "description": "Your year was heavily influenced by deep narratives and expansive worlds, with a healthy mix of action.",
+        "title": "Your Preferred Genres",
+        "type": "genre_breakdown"
+      },
+      {
+        "data": [
+          {
+            "count": 10,
+            "range": "9-10"
+          },
+          {
+            "count": 25,
+            "range": "7-8"
+          },
+          {
+            "count": 8,
+            "range": "5-6"
+          },
+          {
+            "count": 2,
+            "range": "0-4"
+          }
+        ],
+        "description": "You clearly gravitate towards highly-rated games, with a strong preference for well-crafted experiences.",
+        "title": "Score Distribution of Your Games",
+        "type": "score_distribution"
+      },
+      {
+        "description": "While not your highest-rated, this game provided endless fun and replayability.",
+        "game": {
+          "notes": "Kept coming back for 'just one more run.' The art and storytelling are phenomenal for a rogue-lite, proving that even a challenging cycle can be incredibly rewarding.",
+          "platform": "Nintendo Switch",
+          "score": "8.8",
+          "title": "Hades"
+        },
+        "title": "Your Hidden Gem",
+        "type": "hidden_gem"
+      },
+      {
+        "content": "From the expansive open worlds to the cozy indie corners, your year was a testament to your passion for gaming. Here's to more adventures in the year to come!",
+        "title": "Looking Ahead",
+        "type": "narrative"
+      }
+    ]
   }
 }

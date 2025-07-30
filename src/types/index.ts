@@ -41,7 +41,28 @@ export interface NarrativeCard {
     content: string;
 }
 
-export type WrappedCard = PlatformStatsCard | TopGameCard | SummaryCard | NarrativeCard;
+export type WrappedCard = PlatformStatsCard | TopGameCard | SummaryCard | NarrativeCard | GenreBreakdownCard | ScoreDistributionCard | HiddenGemCard;
+
+export interface GenreBreakdownCard {
+    type: 'genre_breakdown';
+    title: string;
+    description: string;
+    data: { genre: string; count: number }[];
+}
+
+export interface ScoreDistributionCard {
+    type: 'score_distribution';
+    title: string;
+    description: string;
+    data: { range: string; count: number }[];
+}
+
+export interface HiddenGemCard {
+    type: 'hidden_gem';
+    title: string;
+    description: string;
+    game: Game;
+}
 
 
 export interface WrappedData {
