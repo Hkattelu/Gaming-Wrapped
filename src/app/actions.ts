@@ -10,7 +10,9 @@ export async function generateWrappedData(csvText: string): Promise<StoryIdentif
       throw new Error("No valid game data found in the CSV. Please check the file format.");
     }
 
-    const response = await fetch('/api/generate', {
+    // NextJS does not support relative URLs
+    const HOST_URL = 'https://gaming-wrapped--game-rewind-fpatu.us-central1.hosted.app';
+    const response = await fetch(`${HOST_URL}/api/generate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

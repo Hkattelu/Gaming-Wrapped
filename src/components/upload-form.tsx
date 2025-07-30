@@ -71,11 +71,8 @@ export function UploadForm() {
         }
         
         try {
-            const result = await generateWrappedData(csvText);
-            // Store result in session storage and redirect
-            sessionStorage.setItem('wrappedData', JSON.stringify(result));
-            sessionStorage.setItem('wrappedId', result.id);
-            router.push(`/wrapped?id=${result.id}`);
+            const { id } = await generateWrappedData(csvText);
+            router.push(`/wrapped?id=${id}`);
         } catch (error: any) {
             toast({
                 title: 'ERROR GENERATING REWIND',
