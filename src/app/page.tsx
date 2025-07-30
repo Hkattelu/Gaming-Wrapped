@@ -59,7 +59,7 @@ export default function Home() {
                 <AccordionTrigger className="font-headline text-xl">How To Get Your Data</AccordionTrigger>
                 <AccordionContent className="text-base font-body text-muted-foreground space-y-4 pt-4">
                   <p><strong className="text-xl text-primary">HowLongToBeat:</strong> Go to your profile, click 'Options' and find the export games list option.</p>
-                  <p><strong className="text-xl text-primary">Steam/Playstation/Xbox:</strong> Unfortunately, Steam and consoles don't have a direct export feature. You might need to use third-party tools like <a href="https://playtracker.net/welcome/" target="_blank" rel="noopener noreferrer" className="text-accent underline">Playtracker</a>. Another option is manually creating a CSV with columns: Title, Platform, Review Score, Review Notes.</p>
+                  <p><strong className="text-xl text-primary">Steam/Playstation/Xbox:</strong> Unfortunately, Steam and consoles don't have a direct export feature. You might need to use third-party tools like <a href="https://playtracker.net/welcome/" target="_blank" rel="noopener noreferrer" className="text-accent underline">Playtracker</a>. Another option is manually creating a CSV with columns: Title, Platform, Review, Review Notes.</p>
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-2">

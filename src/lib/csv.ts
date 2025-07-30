@@ -18,24 +18,14 @@ export function parseCsv(csvText: string): Game[] {
         throw new Error('Error parsing CSV file.');
       }
       
-      const requiredHeaders = ['title', 'platform'];
+      const requiredHeaders = ['title', 'platform', 'review'];
       const actualHeaders = results.meta.fields?.map(h => toCamelCase(h));
       
       if (!requiredHeaders.every(h => actualHeaders?.includes(h))) {
-        throw new Error('CSV must contain "Title" and "Platform" headers.');
+        throw new Error('CSV must contain "Title", "Platform", and "Review" headers.');
       }
 
-      games = results.data.map((row: any) => {
-        const scoreRaw = row.reviewscore || row.score || 'N/A';
-        const score = isNaN(parseFloat(scoreRaw)) ? scoreRaw : parseFloat(scoreRaw);
-        
-        return {
-          title: row.title || 'Untitled',
-          platform: row.platform || 'Unknown Platform',
-          score: score,
-          notes: row.reviewnotes || row.notes || '',
-        };
-      }).filter(game => game.title && game.title !== 'Untitled');
+      games = results;
     }
   });
   return games;
