@@ -78,6 +78,15 @@ web_modules/
 .next
 out
 
+# Genkit
+.genkit
+.genkit/*
+
+# Vscode
+.vscode
+.vscode/*
+
+
 # Nuxt.js build / generate output
 .nuxt
 dist
