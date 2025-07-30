@@ -90,7 +90,7 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
           </CarouselItem>
 
           {cards.map((card, index) => (
-            <CarouselItem key={index}>
+            <CarouselItem className="pt-4 pb-4" key={index}>
               {renderCard(card)}
             </CarouselItem>
           ))}

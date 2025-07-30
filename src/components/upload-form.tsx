@@ -60,10 +60,10 @@ export function UploadForm() {
 
         // A simple validation for CSV header
         const firstLine = csvText.split('\n')[0].toLowerCase();
-        if (!firstLine.includes('title') || !firstLine.includes('platform')) {
+        if (!firstLine.includes('title') || !firstLine.includes('platform') || !firstLine.includes('rating')) {
              toast({
                 title: 'INVALID CSV FORMAT',
-                description: 'Your CSV must contain "Title" and "Platform" columns.',
+                description: 'Your CSV must contain at least "Title", "Platform", and "Rating" columns.',
                 variant: 'destructive',
              });
              setIsLoading(false);
