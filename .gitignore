@@ -150,3 +150,9 @@ vite.config.ts.timestamp-*
 package-lock.json
 node_modules
 node_modules/*
+apphosting.yaml
+firestore.indexes.json
+firestore.rules
+.firebaserc
+firebase.json
+firebase-debug.log

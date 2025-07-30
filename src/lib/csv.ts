@@ -1,4 +1,4 @@
-import { Game, BasicStats } from '@/types';
+import { Game } from '@/types';
 import Papa from 'papaparse';
 
 function toCamelCase(str: string): string {
@@ -39,49 +39,4 @@ export function parseCsv(csvText: string): Game[] {
     }
   });
   return games;
-}
-
-
-export function calculateStats(games: Game[]): BasicStats {
-  if (games.length === 0) {
-    return {
-      totalGames: 0,
-      averageScore: 0,
-      topGame: null,
-      platformDistribution: [],
-    };
-  }
-
-  const scores = games
-    .map(g => typeof g.score === 'number' ? g.score : NaN)
-    .filter(s => !isNaN(s));
-  
-  const averageScore = scores.length > 0 ? Number((scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1)) : 0;
-
-  let topGame: Game | null = null;
-  if(scores.length > 0) {
-    const maxScore = Math.max(...scores);
-    // Find the first game with the max score
-    topGame = games.find(g => g.score === maxScore) || null;
-  } else {
-    // If no games have scores, pick the first game
-    topGame = games[0] || null;
-  }
-
-  const platformCounts = games.reduce((acc, game) => {
-    const platform = game.platform || 'Unknown';
-    acc[platform] = (acc[platform] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  const platformDistribution = Object.entries(platformCounts)
-    .map(([platform, count]) => ({ platform, count }))
-    .sort((a, b) => b.count - a.count);
-
-  return {
-    totalGames: games.length,
-    averageScore,
-    topGame,
-    platformDistribution,
-  };
 }

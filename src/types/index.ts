@@ -5,13 +5,6 @@ export interface Game {
   notes: string;
 }
 
-export interface BasicStats {
-    totalGames: number;
-    averageScore: number;
-    topGame: Game | null;
-    platformDistribution: { platform: string; count: number }[];
-}
-
 // Card types that the AI can generate
 export interface PlatformStatsCard {
     type: 'platform_stats';
@@ -64,6 +57,9 @@ export interface HiddenGemCard {
     game: Game;
 }
 
+export interface StoryIdentifier {
+  id: string;
+}
 
 export interface WrappedData {
   cards: WrappedCard[];

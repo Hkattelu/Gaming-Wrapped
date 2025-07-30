@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     const wrapped = await generateGamingWrapped({ games });
     const id = await saveWrapped(wrapped);
 
-    return NextResponse.json({ id, wrapped });
+    return NextResponse.json({ id });
   } catch (error) {
     console.error('Error generating wrapped content:', error);
     return NextResponse.json({ error: 'Failed to generate wrapped content' }, { status: 500 });
