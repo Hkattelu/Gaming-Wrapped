@@ -156,3 +156,5 @@ firestore.rules
 .firebaserc
 firebase.json
 firebase-debug.log
+.env.development
+.env.production

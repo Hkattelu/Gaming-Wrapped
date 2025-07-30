@@ -95,7 +95,7 @@ const GenerateGamingWrappedOutputSchema = z.object({
 });
 export type GenerateGamingWrappedOutput = z.infer<typeof GenerateGamingWrappedOutputSchema>;
 
-export async function generateGamingWrapped(input: GenerateGamingWrappedInput): Promise<AiResponse> {
+export async function generateGamingWrapped(input: GenerateGamingWrappedInput): Promise<GenerateGamingWrappedOutput> {
   const result = await generateGamingWrappedFlow(input);
   return { cards: result.cards as any };
 }
