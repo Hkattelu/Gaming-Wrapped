@@ -147,7 +147,6 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-package-lock.json
 node_modules
 node_modules/*
 apphosting.yaml

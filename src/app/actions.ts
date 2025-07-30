@@ -10,11 +10,7 @@ export async function generateWrappedData(csvText: string): Promise<StoryIdentif
       throw new Error("No valid game data found in the CSV. Please check the file format.");
     }
 
-    const apiUrl = process.env.HOST_URL
-      ? `https://${process.env.HOST_URL}/api/generate`
-      : `http://localhost:${process.env.NEXT_PUBLIC_API_PORT || 3000}/api/generate`;
-
-    const response = await fetch(apiUrl, {
+    const response = await fetch('/api/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
