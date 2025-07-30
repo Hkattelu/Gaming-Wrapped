@@ -3,4 +3,4 @@ runConfig:
 
 env:
  - variable: GEMINI_API_KEY
-   secret: geminiApiKey
+   secret: geminiApiKey@3
