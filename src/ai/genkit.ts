@@ -1,6 +1,7 @@
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai';
-import 'dotenv/config';
+import { configDotenv } from 'dotenv';
+configDotenv({override: true});
 
 export const ai = genkit({
   plugins: [
