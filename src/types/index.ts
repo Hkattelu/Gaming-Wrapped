@@ -34,8 +34,6 @@ export interface NarrativeCard {
   content: string;
 }
 
-export type WrappedCard = PlatformStatsCard | TopGameCard | SummaryCard | NarrativeCard | GenreBreakdownCard | ScoreDistributionCard | HiddenGemCard;
-
 export interface GenreBreakdownCard {
   type: 'genre_breakdown';
   title: string;
@@ -56,6 +54,53 @@ export interface HiddenGemCard {
   description: string;
   game: Game;
 }
+
+export interface PlayerPersonaCard {
+  type: 'player_persona';
+  title: string;
+  persona: string;
+  description: string;
+}
+
+export interface GamerAlignmentCard {
+  type: 'gamer_alignment';
+  title: string;
+  alignment: string;
+  description: string;
+}
+
+export interface RoastCard {
+  type: 'roast';
+  title: string;
+  roast: string;
+}
+
+export interface RecommendationsCard {
+  type: 'recommendations';
+  title: string;
+  recommendations: string[];
+}
+
+export interface GamingSpiritAnimalCard {
+  type: 'gaming_spirit_animal';
+  title: string;
+  animal: string;
+  description: string;
+}
+
+export type WrappedCard = 
+  | PlatformStatsCard 
+  | TopGameCard 
+  | SummaryCard 
+  | NarrativeCard 
+  | GenreBreakdownCard 
+  | ScoreDistributionCard 
+  | HiddenGemCard
+  | PlayerPersonaCard
+  | GamerAlignmentCard
+  | RoastCard
+  | RecommendationsCard
+  | GamingSpiritAnimalCard;
 
 export interface StoryIdentifier {
   id: string;

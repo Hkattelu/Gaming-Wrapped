@@ -20,6 +20,11 @@ import { NarrativeCard } from './cards/NarrativeCard';
 import { GenreBreakdownCard } from './cards/GenreBreakdownCard';
 import { HiddenGemCard } from './cards/HiddenGemCard';
 import { ScoreDistributionCard } from './cards/ScoreDistributionCard';
+import { PlayerPersonaCardComponent } from "./cards/PlayerPersonaCard";
+import { GamerAlignmentCardComponent } from "./cards/GamerAlignmentCard";
+import { RoastCardComponent } from "./cards/RoastCard";
+import { RecommendationsCardComponent } from "./cards/RecommendationsCard";
+import { GamingSpiritAnimalCardComponent } from "./cards/GamingSpiritAnimalCard";
 
 export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string | null }) {
   const { toast } = useToast();
@@ -68,6 +73,16 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
         return <ScoreDistributionCard card={card} />;
       case 'hidden_gem':
         return <HiddenGemCard card={card} />;
+      case 'player_persona':
+        return <PlayerPersonaCardComponent card={card} />;
+      case 'gamer_alignment':
+        return <GamerAlignmentCardComponent card={card} />;
+      case 'roast':
+        return <RoastCardComponent card={card} />;
+      case 'recommendations':
+        return <RecommendationsCardComponent card={card} />;
+      case 'gaming_spirit_animal':
+        return <GamingSpiritAnimalCardComponent card={card} />;
       default:
         return null;
     }

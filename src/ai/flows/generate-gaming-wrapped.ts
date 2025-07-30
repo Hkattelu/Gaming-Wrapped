@@ -13,7 +13,21 @@ const GenerateGamingWrappedInputSchema = z.object({
 });
 export type GenerateGamingWrappedInput = z.infer<typeof GenerateGamingWrappedInputSchema>;
 
-const CARD_TYPES = ['platform_stats', 'top_game', 'summary', 'genre_breakdown', 'score_distribution', 'hidden_gem', 'narrative'];                                                                                               
+const CARD_TYPES = [
+  'platform_stats', 
+  'top_game', 
+  'summary', 
+  'genre_breakdown', 
+  'score_distribution', 
+  'hidden_gem', 
+  'narrative',
+  'player_persona',
+  'gamer_alignment',
+  'roast',
+  'recommendations',
+  'gaming_spirit_animal',
+];
+
 const PlatformStatsCardSchema = z.object({
   type: z.enum(CARD_TYPES),
   title: z.string().describe('Title for the platform stats card'),
@@ -82,6 +96,39 @@ const HiddenGemCardSchema = z.object({
   }),
 });
 
+const PlayerPersonaCardSchema = z.object({
+  type: z.enum(CARD_TYPES),
+  title: z.string().describe('Title for the player persona card'),
+  persona: z.string().describe('The assigned player persona'),
+  description: z.string().describe('A description of the player persona'),
+});
+
+const GamerAlignmentCardSchema = z.object({
+  type: z.enum(CARD_TYPES),
+  title: z.string().describe('Title for the gamer alignment card'),
+  alignment: z.string().describe('The assigned gamer alignment'),
+  description: z.string().describe('A description of the gamer alignment'),
+});
+
+const RoastCardSchema = z.object({
+  type: z.enum(CARD_TYPES),
+  title: z.string().describe('Title for the roast card'),
+  roast: z.string().describe('A roast of the user\'s gaming habits'),
+});
+
+const RecommendationsCardSchema = z.object({
+  type: z.enum(CARD_TYPES),
+  title: z.string().describe('Title for the recommendations card'),
+  recommendations: z.array(z.string()).describe('A list of game recommendations'),
+});
+
+const GamingSpiritAnimalCardSchema = z.object({
+  type: z.enum(CARD_TYPES),
+  title: z.string().describe('Title for the gaming spirit animal card'),
+  animal: z.string().describe('The assigned gaming spirit animal'),
+  description: z.string().describe('A description of the gaming spirit animal'),
+});
+
 const GenerateGamingWrappedOutputSchema = z.object({
   cards: z.array(z.union([
     PlatformStatsCardSchema,
@@ -91,6 +138,11 @@ const GenerateGamingWrappedOutputSchema = z.object({
     GenreBreakdownCardSchema,
     ScoreDistributionCardSchema,
     HiddenGemCardSchema,
+    PlayerPersonaCardSchema,
+    GamerAlignmentCardSchema,
+    RoastCardSchema,
+    RecommendationsCardSchema,
+    GamingSpiritAnimalCardSchema,
   ])),
 });
 export type GenerateGamingWrappedOutput = z.infer<typeof GenerateGamingWrappedOutputSchema>;
@@ -104,26 +156,7 @@ const prompt = ai.definePrompt({
   name: 'generateGamingWrappedPrompt',
   input: { schema: GenerateGamingWrappedInputSchema },
   output: { schema: GenerateGamingWrappedOutputSchema },
-  prompt: `You are a creative storyteller who specializes in generating personalized gaming year summaries.
-
-  Analyze the following gaming data and create a fun and engaging "Gaming Wrapped" in the form of a series of cards.
-
-  Gaming Data: {{@games}}
-
-  ## Instructions
-
-  Generate a JSON object with a "cards" array. Each card in the array should be one of the following types:
-
-  1.  **summary**: A card with the total number of games and the average score.
-  2.  **platform_stats**: A card with the distribution of games by platform.
-  3.  **top_game**: A card with the user's top-rated game.
-  4.  **narrative**: A card with a short, engaging paragraph about the user's gaming year.
-  5.  **genre_breakdown**: A card that analyzes the game titles and notes to show the user's most played genres.
-  6.  **score_distribution**: A chart that shows how many games fall into different score ranges (e.g., 9-10, 7-8, etc.).
-  7.  **hidden_gem**: A card that highlights a game that isn't the highest-rated but seems interesting based on the user's notes.
-
-  You can create multiple narrative cards.
-  `,
+  prompt: `You are a creative storyteller who specializes in generating personalized gaming year summaries.\n\n  Analyze the following gaming data and create a fun and engaging "Gaming Wrapped" in the form of a series of cards.\n\n  Gaming Data: {{@games}}\n\n  ## Instructions\n\n  Generate a JSON object with a "cards" array. Each card in the array should be one of the following types:\n\n  1.  **summary**: A card with the total number of games and the average score.\n  2.  **platform_stats**: A card with the distribution of games by platform.\n  3.  **top_game**: A card with the user's top-rated game.\n  4.  **narrative**: A card with a short, engaging paragraph about the user's gaming year.\n  5.  **genre_breakdown**: A card that analyzes the game titles and notes to show the user's most played genres.\n  6.  **score_distribution**: A chart that shows how many games fall into different score ranges (e.g., 9-10, 7-8, etc.).\n  7.  **hidden_gem**: A card that highlights a game that isn't the highest-rated but seems interesting based on the user's notes.\n  8.  **player_persona**: Assigns a catchy "class" or "title" based on a holistic view of their gaming habits.\n  9.  **gamer_alignment**: Assigns a Dungeons & Dragons-style alignment based on play style.\n  10. **roast**: Gently (or not-so-gently) makes fun of the user's gaming habits.\n  11. **recommendations**: The AI recommends you new games based on your history.\n  12. **gaming_spirit_animal**: Compares the user's overall "vibe" to a famous game character or creature.\n\n  You can create multiple narrative cards.\n  `,
 });
 
 const generateGamingWrappedFlow = ai.defineFlow(
