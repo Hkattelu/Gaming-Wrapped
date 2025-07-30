@@ -58,27 +58,26 @@ export default function Home() {
               <AccordionItem value="item-1">
                 <AccordionTrigger className="font-headline text-xl">How To Get Your Data</AccordionTrigger>
                 <AccordionContent className="text-base font-body text-muted-foreground space-y-4 pt-4">
-                  <p><strong className="text-primary">HowLongToBeat:</strong> Go to your profile, click 'Export Library' at the bottom of the games list, and save the CSV file.</p>
-                  <p><strong className="text-primary">Steam:</strong> Unfortunately, Steam doesn't have a direct export feature. You might need to use third-party tools like <a href="https://steam.tools/games/" target="_blank" rel="noopener noreferrer" className="text-accent underline">steam.tools</a>, but use them at your own risk. Another option is manually creating a CSV with columns: Title, Platform, Review Score, Review Notes.</p>
-                  <p><strong className="text-primary">PlayStation/Xbox:</strong> Console platforms do not provide an easy way to export your game library. We recommend manually creating a CSV file for the most accurate Rewind.</p>
+                  <p><strong className="text-xl text-primary">HowLongToBeat:</strong> Go to your profile, click 'Options' and find the export games list option.</p>
+                  <p><strong className="text-xl text-primary">Steam/Playstation/Xbox:</strong> Unfortunately, Steam and consoles don't have a direct export feature. You might need to use third-party tools like <a href="https://playtracker.net/welcome/" target="_blank" rel="noopener noreferrer" className="text-accent underline">Playtracker</a>. Another option is manually creating a CSV with columns: Title, Platform, Review Score, Review Notes.</p>
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-2">
                 <AccordionTrigger className="font-headline text-xl">How We Use Your Data</AccordionTrigger>
-                <AccordionContent className="text-base font-body text-muted-foreground space-y-4 pt-4">
+                <AccordionContent className="text-base text-xl font-body text-muted-foreground space-y-4 pt-4">
                   <p>Your privacy is paramount. Here's the deal:</p>
                   <ul className="list-disc pl-6 space-y-2">
                     <li>The CSV data you upload is sent to our server for processing and is NOT stored long-term.</li>
-                    <li>We use the data *only* to generate your personalized Game Rewind. It is not used for any other purpose, sold, or shared with third parties.</li>
+                    <li>We use the data *only* to generate your personalized Game Wrapped. It is not used for any other purpose, sold, or shared with third parties.</li>
                     <li>The AI model that processes your data is prohibited from training on it.</li>
-                    <li>Your generated Rewind is accessible via a unique, shareable link, but the underlying data is discarded after your session.</li>
+                    <li>Your generated Wrapped is accessible via a unique, shareable link, but the underlying data is discarded after your session.</li>
                   </ul>
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-3">
                 <AccordionTrigger className="font-headline text-xl">Terms of Service</AccordionTrigger>
-                <AccordionContent className="text-base font-body text-muted-foreground space-y-4 pt-4">
-                  <p>By using Game Rewind, you agree to the following terms:</p>
+                <AccordionContent className="text-base text-xl font-body text-muted-foreground space-y-4 pt-4">
+                  <p>By using Gaming Wrapped, you agree to the following terms:</p>
                    <ul className="list-disc pl-6 space-y-2">
                     <li>This service is provided "as is" for entertainment purposes. We make no guarantees about the accuracy or availability of the service.</li>
                     <li>You are responsible for the data you upload. Ensure you have the right to use and share it. Do not upload sensitive personal information.</li>

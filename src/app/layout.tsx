@@ -23,6 +23,9 @@ export default function RootLayout({
       <body className="font-body antialiased">
         {children}
         <Toaster />
+        <footer className="w-full py-4 text-center text-sm text-muted-foreground">
+          Made with ❤️ by <a href="https://www.youtube.com/@Glowstringman" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Glowstringman</a>. [<a href="https://ko-fi.com/glowstringman" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Donate</a>] [<a href="https://github.com/Hkattelu/Gaming-Wrapped" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Contribute</a>]
+        </footer>
       </body>
     </html>
   );
