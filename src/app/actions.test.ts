@@ -1,14 +1,27 @@
 import { jest, describe, expect, it, beforeAll, beforeEach, } from '@jest/globals';
+import { ManualGame, WrappedData } from '@/types';
 
 // Mock the fetch function
 global.fetch = jest.fn();
 
 // Declare mockParseCsv with 'mock' prefix
 let mockParseCsv: jest.Mock;
+let mockCalculateStats: jest.Mock;
+let mockManualGamesToCsv: jest.Mock;
+let mockGenerateGamingWrapped: jest.Mock;
 
 // Mock the csv module, referencing mockParseCsv
 jest.mock('@/lib/csv', () => ({
   parseCsv: jest.fn((csvText: string) => mockParseCsv(csvText)), // Reference the prefixed variable
+  manualGamesToCsv: jest.fn((games: ManualGame[]) => mockManualGamesToCsv(games)),
+}));
+
+jest.mock('@/lib/stats', () => ({
+  calculateStats: jest.fn((games: any) => mockCalculateStats(games)),
+}));
+
+jest.mock('@/ai/flows/generate-gaming-wrapped', () => ({
+  generateGamingWrapped: jest.fn((data: any) => mockGenerateGamingWrapped(data)),
 }));
 
 describe('generateWrappedData', () => {
@@ -92,5 +105,56 @@ describe('generateWrappedData', () => {
     );
     expect(mockParseCsv).toHaveBeenCalledWith(mockCsvText);
     expect(global.fetch).toHaveBeenCalled();
+  });
+});
+
+describe('generateWrappedDataFromManual', () => {
+  let generateWrappedDataFromManual: any;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.resetModules();
+
+    mockCalculateStats = jest.requireMock('@/lib/stats').calculateStats;
+    mockManualGamesToCsv = jest.requireMock('@/lib/csv').manualGamesToCsv;
+    mockGenerateGamingWrapped = jest.requireMock('@/ai/flows/generate-gaming-wrapped').generateGamingWrapped;
+
+    generateWrappedDataFromManual = require('./actions').generateWrappedDataFromManual;
+  });
+
+  it('should generate wrapped data from manual input successfully', async () => {
+    const mockManualGames: ManualGame[] = [
+      { id: '1', title: 'Game 1', platform: 'PC', status: 'Finished', score: '9' },
+      { id: '2', title: 'Game 2', platform: 'PS5', status: 'Completed', score: '8' },
+    ];
+    const mockStats = { totalGames: 2, averageScore: 8.5 };
+    const mockCsvText = 'title,platform,score,notes\nGame 1,PC,9,Finished\nGame 2,PS5,8,Completed';
+    const mockAiResponse = { cards: [] };
+
+    mockCalculateStats.mockReturnValue(mockStats);
+    mockManualGamesToCsv.mockReturnValue(mockCsvText);
+    mockGenerateGamingWrapped.mockResolvedValue(mockAiResponse);
+
+    const result = await generateWrappedDataFromManual(mockManualGames);
+
+    expect(mockCalculateStats).toHaveBeenCalledWith([
+      { title: 'Game 1', platform: 'PC', score: 9, notes: 'Finished' },
+      { title: 'Game 2', platform: 'PS5', score: 8, notes: 'Completed' },
+    ]);
+    expect(mockManualGamesToCsv).toHaveBeenCalledWith(mockManualGames);
+    expect(mockGenerateGamingWrapped).toHaveBeenCalledWith({ csvData: mockCsvText });
+    expect(result).toEqual({
+      basicStats: mockStats,
+      aiResponse: mockAiResponse,
+    });
+  });
+
+  it('should throw an error if no games are provided', async () => {
+    await expect(generateWrappedDataFromManual([])).rejects.toThrow(
+      'No games provided. Please add some games to your list.'
+    );
+    expect(mockCalculateStats).not.toHaveBeenCalled();
+    expect(mockManualGamesToCsv).not.toHaveBeenCalled();
+    expect(mockGenerateGamingWrapped).not.toHaveBeenCalled();
   });
 });

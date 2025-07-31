@@ -5,6 +5,14 @@ export interface Game {
   notes: string;
 }
 
+export interface ManualGame {
+  id: string; // client-side only
+  title: string;
+  platform: string;
+  status: string; // e.g., 'Finished', 'Completed', 'Dropped'
+  score: string;
+}
+
 // Card types that the AI can generate
 export interface PlatformStatsCard {
   type: 'platform_stats';

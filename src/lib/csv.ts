@@ -25,8 +25,9 @@ export function parseCsv(csvText: string): Game[] {
         throw new Error('CSV must contain "Title", "Platform", and "Review" headers.');
       }
 
-      games = results;
+      games = results.data;
     }
   });
+  console.log(games);
   return games;
 }

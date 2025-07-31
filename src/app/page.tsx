@@ -3,6 +3,7 @@ import { UploadForm } from '@/components/upload-form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FileText, GanttChartSquare, Share2 } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Home() {
   return (
@@ -25,6 +26,12 @@ export default function Home() {
               <UploadForm />
             </CardContent>
           </Card>
+          
+          <div className="mt-4">
+            <Link href="/manual" className="text-accent underline font-body text-lg hover:text-primary transition-colors">
+              Don't have your data handy? You can fill it out manually.
+            </Link>
+          </div>
 
           <div className="mt-24 w-full">
             <h2 className="text-3xl font-headline font-semibold tracking-widest">HOW IT WORKS</h2>
@@ -59,6 +66,7 @@ export default function Home() {
                 <AccordionTrigger className="font-headline text-xl">How To Get Your Data</AccordionTrigger>
                 <AccordionContent className="text-base font-body text-muted-foreground space-y-4 pt-4">
                   <p><strong className="text-xl text-primary">HowLongToBeat:</strong> Go to your profile, click 'Options' and find the export games list option.</p>
+                  <p><strong className="text-xl text-primary">BackLoggd:</strong> BackLoggd doesn't provide an official way to download a CSV, though it is on <a href="https://backloggd.com/roadmap/">their roadmap</a>.</p>
                   <p><strong className="text-xl text-primary">Steam/Playstation/Xbox:</strong> Unfortunately, Steam and consoles don't have a direct export feature. You might need to use third-party tools like <a href="https://playtracker.net/welcome/" target="_blank" rel="noopener noreferrer" className="text-accent underline">Playtracker</a>. Another option is manually creating a CSV with columns: Title, Platform, Review, Review Notes.</p>
                 </AccordionContent>
               </AccordionItem>
