@@ -1,0 +1,5 @@
+env:
+  - variable: GEMINI_API_KEY
+    secret: geminiApiKey@3
+  - variable: HOST_URL
+    value: http://localhost:9002

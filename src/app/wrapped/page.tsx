@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import type { WrappedData } from '@/types';
 import { WrappedSlideshow } from '@/components/wrapped-slideshow';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertTriangle } from 'lucide-react';
+import { ArrowLeft, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Loading from './loading';
@@ -90,6 +90,11 @@ function WrappedPageContent() {
 export default function WrappedPage() {
   return (
     <Suspense fallback={<Loading />}>
+          <div className="w-full flex justify-start">
+             <Button asChild variant="ghost">
+                <Link href="/"><ArrowLeft className="mr-2"/> Back to Home</Link>
+             </Button>
+          </div>
       <WrappedPageContent />
     </Suspense>
   );

@@ -7,7 +7,7 @@ interface GamingSpiritAnimalCardProps {
 
 export function GamingSpiritAnimalCardComponent({ card }: GamingSpiritAnimalCardProps) {
   return (
-    <Card>
+    <Card className="h-[550px] flex flex-col justify-center items-center text-center p-6 bg-card/80 backdrop-blur-sm border-primary/20 shadow-2xl shadow-primary/10 rounded-2xl">
       <CardHeader>
         <CardTitle>{card.title}</CardTitle>
       </CardHeader>

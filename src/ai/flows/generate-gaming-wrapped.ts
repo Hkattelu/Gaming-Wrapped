@@ -5,10 +5,39 @@ import { z } from 'genkit';
 
 const GenerateGamingWrappedInputSchema = z.object({
   games: z.array(z.object({
-    title: z.string(),
-    platform: z.string(),
-    score: z.union([z.string(), z.number()]),
-    notes: z.string(),
+    title: z.string().optional().describe("Title"),
+    platform: z.string().optional().describe("Platform"),
+    review: z.string().optional().describe("Review score. Typically out of 10."),
+    playing: z.string().optional().describe("Playing"),
+    backlog: z.string().optional().describe("Backlog"),
+    replay: z.string().optional().describe("Replay"),
+    online: z.string().optional().describe("Online"),
+    custom2: z.string().optional().describe("Custom notes"),
+    custom3: z.string().optional().describe("More Custom notes"),
+    completed: z.string().optional().describe("Whether the game was completed"),
+    retired: z.string().optional().describe("Whether the game was retired"),
+    retiredNotes: z.string().optional().describe("Notes for why the game was retired"),
+    startDate: z.string().optional().describe("Start Date"),
+    completionDate: z.string().optional().describe("Completion Date"),
+    playthrough: z.string().optional().describe("What kind of playthrough it was"),
+    progress: z.string().optional().describe("Progress"),
+    mainStory: z.string().optional().describe("Main Story"),
+    mainStoryNotes: z.string().optional().describe("Main Story Notes"),
+    mainPlusExtras: z.string().optional().describe("Main + Extras"),
+    mainPlusExtrasNotes: z.string().optional().describe("Main + Extras Notes"),
+    completionist: z.string().optional().describe("Completionist"),
+    completionistNotes: z.string().optional().describe("Completionist Notes"),
+    speedAnyPercent: z.string().optional().describe("Speedrun Any%"),
+    speedAnyPercentNotes: z.string().optional().describe("Speed Any% Notes"),
+    speed100Percent: z.string().optional().describe("Speed 100%"),
+    speed100PercentNotes: z.string().optional().describe("Speed 100% Notes"),
+    coOp: z.string().optional().describe("Co-Op"),
+    multiPlayer: z.string().optional().describe("Multi-Player"),
+    generalNotes: z.string().optional().describe("General Notes"),
+    storefront: z.string().optional().describe("Storefront"),
+    reviewNotes: z.string().optional().describe("Review Notes"),
+    added: z.string().optional().describe("The date this game was added"),
+    updated: z.string().optional().describe("The date this entry was updaeted"),
   })).describe('Array of game objects'),
 });
 export type GenerateGamingWrappedInput = z.infer<typeof GenerateGamingWrappedInputSchema>;
@@ -26,7 +55,7 @@ const CARD_TYPES = [
   'roast',
   'recommendations',
   'gaming_spirit_animal',
-];
+] as const;
 
 const PlatformStatsCardSchema = z.object({
   type: z.enum(CARD_TYPES),

@@ -57,18 +57,6 @@ export function UploadForm() {
             setIsLoading(false);
             return;
         }
-
-        // A simple validation for CSV header
-        const firstLine = csvText.split('\n')[0].toLowerCase();
-        if (!firstLine.includes('title') || !firstLine.includes('platform') || !firstLine.includes('review')) {
-             toast({
-                title: 'INVALID CSV FORMAT',
-                description: 'Your CSV must contain at least "Title", "Platform", and "Review" columns.',
-                variant: 'destructive',
-             });
-             setIsLoading(false);
-             return;
-        }
         
         try {
             const { id } = await generateWrappedData(csvText);

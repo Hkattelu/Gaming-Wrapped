@@ -1,7 +1,7 @@
 'use server';
 
 import { parseCsv } from "@/lib/csv";
-import type { ManualGame, WrappedData, StoryIdentifier } from "@/types";
+import type { ManualGame, StoryIdentifier } from "@/types";
 
 export async function generateWrappedData(csvText: string): Promise<StoryIdentifier> {
   try {
@@ -10,9 +10,9 @@ export async function generateWrappedData(csvText: string): Promise<StoryIdentif
       throw new Error("No valid game data found in the CSV. Please check the file format.");
     }
 
+    console.log('first game', games[0]);
     // NextJS does not support relative URLs
-    const HOST_URL = 'https://gaming-wrapped--game-rewind-fpatu.us-central1.hosted.app';
-    const response = await fetch(`${HOST_URL}/api/generate`, {
+    const response = await fetch(`${process.env.HOST_URL}/api/generate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

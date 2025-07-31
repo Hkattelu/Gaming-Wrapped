@@ -1,33 +1,69 @@
 import { Game } from '@/types';
 import Papa from 'papaparse';
 
-function toCamelCase(str: string): string {
-  // Converts "Review Score" to "reviewscore"
-  return str.trim().replace(/\s+/g, '').toLowerCase();
+/**
+ * A mapping from the exact HowLongToBeat CSV header string
+ * to the desired camelCase key used in our Zod schema.
+ */
+const hltbHeaderToKeyMap = {
+  "Title": "title",
+  "Platform": "platform",
+  "Playing": "playing",
+  "Backlog": "backlog",
+  "Replay": "replay",
+  "Online": "online",
+  "Custom-2": "custom2",
+  "Custom-3": "custom3",
+  "Completed": "completed",
+  "Retired": "retired",
+  "Retired Notes": "retiredNotes",
+  "Start Date": "startDate",
+  "Completion Date": "completionDate",
+  "Playthrough": "playthrough",
+  "Progress": "progress",
+  "Main Story": "mainStory",
+  "Main Story Notes": "mainStoryNotes",
+  "Main + Extras": "mainPlusExtras",
+  "Main + Extras Notes": "mainPlusExtrasNotes",
+  "Completionist": "completionist",
+  "Completionist Notes": "completionistNotes",
+  "Speed Any%": "speedAnyPercent",
+  "Speed Any% Notes": "speedAnyPercentNotes",
+  "Speed 100%": "speed100Percent",
+  "Speed 100% Notes": "speed100PercentNotes",
+  "Co-Op": "coOp",
+  "Multi-Player": "multiPlayer",
+  "General Notes": "generalNotes",
+  "Storefront": "storefront",
+  "Review": "review",
+  "Review Notes": "reviewNotes",
+  "Added": "added",
+  "Updated": "updated",
+} as Record<string, string>;
+
+/**
+ * Converts a raw CSV header string into its corresponding schema key.
+ * @param {string} header - The header string from the CSV file.
+ * @returns {string|undefined} The matching camelCase key or undefined if not found.
+ */
+function convertHeaderToKey(header: string): string {
+  return hltbHeaderToKeyMap[header] ?? header;
 }
 
 export function parseCsv(csvText: string): Game[] {
   let games: Game[] = [];
+  let parseError;
   Papa.parse(csvText, {
     header: true,
     skipEmptyLines: true,
-    transformHeader: header => toCamelCase(header),
-    complete: (results) => {
-      if (results.errors.length) {
-        console.error("Errors parsing CSV:", results.errors);
-        throw new Error('Error parsing CSV file.');
-      }
-      
-      const requiredHeaders = ['title', 'platform', 'review'];
-      const actualHeaders = results.meta.fields?.map(h => toCamelCase(h));
-      
-      if (!requiredHeaders.every(h => actualHeaders?.includes(h))) {
-        throw new Error('CSV must contain "Title", "Platform", and "Review" headers.');
-      }
-
+    transformHeader: header => convertHeaderToKey(header),
+    error: (err: Error) => {
+      parseError = err;
+    },
+    complete: (results: Papa.ParseResult<Game>) => {
       games = results.data;
     }
   });
-  console.log(games);
+  if (parseError) throw parseError;
   return games;
 }

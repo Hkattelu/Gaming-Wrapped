@@ -4,3 +4,5 @@ runConfig:
 env:
  - variable: GEMINI_API_KEY
    secret: geminiApiKey@3
+ - variable: HOST_URL
+   value: https://gaming-wrapped--game-rewind-fpatu.us-central1.hosted.app
