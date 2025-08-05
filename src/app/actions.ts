@@ -10,7 +10,6 @@ export async function generateWrappedData(csvText: string): Promise<StoryIdentif
       throw new Error("No valid game data found in the CSV. Please check the file format.");
     }
 
-    console.log('first game', games[0]);
     // NextJS does not support relative URLs
     const response = await fetch(`${process.env.HOST_URL}/api/generate`, {
       method: 'POST',

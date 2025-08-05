@@ -183,9 +183,9 @@ export async function generateGamingWrapped(input: GenerateGamingWrappedInput): 
 
 const prompt = ai.definePrompt({
   name: 'generateGamingWrappedPrompt',
-  input: { schema: GenerateGamingWrappedInputSchema },
+  input: { schema: z.object({games: z.string()}) },
   output: { schema: GenerateGamingWrappedOutputSchema },
-  prompt: `You are a creative storyteller who specializes in generating personalized gaming year summaries.\n\n  Analyze the following gaming data and create a fun and engaging "Gaming Wrapped" in the form of a series of cards.\n\n  Gaming Data: {{@games}}\n\n  ## Instructions\n\n  Generate a JSON object with a "cards" array. Each card in the array should be one of the following types:\n\n  1.  **summary**: A card with the total number of games and the average score.\n  2.  **platform_stats**: A card with the distribution of games by platform.\n  3.  **top_game**: A card with the user's top-rated game.\n  4.  **narrative**: A card with a short, engaging paragraph about the user's gaming year.\n  5.  **genre_breakdown**: A card that analyzes the game titles and notes to show the user's most played genres.\n  6.  **score_distribution**: A chart that shows how many games fall into different score ranges (e.g., 9-10, 7-8, etc.).\n  7.  **hidden_gem**: A card that highlights a game that isn't the highest-rated but seems interesting based on the user's notes.\n  8.  **player_persona**: Assigns a catchy "class" or "title" based on a holistic view of their gaming habits.\n  9.  **gamer_alignment**: Assigns a Dungeons & Dragons-style alignment based on play style.\n  10. **roast**: Gently (or not-so-gently) makes fun of the user's gaming habits.\n  11. **recommendations**: The AI recommends you new games based on your history.\n  12. **gaming_spirit_animal**: Compares the user's overall "vibe" to a famous game character or creature.\n\n  You can create multiple narrative cards.\n  `,
+  prompt: `You are a creative storyteller who specializes in generating personalized gaming year summaries.\n\n  Analyze the following gaming data and create a fun and engaging "Gaming Wrapped" in the form of a series of cards.\n\n  =====\nGaming Data: {{games}}\n=====\n\n  ## Instructions\n\n  Generate a JSON object with a "cards" array. Each card in the array should be one of the following types:\n\n  1.  **summary**: A card with the total number of games and the average score.\n  2.  **platform_stats**: A card with the distribution of games by platform.\n  3.  **top_game**: A card with the user's top-rated game.\n  4.  **narrative**: A card with a short, engaging paragraph about the user's gaming year.\n  5.  **genre_breakdown**: A card that analyzes the game titles and notes to show the user's most played genres.\n  6.  **score_distribution**: A chart that shows how many games fall into different score ranges (e.g., 9-10, 7-8, etc.).\n  7.  **hidden_gem**: A card that highlights a game that isn't the highest-rated but seems interesting based on the user's notes.\n  8.  **player_persona**: Assigns a catchy "class" or "title" based on a holistic view of their gaming habits.\n  9.  **gamer_alignment**: Assigns a Dungeons & Dragons-style alignment based on play style.\n  10. **roast**: Gently (or not-so-gently) makes fun of the user's gaming habits.\n  11. **recommendations**: The AI recommends you new games based on your history.\n  12. **gaming_spirit_animal**: Compares the user's overall "vibe" to a famous game character or creature.\n\n  You can create multiple narrative cards.\n  `,
 });
 
 const generateGamingWrappedFlow = ai.defineFlow(
@@ -195,7 +195,7 @@ const generateGamingWrappedFlow = ai.defineFlow(
     outputSchema: GenerateGamingWrappedOutputSchema,
   },
   async input => {
-    const { output } = await prompt({ games: input.games });
+    const { output } = await prompt({ games: JSON.stringify(input.games) });
     return output!;
   }
 );
