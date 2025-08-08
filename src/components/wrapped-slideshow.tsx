@@ -112,10 +112,10 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
             <div className="h-[550px] flex flex-col justify-center items-center text-center p-6 bg-card/80 backdrop-blur-sm border-primary/20 shadow-2xl shadow-primary/10 rounded-2xl">
                 <Gift className="w-20 h-20 text-primary" />
                 <h2 className="text-5xl font-headline font-bold mt-4 tracking-widest">THAT'S A WRAP!</h2>
-                <p className="text-muted-foreground text-lg mt-2 max-w-xs">Share your year in gaming with your friends!</p>
+                <p className="text-muted-foreground text-lg mt-2 max-w-xs">Share your wrapped with your friends!</p>
                 <Button className="mt-8 font-headline text-xl tracking-wider" onClick={handleShare}>
                     <Share2 className="mr-2 h-5 w-5"/>
-                    SHARE MY REWIND
+                    SHARE MY WRAPPED
                 </Button>
             </div>
           </CarouselItem>
