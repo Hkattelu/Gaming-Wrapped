@@ -11,6 +11,7 @@ export interface ManualGame {
   platform: string;
   status: string; // e.g., 'Finished', 'Completed', 'Dropped'
   score: string;
+  notes?: string; // optional review notes from manual entry
 }
 
 // Card types that the AI can generate
@@ -89,13 +90,6 @@ export interface RecommendationsCard {
   recommendations: string[];
 }
 
-export interface GamingSpiritAnimalCard {
-  type: 'gaming_spirit_animal';
-  title: string;
-  animal: string;
-  description: string;
-}
-
 export type WrappedCard = 
   | PlatformStatsCard 
   | TopGameCard 
@@ -107,8 +101,7 @@ export type WrappedCard =
   | PlayerPersonaCard
   | GamerAlignmentCard
   | RoastCard
-  | RecommendationsCard
-  | GamingSpiritAnimalCard;
+  | RecommendationsCard;
 
 export interface StoryIdentifier {
   id: string;

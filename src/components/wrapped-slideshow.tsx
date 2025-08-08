@@ -24,7 +24,6 @@ import { PlayerPersonaCardComponent } from "./cards/PlayerPersonaCard";
 import { GamerAlignmentCardComponent } from "./cards/GamerAlignmentCard";
 import { RoastCardComponent } from "./cards/RoastCard";
 import { RecommendationsCardComponent } from "./cards/RecommendationsCard";
-import { GamingSpiritAnimalCardComponent } from "./cards/GamingSpiritAnimalCard";
 
 export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string | null }) {
   const { toast } = useToast();
@@ -81,8 +80,6 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
         return <RoastCardComponent card={card} />;
       case 'recommendations':
         return <RecommendationsCardComponent card={card} />;
-      case 'gaming_spirit_animal':
-        return <GamingSpiritAnimalCardComponent card={card} />;
       default:
         return null;
     }
