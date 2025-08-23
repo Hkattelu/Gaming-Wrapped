@@ -123,9 +123,13 @@ export default function ManualEntryPage() {
     }
     setIsLoading(true);
     try {
-      const result = await generateWrappedDataFromManual(gamesList);
-      sessionStorage.setItem('wrappedData', JSON.stringify(result));
-      router.push('/wrapped');
+      // Generate on the server and get the story identifier (id)
+      const { id } = await generateWrappedDataFromManual(gamesList);
+      // Clear any legacy cache key and persist id as string for refresh/back-forward scenarios
+      sessionStorage.removeItem('wrappedData');
+      sessionStorage.setItem('wrappedId', String(id));
+      // Use replace so Back returns to the manual page instead of an intermediate state
+      router.replace(`/wrapped?id=${id}`);
     } catch (error: any)
 {
       toast({
@@ -291,9 +295,14 @@ export default function ManualEntryPage() {
           
            {gamesList.length >= 3 && (
               <div className="mt-8 w-full max-w-lg z-20">
-                <Button size="lg" className="w-full font-headline tracking-widest text-xl h-14" onClick={handleGenerate} disabled={isLoading}>
+                <Button
+                  size="lg"
+                  className="w-full font-headline tracking-widest text-xl h-auto min-h-[3.5rem] whitespace-normal break-words text-center"
+                  onClick={handleGenerate}
+                  disabled={isLoading}
+                >
                     {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Dices className="mr-2 h-5 w-5"/>}
-                    That's enough! Generate My Wrapped!
+                    {"That's enough! Generate my Wrapped!"}
                 </Button>
               </div>
            )}

@@ -48,12 +48,15 @@ function WrappedPageContent() {
           const parsedData: WrappedData = JSON.parse(storedData);
           setData(parsedData);
           setId(storedId);
-          router.push(`/wrapped?id=${storedId}`);
+          router.replace(`/wrapped?id=${storedId}`);
         } catch (e) {
           setError('Failed to load your Gaming Wrapped. The data format is invalid.');
         } finally {
           setIsLoading(false);
         }
+      } else if (storedId) {
+        // If we have an id but no cached data, redirect to fetch it server-side
+        router.replace(`/wrapped?id=${storedId}`);
       } else {
         setError('No Gaming Wrapped data found. Please start over.');
         setIsLoading(false);
