@@ -199,29 +199,65 @@ describe('lib/igdb integration', () => {
     expect(body).toContain('limit 20');
   });
 
-  it.skip('igdbRequest: retries exactly once on 401/403 by invalidating cached token', async () => {
-    // NOTE: This is intentionally skipped because the current implementation in src/lib/igdb.ts
-    // does not yet implement the 401/403 retry with token invalidation.
-    // Once implemented, enable this test.
+  it('igdbRequest: retries exactly once on 401/403 by invalidating cached token', async () => {
     process.env.TWITCH_CLIENT_ID = 'abc';
     process.env.TWITCH_CLIENT_SECRET = 'shh';
 
-    const calls: Array<{ url: string }> = [];
-    global.fetch = jest.fn(async (input: any) => {
-      calls.push({ url: String(input) });
-      if (String(input).includes('oauth2/token')) return { ok: true, json: async () => ({ access_token: 't1', expires_in: 300 }) } as any;
-      // First IGDB call → 401, then token should be invalidated and refetched, then IGDB 200
-      if (calls.filter((c) => c.url.includes('/v4/games')).length === 0) {
+    // Call order: token(t1) -> IGDB(401) -> token(t2) -> IGDB(200)
+    const rows = [{ name: 'OK', cover: { image_id: 'i' } }];
+    // Spy to observe Authorization header on the second IGDB call
+    const auths: string[] = [];
+    const mf = mockFetchSequence([
+      async (input) => {
+        expect(String(input)).toContain('oauth2/token');
+        return { ok: true, json: async () => ({ access_token: 't1', expires_in: 300 }) } as any;
+      },
+      async (input, init) => {
+        expect(String(input)).toContain('/v4/games');
+        const h = (init as any)?.headers ?? {};
+        auths.push(h['Authorization']);
         return { ok: false, status: 401, text: async () => 'unauthorized' } as any;
-      }
-      if (String(input).includes('oauth2/token')) {
+      },
+      async (input) => {
+        expect(String(input)).toContain('oauth2/token');
         return { ok: true, json: async () => ({ access_token: 't2', expires_in: 300 }) } as any;
-      }
-      return { ok: true, json: async () => ([{ name: 'OK', cover: { image_id: 'i' } }]) } as any;
-    }) as any;
+      },
+      async (input, init) => {
+        expect(String(input)).toContain('/v4/games');
+        const h = (init as any)?.headers ?? {};
+        auths.push(h['Authorization']);
+        return { ok: true, json: async () => rows } as any;
+      },
+    ]);
+    // @ts-ignore
+    global.fetch = mf as any;
 
     const { getTopGamesOfYear } = await import(IGDB_MODULE_PATH);
     const res = await getTopGamesOfYear(2025, 8);
-    expect(res).not.toBeNull();
+    expect(res).toEqual([{ title: 'OK', imageUrl: expect.stringContaining('/t_thumb/i.jpg') }]);
+    // First call used t1, second call should use t2
+    expect(auths[0]).toBe('Bearer t1');
+    expect(auths[1]).toBe('Bearer t2');
+  });
+
+  it('igdbRequest: returns null and logs once when retry also fails', async () => {
+    process.env.TWITCH_CLIENT_ID = 'abc';
+    process.env.TWITCH_CLIENT_SECRET = 'shh';
+
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const mf = mockFetchSequence([
+      async (input) => ({ ok: true, json: async () => ({ access_token: 't1', expires_in: 300 }) }) as any,
+      async () => ({ ok: false, status: 401, text: async () => 'unauthorized' }) as any,
+      async (input) => ({ ok: true, json: async () => ({ access_token: 't2', expires_in: 300 }) }) as any,
+      async () => ({ ok: false, status: 500, text: async () => 'nope' }) as any,
+    ]);
+    // @ts-ignore
+    global.fetch = mf as any;
+
+    const { searchCoverByTitle } = await import(IGDB_MODULE_PATH);
+    const res = await searchCoverByTitle('Halo');
+    expect(res).toBeNull();
+    expect(errorSpy).toHaveBeenCalledTimes(1);
+    errorSpy.mockRestore();
   });
 });
