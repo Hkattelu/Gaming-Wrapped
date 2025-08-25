@@ -112,7 +112,38 @@ export interface TopGameSuggestion {
   imageUrl: string | null;
 }
 
+// In-memory TTL cache for top-of-year suggestions, keyed by requested year and
+// the current UTC year-month (YYYY-MM). This ensures results are reused within
+// the same calendar month and naturally refresh when the month rolls over.
+type TopOfYearCacheEntry = { at: number; data: TopGameSuggestion[] };
+const topOfYearCache = new Map<string, TopOfYearCacheEntry>();
+
+// TTL for cached entries. Using a conservative default so results can refresh
+// within a month if IGDB rankings meaningfully change. Can be tuned; see PR.
+const TOP_OF_YEAR_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
+
 export async function getTopGamesOfYear(year: number, limit = 8): Promise<TopGameSuggestion[] | null> {
+  // Build a cache key that combines the requested UTC year with the current
+  // UTC calendar year-month (YYYY-MM). We derive month in UTC to align with
+  // the existing UTC-based year filtering and to avoid regional skew.
+  const now = new Date();
+  const ym = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`;
+  const cacheKey = `${year}:${ym}`;
+
+  // Serve from cache when entry is fresh AND satisfies the requested limit.
+  // If the cached list is shorter than the requested limit, treat as a miss so
+  // that callers asking for more receive at least the requested number.
+  const cached = topOfYearCache.get(cacheKey);
+  if (cached && Date.now() - cached.at >= TOP_OF_YEAR_TTL_MS) {
+    // Evict stale entries to prevent unbounded growth over time.
+    topOfYearCache.delete(cacheKey);
+  } else if (cached) {
+    if (cached.data.length >= limit) {
+      return cached.data.slice(0, limit);
+    }
+    // else: fall through to refetch with a larger limit
+  }
+
   // IGDB timestamps are in seconds since epoch
   const start = Math.floor(new Date(Date.UTC(year, 0, 1, 0, 0, 0)).getTime() / 1000);
   const end = Math.floor(new Date(Date.UTC(year + 1, 0, 1, 0, 0, 0)).getTime() / 1000);
@@ -122,10 +153,22 @@ export async function getTopGamesOfYear(year: number, limit = 8): Promise<TopGam
     'fields name, cover.image_id, first_release_date, total_rating_count, popularity; ',
     `where first_release_date >= ${start} & first_release_date < ${end} & cover != null; `,
     'sort total_rating_count desc; ',
+    // Use the requested limit (capped to 20). When refetching because the
+    // cached list was shorter than requested, this ensures we fetch enough
+    // items for the current caller.
     `limit ${Math.max(1, Math.min(limit, 20))};`
   ].join('');
 
   const rows = await igdbRequest<Array<{ name: string; cover?: { image_id: string } }>>('games', q);
   if (!rows) return null;
-  return rows.map(r => ({ title: r.name, imageUrl: r.cover?.image_id ? igdbImageUrl(r.cover.image_id, 'thumb') : null }));
+  const mapped = rows.map(r => ({
+    title: r.name,
+    imageUrl: r.cover?.image_id ? igdbImageUrl(r.cover.image_id, 'thumb') : null,
+  }));
+
+  // Update cache with the freshly fetched list and timestamp.
+  topOfYearCache.set(cacheKey, { at: Date.now(), data: mapped });
+
+  // Respect the requested limit on return.
+  return mapped.slice(0, limit);
 }
