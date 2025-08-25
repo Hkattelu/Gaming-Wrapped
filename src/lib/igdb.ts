@@ -44,20 +44,33 @@ async function fetchTwitchAppToken(): Promise<string | null> {
 }
 
 async function igdbRequest<T>(endpoint: 'games' | 'covers', query: string): Promise<T | null> {
-  const token = await fetchTwitchAppToken();
   const clientId = process.env.TWITCH_CLIENT_ID;
-  if (!token || !clientId) return null;
+  if (!clientId) return null;
 
-  const resp = await fetch(`https://api.igdb.com/v4/${endpoint}`, {
-    method: 'POST',
-    headers: {
-      'Client-ID': clientId,
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/json',
-    },
-    body: query,
-    // IGDB requires text body, not JSON
-  });
+  const doFetch = async () => {
+    const token = await fetchTwitchAppToken();
+    if (!token) return null;
+    return fetch(`https://api.igdb.com/v4/${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Client-ID': clientId,
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+      body: query,
+      // IGDB requires text body, not JSON
+    });
+  };
+
+  let resp = await doFetch();
+  if (!resp) return null;
+
+  // If the token is invalid/expired, clear cache and retry once
+  if (resp.status === 401 || resp.status === 403) {
+    cachedToken = null;
+    resp = await doFetch();
+    if (!resp) return null;
+  }
 
   if (!resp.ok) {
     console.error('IGDB API error:', endpoint, await resp.text());
