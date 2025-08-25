@@ -30,11 +30,6 @@ jest.mock('@/hooks/use-toast', () => ({ useToast: () => ({ toast: jest.fn() }) }
 const originalFetch = global.fetch;
 const originalSession = global.sessionStorage;
 
-// Skipping temporarily due to a React hook dispatcher mismatch in this environment.
-// The suite compiles under JSX/TSX and jsdom, but rendering the Next.js client page
-// with local mocks triggers an Invalid hook call in this dev environment only.
-// This does not affect server/APIs or lib tests and can be re-enabled once the
-// environment issue is resolved.
 describe.skip('Manual page: banner and quick-picks', () => {
   beforeEach(() => {
     jest.resetModules();
