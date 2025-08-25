@@ -40,6 +40,22 @@ function gamesToCsvForDownload(games: ManualGame[]): string {
 }
 
 
+// Reusable allowlist validator for IGDB image URLs used in this file.
+// Accept only https URLs to images.igdb.com with pathname starting with /igdb/image/upload/
+function safeIgdbImageUrl(raw: unknown): string | null {
+  try {
+    if (typeof raw !== 'string') return null;
+    const u = new URL(raw);
+    if (u.protocol === 'https:' && u.hostname === 'images.igdb.com' && u.pathname.startsWith('/igdb/image/upload/')) {
+      return u.toString();
+    }
+  } catch {
+    // ignore parse errors
+  }
+  return null;
+}
+
+
 export default function ManualEntryPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGame, setSelectedGame] = useState<SelectedGame | null>(null);
@@ -95,19 +111,12 @@ export default function ManualEntryPage() {
         const data = await res.json();
         if (mounted && Array.isArray(data?.suggestions)) {
           // Client-side host allowlist for images (defense in depth)
-          const safe = data.suggestions.map((s: any) => {
-            const url = typeof s?.imageUrl === 'string' ? s.imageUrl : null;
-            let safeUrl: string | null = null;
-            try {
-              if (url) {
-                const u = new URL(url);
-                if (u.protocol === 'https:' && u.hostname === 'images.igdb.com' && u.pathname.startsWith('/igdb/image/upload/')) {
-                  safeUrl = u.toString();
-                }
-              }
-            } catch { /* ignore */ }
-            return { title: String(s?.title || ''), imageUrl: safeUrl };
-          }).filter((x: any) => x.title);
+          const safe = data.suggestions
+            .map((s: any) => ({
+              title: String(s?.title || ''),
+              imageUrl: safeIgdbImageUrl(s?.imageUrl),
+            }))
+            .filter((x: any) => x.title);
           setTopThisYear(safe);
         }
       } catch (err: any) {
@@ -172,15 +181,7 @@ export default function ManualEntryPage() {
         if (!res.ok) throw new Error(String(res.status));
         const data = await res.json();
         const rawUrl = typeof data?.imageUrl === 'string' ? data.imageUrl : null;
-        let safeUrl: string | null = null;
-        try {
-          if (rawUrl) {
-            const parsed = new URL(rawUrl);
-            if (parsed.protocol === 'https:' && parsed.hostname === 'images.igdb.com' && parsed.pathname.startsWith('/igdb/image/upload/')) {
-              safeUrl = rawUrl;
-            }
-          }
-        } catch { /* ignore */ }
+        const safeUrl: string | null = safeIgdbImageUrl(rawUrl);
         if (isMountedRef.current) {
           setCoverUrlsById(prev => ({ ...prev, [currentId]: safeUrl }));
         }
