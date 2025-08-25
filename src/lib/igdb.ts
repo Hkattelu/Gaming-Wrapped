@@ -118,8 +118,8 @@ export interface TopGameSuggestion {
 type TopOfYearCacheEntry = { at: number; data: TopGameSuggestion[] };
 const topOfYearCache = new Map<string, TopOfYearCacheEntry>();
 
-// TTL for cached entries. Using a conservative default so results can refresh
-// within a month if IGDB rankings meaningfully change. Can be tuned; see PR.
+// TTL for cached entries. Conservative default so results can refresh within
+// a month if IGDB rankings meaningfully change.
 const TOP_OF_YEAR_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
 
 export async function getTopGamesOfYear(year: number, limit = 8): Promise<TopGameSuggestion[] | null> {
