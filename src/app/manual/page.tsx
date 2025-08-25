@@ -100,8 +100,44 @@ export default function ManualEntryPage() {
     loadGames();
   }, []);
 
-  // Load quick-pick suggestions once on mount (best-effort)
+  // Load quick-pick suggestions once per session (best-effort)
   useEffect(() => {
+    const year = new Date().getUTCFullYear();
+    const cacheKey = `gw:top-this-year:${year}`;
+
+    const sanitizeImageUrl = (url: string | null): string | null => {
+      if (!url) return null;
+      try {
+        const u = new URL(url);
+        if (u.protocol === 'https:' && u.hostname === 'images.igdb.com' && u.pathname.startsWith('/igdb/image/upload/')) {
+          return u.toString();
+        }
+      } catch {}
+      return null;
+    };
+    const normalizeSuggestions = (arr: any[]) =>
+      arr
+        .map((s: any) => ({
+          title: String(s?.title || ''),
+          imageUrl: sanitizeImageUrl(typeof s?.imageUrl === 'string' ? s.imageUrl : null),
+        }))
+        .filter((x: any) => x.title)
+        .slice(0, 8);
+
+    // Try session cache first to avoid refreshes during the session
+    try {
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed)) {
+          setTopThisYear(normalizeSuggestions(parsed));
+          return; // no network needed
+        }
+      }
+    } catch {
+      // ignore cache errors and fall back to network
+    }
+
     const ac = new AbortController();
     let mounted = true;
     (async () => {
@@ -111,13 +147,10 @@ export default function ManualEntryPage() {
         const data = await res.json();
         if (mounted && Array.isArray(data?.suggestions)) {
           // Client-side host allowlist for images (defense in depth)
-          const safe = data.suggestions
-            .map((s: any) => ({
-              title: String(s?.title || ''),
-              imageUrl: safeIgdbImageUrl(s?.imageUrl),
-            }))
-            .filter((x: any) => x.title);
+          const safe = normalizeSuggestions(data.suggestions);
           setTopThisYear(safe);
+          // Persist for the session to avoid refreshes
+          try { sessionStorage.setItem(cacheKey, JSON.stringify(safe)); } catch {}
         }
       } catch (err: any) {
         if (mounted && !ac.signal.aborted) {
@@ -125,6 +158,7 @@ export default function ManualEntryPage() {
         }
       }
     })();
+
     return () => {
       mounted = false;
       ac.abort();
