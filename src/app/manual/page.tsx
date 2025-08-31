@@ -129,9 +129,13 @@ export default function ManualEntryPage() {
       const cached = sessionStorage.getItem(cacheKey);
       if (cached) {
         const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed)) {
-          setTopThisYear(normalizeSuggestions(parsed));
-          return; // no network needed
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const safe = normalizeSuggestions(parsed);
+          if (safe.length > 0) {
+            setTopThisYear(safe);
+            return; // no network needed
+          }
+          // if normalization results in empty list, fall through to network
         }
       }
     } catch {
@@ -316,12 +320,12 @@ export default function ManualEntryPage() {
               {topThisYear.length > 0 && (
                 <div className="text-left">
                   <p className="text-sm text-muted-foreground mb-2">Top games this year</p>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {topThisYear.map((g, idx) => (
                       <button
                         key={`${g.title}-${idx}`}
                         type="button"
-                        className="flex items-center gap-2 p-2 rounded-md bg-muted/40 hover:bg-muted transition"
+                        className="flex items-center gap-3 p-3 rounded-lg bg-muted/40 hover:bg-muted transition"
                         onClick={() => {
                           setSearchQuery(g.title);
                           setSelectedGame({ title: g.title });
@@ -332,11 +336,11 @@ export default function ManualEntryPage() {
                         <Image
                           src={g.imageUrl || 'https://placehold.co/40x40.png'}
                           alt={g.title}
-                          width={40}
-                          height={40}
+                          width={64}
+                          height={64}
                           className="rounded"
                         />
-                        <span className="text-sm line-clamp-2 text-left">{g.title}</span>
+                        <span className="text-base font-medium line-clamp-2 text-left">{g.title}</span>
                       </button>
                     ))}
                   </div>
@@ -424,7 +428,7 @@ export default function ManualEntryPage() {
                       <li key={game.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                         <div className="flex items-center gap-4">
                            <Image src={coverUrlsById[game.id] || `https://placehold.co/40x40.png`} data-ai-hint="game boxart" alt={game.title} width={40} height={40} className="rounded-md" onError={() => setCoverUrlsById(prev => ({ ...prev, [game.id]: null }))} />
-                           <div>
+                           <div className="flex flex-col items-start">
                             <div className="flex items-center gap-2">
                               <p className="font-bold font-body text-lg">{game.title}</p>
                               {/* Platform badge */}

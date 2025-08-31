@@ -4,6 +4,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FileText, GanttChartSquare, Share2 } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
   return (
@@ -27,13 +28,13 @@ export default function Home() {
             </CardContent>
           </Card>
           
-          <div className="mt-4">
-            <Link href="/manual" className="text-accent underline font-body text-lg hover:text-primary transition-colors">
-              Don't have your data handy? You can fill it out manually.
-            </Link>
+          <div className="mt-6">
+            <Button asChild size="lg" className="font-headline tracking-widest text-xl">
+              <Link href="/manual">No CSV? Add your games manually</Link>
+            </Button>
           </div>
 
-          <div className="mt-24 w-full">
+          <div className="mt-10 w-full">
             <h2 className="text-3xl font-headline font-semibold tracking-widest">HOW IT WORKS</h2>
             <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
               <Card className="bg-card/50 backdrop-blur-sm p-6 flex flex-col items-center text-center gap-4 hover:border-accent transition-all border-transparent border-2">

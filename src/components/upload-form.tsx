@@ -34,15 +34,15 @@ export function UploadForm() {
         setLoadingStep((prev) => (prev + 1) % loadingMessages.length);
       }, 4000);
 
-      // Timeout after 60s with an error toast
+      // Timeout after 90s with an error toast
       timeoutRef.current = window.setTimeout(() => {
         toast({
           title: 'THIS IS TAKING LONGER THAN EXPECTED',
-          description: 'The generation is taking over 60 seconds. Please try again in a bit.',
+          description: 'The generation is taking over 90 seconds. Please try again in a bit.',
           variant: 'destructive',
         });
         setIsLoading(false);
-      }, 60000);
+      }, 90000);
     } else {
       // Cleanup timers when not loading
       if (intervalRef.current) {

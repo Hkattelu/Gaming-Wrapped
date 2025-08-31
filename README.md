@@ -18,6 +18,7 @@ Follow these steps to get the project up and running on your local machine.
 - Node.js (v18 or later)
 - npm (comes with Node.js)
 - A Gemini API Key
+- Twitch Developer App (Client ID and Client Secret for IGDB)
 
 ### Installation
 
@@ -33,9 +34,12 @@ Follow these steps to get the project up and running on your local machine.
     ```
 
 3.  **Set up environment variables:**
-    Create a `.env` file in the root of the project and add your Gemini API key:
+    Create a `.env` file in the root of the project (see `.env.example`) and add the following:
     ```
     GEMINI_API_KEY=your_gemini_api_key_here
+    HOST_URL=http://localhost:3000
+    TWITCH_CLIENT_ID=your_twitch_client_id
+    TWITCH_CLIENT_SECRET=your_twitch_client_secret
     ```
 
 4.  **Run the development server:**

@@ -150,7 +150,7 @@ export async function getTopGamesOfYear(year: number, limit = 8): Promise<TopGam
 
   // Pull popular games released in the given year, require a cover to ensure good UX
   const q = [
-    'fields name, cover.image_id, first_release_date, total_rating_count, popularity; ',
+    'fields name, cover.image_id, first_release_date, total_rating_count; ',
     `where first_release_date >= ${start} & first_release_date < ${end} & cover != null; `,
     'sort total_rating_count desc; ',
     // Use the requested limit (capped to 20). When refetching because the
@@ -159,8 +159,18 @@ export async function getTopGamesOfYear(year: number, limit = 8): Promise<TopGam
     `limit ${Math.max(1, Math.min(limit, 20))};`
   ].join('');
 
-  const rows = await igdbRequest<Array<{ name: string; cover?: { image_id: string } }>>('games', q);
-  if (!rows) return null;
+  let rows = await igdbRequest<Array<{ name: string; cover?: { image_id: string } }>>('games', q);
+  // Fallback: if primary query returned nothing, try sorting by popularity
+  if (!rows || rows.length === 0) {
+    const qFallback = [
+      'fields name, cover.image_id, first_release_date, total_rating, total_rating_count; ',
+      `where first_release_date >= ${start} & first_release_date < ${end} & cover != null; `,
+      'sort total_rating desc; ',
+      `limit ${Math.max(1, Math.min(limit, 20))};`
+    ].join('');
+    rows = await igdbRequest<Array<{ name: string; cover?: { image_id: string } }>>('games', qFallback) ?? [];
+  }
+  if (!rows || rows.length === 0) return null;
   const mapped = rows.map(r => ({
     title: r.name,
     imageUrl: r.cover?.image_id ? igdbImageUrl(r.cover.image_id, 'thumb') : null,

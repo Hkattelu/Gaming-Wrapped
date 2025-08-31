@@ -12,11 +12,13 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'placehold.co',
+        port: '',
         pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'images.igdb.com',
+        port: '',
         pathname: '/igdb/image/upload/**',
       },
     ],
