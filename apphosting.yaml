@@ -4,5 +4,9 @@ runConfig:
 env:
  - variable: GEMINI_API_KEY
    secret: geminiApiKey@3
+ - variable: TWITCH_CLIENT_ID
+   secret: twitchClientId@1
+ - variable: TWITCH_CLIENT_SECRET
+   secret: twitchClientSecret@1
  - variable: HOST_URL
    value: https://gaming-wrapped--game-rewind-fpatu.us-central1.hosted.app
