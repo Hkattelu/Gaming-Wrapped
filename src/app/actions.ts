@@ -10,7 +10,6 @@ export async function generateWrappedData(csvText: string): Promise<StoryIdentif
       throw new Error("No valid game data found in the CSV. Please check the file format.");
     }
 
-    console.log('first game', games[0]);
     // NextJS does not support relative URLs
     const response = await fetch(`${process.env.HOST_URL}/api/generate`, {
       method: 'POST',
@@ -43,11 +42,12 @@ function manualGamesToCsv(games: ManualGame[]): string {
   const header = "Title,Platform,Review Score,Review Notes\n";
   const rows = games.map(game => {
     // Simple CSV encoding: handle commas by quoting
-    const title = `"${game.title.replace(/"/g, '""')}"`;
-    const platform = `"${game.platform.replace(/"/g, '""')}"`;
+    const title = `"${game.title.replace(/\"/g, '""')}"`;
+    const platform = `"${game.platform.replace(/\"/g, '""')}"`;
     const score = game.score;
-    // Construct notes from status, as we don't have a dedicated field for it here
-    const notes = `"${game.status}"`;
+    // Use explicit notes if provided, otherwise fall back to status
+    const reviewNotes = game.notes && game.notes.trim().length > 0 ? game.notes : game.status;
+    const notes = `"${reviewNotes.replace(/\"/g, '""')}"`;
     return `${title},${platform},${score},${notes}`;
   });
   return header + rows.join('\n');

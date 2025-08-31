@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,13 +10,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogC
 import { useToast } from '@/hooks/use-toast';
 import { ManualGame } from '@/types';
 import { generateWrappedDataFromManual } from '@/app/actions';
-import { ArrowLeft, Dices, Download, Gamepad, Loader2, PcCase, Plus, Trash2 } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Dices, Download, Gamepad, Gamepad2, Joystick, Loader2, PcCase, Plus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Logo } from '@/components/logo';
 import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 // Represents a game selected by the user, before detailed info is added
 interface SelectedGame {
@@ -27,13 +29,30 @@ interface SelectedGame {
 function gamesToCsvForDownload(games: ManualGame[]): string {
     const header = "Title,Platform,Review Score,Review Notes\n";
     const rows = games.map(game => {
-        const title = `"${game.title.replace(/"/g, '""')}"`;
-        const platform = `"${game.platform.replace(/"/g, '""')}"`;
+        const title = `"${game.title.replace(/\"/g, '""')}"`;
+        const platform = `"${game.platform.replace(/\"/g, '""')}"`;
         const score = game.score;
-        const notes = `"${game.status}"`;
+        const reviewNotes = game.notes && game.notes.trim().length > 0 ? game.notes : game.status;
+        const notes = `"${reviewNotes.replace(/\"/g, '""')}"`;
         return `${title},${platform},${score},${notes}`;
     });
     return header + rows.join('\n');
+}
+
+
+// Reusable allowlist validator for IGDB image URLs used in this file.
+// Accept only https URLs to images.igdb.com with pathname starting with /igdb/image/upload/
+function safeIgdbImageUrl(raw: unknown): string | null {
+  try {
+    if (typeof raw !== 'string') return null;
+    const u = new URL(raw);
+    if (u.protocol === 'https:' && u.hostname === 'images.igdb.com' && u.pathname.startsWith('/igdb/image/upload/')) {
+      return u.toString();
+    }
+  } catch {
+    // ignore parse errors
+  }
+  return null;
 }
 
 
@@ -43,9 +62,122 @@ export default function ManualEntryPage() {
   const [gamesList, setGamesList] = useState<ManualGame[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  // Autosuggest state
+  const [allGames, setAllGames] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  // IGDB cover thumbnails for added items (by local id)
+  const [coverUrlsById, setCoverUrlsById] = useState<Record<string, string | null>>({});
+  // Quick-picks for current year (from IGDB, best-effort)
+  const [topThisYear, setTopThisYear] = useState<Array<{ title: string; imageUrl: string | null }>>([]);
+  const [picksError, setPicksError] = useState<string | null>(null);
+  // Mounted guard to avoid setState after unmount
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    return () => { isMountedRef.current = false; };
+  }, []);
 
   const router = useRouter();
   const { toast } = useToast();
+
+  // Load games list from public/games.json for autosuggest
+  // Gracefully handle absence or errors
+  // We only load once on mount
+  useEffect(() => {
+    async function loadGames() {
+      try {
+        const res = await fetch('/games.json', { cache: 'force-cache' });
+        if (!res.ok) return;
+        const data: string[] = await res.json();
+        if (Array.isArray(data)) {
+          setAllGames(data);
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+    loadGames();
+  }, []);
+
+  // Load quick-pick suggestions once per session (best-effort)
+  useEffect(() => {
+    const year = new Date().getUTCFullYear();
+    const cacheKey = `gw:top-this-year:${year}`;
+
+    const sanitizeImageUrl = (url: string | null): string | null => {
+      if (!url) return null;
+      try {
+        const u = new URL(url);
+        if (u.protocol === 'https:' && u.hostname === 'images.igdb.com' && u.pathname.startsWith('/igdb/image/upload/')) {
+          return u.toString();
+        }
+      } catch {}
+      return null;
+    };
+    const normalizeSuggestions = (arr: any[]) =>
+      arr
+        .map((s: any) => ({
+          title: String(s?.title || ''),
+          imageUrl: sanitizeImageUrl(typeof s?.imageUrl === 'string' ? s.imageUrl : null),
+        }))
+        .filter((x: any) => x.title)
+        .slice(0, 8);
+
+    // Try session cache first to avoid refreshes during the session
+    try {
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed)) {
+          setTopThisYear(normalizeSuggestions(parsed));
+          return; // no network needed
+        }
+      }
+    } catch {
+      // ignore cache errors and fall back to network
+    }
+
+    const ac = new AbortController();
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch('/api/igdb/top-this-year', { cache: 'no-store', signal: ac.signal });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        if (mounted && Array.isArray(data?.suggestions)) {
+          // Client-side host allowlist for images (defense in depth)
+          const safe = normalizeSuggestions(data.suggestions);
+          setTopThisYear(safe);
+          // Persist for the session to avoid refreshes
+          try { sessionStorage.setItem(cacheKey, JSON.stringify(safe)); } catch {}
+        }
+      } catch (err: any) {
+        if (mounted && !ac.signal.aborted) {
+          setPicksError('Top picks unavailable right now.');
+        }
+      }
+    })();
+
+    return () => {
+      mounted = false;
+      ac.abort();
+    };
+  }, []);
+
+  // Update suggestions when query changes
+  useEffect(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q || allGames.length === 0) {
+      setSuggestions([]);
+      return;
+    }
+    const next = allGames
+      .filter(name => name && name.toLowerCase().startsWith(q))
+      .slice(0, 5);
+    setSuggestions(next);
+    setHighlightedIndex(next.length > 0 ? 0 : -1);
+  }, [searchQuery, allGames]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,10 +202,38 @@ export default function ManualEntryPage() {
       title: `${newGame.title} added!`,
       description: "Ready for the next one.",
     });
+
+    // Best-effort: fetch IGDB cover thumbnail in the background
+    const currentId = newGame.id;
+    (async () => {
+      try {
+        const res = await fetch('/api/igdb/cover', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: newGame.title }),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        const data = await res.json();
+        const rawUrl = typeof data?.imageUrl === 'string' ? data.imageUrl : null;
+        const safeUrl: string | null = safeIgdbImageUrl(rawUrl);
+        if (isMountedRef.current) {
+          setCoverUrlsById(prev => ({ ...prev, [currentId]: safeUrl }));
+        }
+      } catch {
+        if (isMountedRef.current) {
+          setCoverUrlsById(prev => ({ ...prev, [currentId]: null }));
+        }
+      }
+    })();
   };
 
   const handleRemoveGame = (id: string) => {
     setGamesList(prev => prev.filter(game => game.id !== id));
+    setCoverUrlsById(prev => {
+      const next = { ...prev } as Record<string, string | null>;
+      delete next[id];
+      return next;
+    });
   };
   
   const handleGenerate = async () => {
@@ -83,9 +243,13 @@ export default function ManualEntryPage() {
     }
     setIsLoading(true);
     try {
-      const result = await generateWrappedDataFromManual(gamesList);
-      sessionStorage.setItem('wrappedData', JSON.stringify(result));
-      router.push('/wrapped');
+      // Generate on the server and get the story identifier (id)
+      const { id } = await generateWrappedDataFromManual(gamesList);
+      // Clear any legacy cache key and persist id as string for refresh/back-forward scenarios
+      sessionStorage.removeItem('wrappedData');
+      sessionStorage.setItem('wrappedId', String(id));
+      // Use replace so Back returns to the manual page instead of an intermediate state
+      router.replace(`/wrapped?id=${id}`);
     } catch (error: any)
 {
       toast({
@@ -135,18 +299,109 @@ export default function ManualEntryPage() {
             No CSV? No problem. Add your games manually.
           </p>
 
+          {/* Unsaved list warning */}
+          <div className="w-full max-w-lg mt-4 text-left">
+            <Alert className="bg-amber-500/10 border-amber-500/30">
+              <AlertTriangle className="h-5 w-5" />
+              <AlertTitle className="font-headline tracking-wider">Heads up</AlertTitle>
+              <AlertDescription>
+                This list isn&apos;t saved. If you exit this page, your added games will be lost.
+              </AlertDescription>
+            </Alert>
+          </div>
+
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <form onSubmit={handleSearchSubmit} className="w-full max-w-lg mt-8">
+            {/* Quick-picks */}
+            <div className="w-full max-w-lg mt-8">
+              {topThisYear.length > 0 && (
+                <div className="text-left">
+                  <p className="text-sm text-muted-foreground mb-2">Top games this year</p>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {topThisYear.map((g, idx) => (
+                      <button
+                        key={`${g.title}-${idx}`}
+                        type="button"
+                        className="flex items-center gap-2 p-2 rounded-md bg-muted/40 hover:bg-muted transition"
+                        onClick={() => {
+                          setSearchQuery(g.title);
+                          setSelectedGame({ title: g.title });
+                          setIsDialogOpen(true);
+                        }}
+                        aria-label={`Quick add ${g.title}`}
+                      >
+                        <Image
+                          src={g.imageUrl || 'https://placehold.co/40x40.png'}
+                          alt={g.title}
+                          width={40}
+                          height={40}
+                          className="rounded"
+                        />
+                        <span className="text-sm line-clamp-2 text-left">{g.title}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {picksError && topThisYear.length === 0 && (
+                <p className="text-xs text-muted-foreground text-left">{picksError}</p>
+              )}
+            </div>
+
+            <form onSubmit={handleSearchSubmit} className="w-full max-w-lg mt-6 relative">
               <Input
+                ref={inputRef}
                 type="search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (suggestions.length > 0) {
+                    if (e.key === 'ArrowDown') {
+                      e.preventDefault();
+                      setHighlightedIndex((prev) => (prev + 1) % suggestions.length);
+                    } else if (e.key === 'ArrowUp') {
+                      e.preventDefault();
+                      setHighlightedIndex((prev) => (prev - 1 + suggestions.length) % suggestions.length);
+                    } else if (e.key === 'Enter') {
+                      // If we have a highlighted suggestion, select it and open dialog
+                      if (highlightedIndex >= 0 && highlightedIndex < suggestions.length) {
+                        e.preventDefault();
+                        const choice = suggestions[highlightedIndex];
+                        setSearchQuery(choice);
+                        setSelectedGame({ title: choice });
+                        setIsDialogOpen(true);
+                      }
+                    }
+                  }
+                }}
                 placeholder="What was the first game you played this year?"
                 className="h-14 text-center text-xl font-body tracking-wider"
+                aria-autocomplete="list"
+                aria-expanded={suggestions.length > 0}
+                aria-controls="game-suggestions"
               />
+              {suggestions.length > 0 && (
+                <ul id="game-suggestions" className="absolute left-0 right-0 mt-1 bg-popover border rounded-md shadow z-20 max-h-60 overflow-auto">
+                  {suggestions.map((s, idx) => (
+                    <li key={s}>
+                      <button
+                        type="button"
+                        className={`w-full text-left px-3 py-2 hover:bg-muted ${idx === highlightedIndex ? 'bg-muted' : ''}`}
+                        onMouseEnter={() => setHighlightedIndex(idx)}
+                        onClick={() => {
+                          setSearchQuery(s);
+                          setSelectedGame({ title: s });
+                          setIsDialogOpen(true);
+                        }}
+                      >
+                        {s}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
                <Button type="submit" size="lg" className="mt-4 w-full font-headline tracking-widest text-lg">
                 <Plus className="mr-2"/> Add Game
-              </Button>
+               </Button>
             </form>
             
             {selectedGame && <AddGameDialog game={selectedGame} onAddGame={handleAddGame} />}
@@ -168,9 +423,24 @@ export default function ManualEntryPage() {
                     {gamesList.map(game => (
                       <li key={game.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                         <div className="flex items-center gap-4">
-                           <Image src={`https://placehold.co/40x40.png`} data-ai-hint="game boxart" alt={game.title} width={40} height={40} className="rounded-md" />
+                           <Image src={coverUrlsById[game.id] || `https://placehold.co/40x40.png`} data-ai-hint="game boxart" alt={game.title} width={40} height={40} className="rounded-md" onError={() => setCoverUrlsById(prev => ({ ...prev, [game.id]: null }))} />
                            <div>
-                            <p className="font-bold font-body text-lg">{game.title}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="font-bold font-body text-lg">{game.title}</p>
+                              {/* Platform badge */}
+                              {game.platform === 'PC' && (
+                                <Badge className="bg-sky-600 text-white border-transparent">PC</Badge>
+                              )}
+                              {game.platform === 'PlayStation' && (
+                                <Badge className="bg-blue-600 text-white border-transparent">PS</Badge>
+                              )}
+                              {game.platform === 'Xbox' && (
+                                <Badge className="bg-green-600 text-white border-transparent">Xbox</Badge>
+                              )}
+                              {game.platform === 'Switch' && (
+                                <Badge className="bg-red-600 text-white border-transparent">Switch</Badge>
+                              )}
+                            </div>
                             <p className="text-sm text-muted-foreground">{game.platform} - {game.status}</p>
                            </div>
                         </div>
@@ -192,9 +462,14 @@ export default function ManualEntryPage() {
           
            {gamesList.length >= 3 && (
               <div className="mt-8 w-full max-w-lg z-20">
-                <Button size="lg" className="w-full font-headline tracking-widest text-xl h-14" onClick={handleGenerate} disabled={isLoading}>
+                <Button
+                  size="lg"
+                  className="w-full font-headline tracking-widest text-xl h-auto min-h-[3.5rem] whitespace-normal break-words text-center"
+                  onClick={handleGenerate}
+                  disabled={isLoading}
+                >
                     {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Dices className="mr-2 h-5 w-5"/>}
-                    That's enough! Generate My Rewind!
+                    {"That's enough! Generate my Wrapped!"}
                 </Button>
               </div>
            )}
@@ -209,9 +484,10 @@ function AddGameDialog({ game, onAddGame }: { game: SelectedGame, onAddGame: (de
     const [status, setStatus] = useState('Finished');
     const [platform, setPlatform] = useState('PC');
     const [score, setScore] = useState(7); // Default to 7/10
+    const [notes, setNotes] = useState('');
     
     const handleSave = () => {
-        onAddGame({ title: game.title, platform, status, score: score.toString() });
+        onAddGame({ title: game.title, platform, status, score: score.toString(), notes });
     }
 
     return (
@@ -234,10 +510,10 @@ function AddGameDialog({ game, onAddGame }: { game: SelectedGame, onAddGame: (de
                  <div>
                     <Label className="text-lg font-headline tracking-wider">Platform</Label>
                      <ToggleGroup type="single" value={platform} onValueChange={(v) => v && setPlatform(v)} className="grid grid-cols-4 gap-2 mt-2">
-                        <ToggleGroupItem value="PC" className="text-base h-12"><PcCase /></ToggleGroupItem>
-                        <ToggleGroupItem value="PlayStation" className="text-base h-12"><Gamepad/></ToggleGroupItem>
-                        <ToggleGroupItem value="Xbox" className="text-base h-12"><Dices/></ToggleGroupItem>
-                        <ToggleGroupItem value="Switch" className="text-base h-12">Switch</ToggleGroupItem>
+                        <ToggleGroupItem value="PC" className="text-base h-12 flex items-center gap-2 justify-center"><PcCase className="h-5 w-5"/><span>PC</span></ToggleGroupItem>
+                        <ToggleGroupItem value="PlayStation" className="text-base h-12 flex items-center gap-2 justify-center"><Joystick className="h-5 w-5"/><span>PlayStation</span></ToggleGroupItem>
+                        <ToggleGroupItem value="Xbox" className="text-base h-12 flex items-center gap-2 justify-center"><Gamepad className="h-5 w-5"/><span>Xbox</span></ToggleGroupItem>
+                        <ToggleGroupItem value="Switch" className="text-base h-12 flex items-center gap-2 justify-center"><Gamepad2 className="h-5 w-5"/><span>Switch</span></ToggleGroupItem>
                     </ToggleGroup>
                 </div>
                 
@@ -247,8 +523,20 @@ function AddGameDialog({ game, onAddGame }: { game: SelectedGame, onAddGame: (de
                         id="score-slider"
                         min={1} max={10} step={1}
                         value={[score]}
-                        onValue-change={(v) => setScore(v[0])}
+                        onValueChange={(v) => setScore(v[0])}
                         className="mt-4"
+                    />
+                 </div>
+
+                <div>
+                    <Label htmlFor="review-notes" className="text-lg font-headline tracking-wider">Review Notes (optional)</Label>
+                    <textarea
+                        id="review-notes"
+                        className="mt-2 w-full rounded-md border bg-background p-3 text-base"
+                        rows={3}
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        placeholder="What did you think about it?"
                     />
                 </div>
             </div>

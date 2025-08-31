@@ -1,7 +1,10 @@
 module.exports = {
-  testEnvironment: 'node',
+  // Use jsdom so DOM-based tests (e.g., React components) can run
+  testEnvironment: 'jsdom',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    // Minimal mock for next/server so route handlers can be imported in Jest without Web Request globals
+    '^next/server$': '<rootDir>/src/lib/__mocks__/next-server.ts',
   },
   transform: {
     '^.+\.(ts|tsx)$': ["babel-jest", { "configFile": "./babel.config.test.js" }]

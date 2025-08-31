@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
@@ -12,8 +12,61 @@ import { useRouter } from 'next/navigation';
 export function UploadForm() {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState(0);
   const { toast } = useToast();
   const router = useRouter();
+
+  const intervalRef = useRef<number | null>(null);
+  const timeoutRef = useRef<number | null>(null);
+
+  const loadingMessages = [
+    'Analyzing your CSV... 🧠',
+    'Crunching stats... 📊',
+    'Crafting your story... ✍️',
+    'Building your slideshow... 🎬',
+    'Adding some flair... ✨',
+  ];
+
+  useEffect(() => {
+    if (isLoading) {
+      // Rotate status text every 4s
+      intervalRef.current = window.setInterval(() => {
+        setLoadingStep((prev) => (prev + 1) % loadingMessages.length);
+      }, 4000);
+
+      // Timeout after 60s with an error toast
+      timeoutRef.current = window.setTimeout(() => {
+        toast({
+          title: 'THIS IS TAKING LONGER THAN EXPECTED',
+          description: 'The generation is taking over 60 seconds. Please try again in a bit.',
+          variant: 'destructive',
+        });
+        setIsLoading(false);
+      }, 60000);
+    } else {
+      // Cleanup timers when not loading
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      setLoadingStep(0);
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+  }, [isLoading]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -60,6 +113,8 @@ export function UploadForm() {
         
         try {
             const { id } = await generateWrappedData(csvText);
+            // Stop loading locally before navigation
+            setIsLoading(false);
             router.push(`/wrapped?id=${id}`);
         } catch (error: any) {
             toast({
@@ -106,6 +161,12 @@ export function UploadForm() {
         {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
         Generate My Rewind
       </Button>
+
+      {isLoading && (
+        <p className="text-sm text-center text-muted-foreground animate-pulse" aria-live="polite">
+          {loadingMessages[loadingStep]}
+        </p>
+      )}
     </form>
   );
 }

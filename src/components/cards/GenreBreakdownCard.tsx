@@ -13,6 +13,13 @@ const genreColors = [
 ];
 
 export function GenreBreakdownCard({ card }: { card: GenreBreakdownCardType }) {
+  // Compute top 4 genres and roll the rest into "Other"
+  const sorted = [...card.data].sort((a, b) => b.count - a.count);
+  const top = sorted.slice(0, 4);
+  const remainder = sorted.slice(4);
+  const otherCount = remainder.reduce((sum, cur) => sum + cur.count, 0);
+  const processedData = otherCount > 0 ? [...top, { genre: 'Other', count: otherCount }] : top;
+
   return (
     <Card className="h-[550px] flex flex-col justify-center items-center text-center p-6 bg-card/80 backdrop-blur-sm border-primary/20 shadow-2xl shadow-primary/10 rounded-2xl">
       <CardHeader>
@@ -21,8 +28,8 @@ export function GenreBreakdownCard({ card }: { card: GenreBreakdownCardType }) {
       </CardHeader>
       <CardContent className="w-full h-64">
         <PieChart width={400} height={250}>
-          <Pie data={card.data} dataKey="count" nameKey="genre" cx="50%" cy="50%" outerRadius={80} fill="#8884d8" labelLine={false} label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}>
-            {card.data.map((entry, index) => (
+          <Pie data={processedData} dataKey="count" nameKey="genre" cx="50%" cy="50%" outerRadius={80} fill="#8884d8" labelLine={false} label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}>
+            {processedData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={genreColors[index % genreColors.length]} />
             ))}
           </Pie>
