@@ -316,7 +316,7 @@ export default function ManualEntryPage() {
 
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             {/* Quick-picks */}
-            <div className="w-full max-w-lg mt-8">
+            <div className="w-full max-w-4xl mt-8">
               {topThisYear.length > 0 && (
                 <div className="text-left">
                   <p className="text-sm text-muted-foreground mb-2">Top games this year</p>
