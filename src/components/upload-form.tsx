@@ -68,20 +68,33 @@ export function UploadForm() {
     };
   }, [isLoading]);
 
+  const MAX_CSV_BYTES = 2_000_000; // ~2 MB
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
-      if (selectedFile.type === 'text/csv' || selectedFile.name.endsWith('.csv')) {
-        setFile(selectedFile);
-      } else {
+      if (!(selectedFile.type === 'text/csv' || selectedFile.name.endsWith('.csv'))) {
         toast({
           title: 'INVALID FILE TYPE',
           description: 'Please upload a CSV file.',
           variant: 'destructive',
         });
         setFile(null);
-        event.target.value = ''; // Reset the input
+        event.target.value = '';
+        return;
       }
+      if (selectedFile.size > MAX_CSV_BYTES) {
+        const mb = (selectedFile.size / (1024 * 1024)).toFixed(2);
+        toast({
+          title: 'CSV TOO LARGE',
+          description: `Your file is ${mb} MB. Please upload a CSV under 2 MB or trim the file and try again.`,
+          variant: 'destructive',
+        });
+        setFile(null);
+        event.target.value = '';
+        return;
+      }
+      setFile(selectedFile);
     }
   };
   

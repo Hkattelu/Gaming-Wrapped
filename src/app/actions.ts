@@ -5,9 +5,13 @@ import type { ManualGame, StoryIdentifier } from "@/types";
 
 export async function generateWrappedData(csvText: string): Promise<StoryIdentifier> {
   try {
+    const MAX_GAMES = 500; // Guard against extremely large CSVs
     const games = parseCsv(csvText);
     if (games.length === 0) {
       throw new Error("No valid game data found in the CSV. Please check the file format.");
+    }
+    if (games.length > MAX_GAMES) {
+      throw new Error(`Your CSV has ${games.length} games. Please limit to ${MAX_GAMES} or fewer by trimming your file and try again.`);
     }
 
     // NextJS does not support relative URLs
