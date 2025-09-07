@@ -160,8 +160,8 @@ export async function getTopGamesOfYear(year: number, limit = 8): Promise<TopGam
   ].join('');
 
   let rows = await igdbRequest<Array<{ name: string; cover?: { image_id: string } }>>('games', q);
-  // Fallback: if primary query returned nothing, try sorting by popularity
-  if (!rows || rows.length === 0) {
+  // Fallback: only when the primary query returned an empty array (not on null/error)
+  if (Array.isArray(rows) && rows.length === 0) {
     const qFallback = [
       'fields name, cover.image_id, first_release_date, total_rating, total_rating_count; ',
       `where first_release_date >= ${start} & first_release_date < ${end} & cover != null; `,

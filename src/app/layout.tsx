@@ -1,10 +1,43 @@
-import type {Metadata} from 'next';
+import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 
+const HOST_URL = process.env.HOST_URL ?? 'https://gamingwrapped.com';
+
 export const metadata: Metadata = {
-  title: 'Gaming Wrapped',
-  description: 'Your year in gaming, wrapped.',
+  metadataBase: new URL(HOST_URL),
+  title: {
+    default: 'Gaming Wrapped',
+    template: '%s | Gaming Wrapped',
+  },
+  description: 'Upload your play history and get a shareable, AI‑generated year‑in‑review.',
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    url: '/',
+    title: 'Gaming Wrapped',
+    description: 'Upload your play history and get a shareable, AI‑generated year‑in‑review.',
+    images: [
+      {
+        url: 'https://placehold.co/1200x630/png?text=Gaming+Wrapped',
+        width: 1200,
+        height: 630,
+        alt: 'Gaming Wrapped',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Gaming Wrapped',
+    description: 'Upload your play history and get a shareable, AI‑generated year‑in‑review.',
+    images: ['https://placehold.co/1200x630/png?text=Gaming+Wrapped'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -12,13 +45,28 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Gaming Wrapped",
+    url: HOST_URL,
+  } as const;
+
   return (
     <html lang="en" className="dark">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="mask-icon" href="/icon.svg" color="#0ea5e9" />
+        <link rel="manifest" href="/manifest.webmanifest" />
+        <meta name="theme-color" content="#0b0b0f" />
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
       </head>
       <body className="font-body antialiased">
         {children}

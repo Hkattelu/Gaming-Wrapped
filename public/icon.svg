@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <style>
+      .bg { fill: #0b0b0f; }
+      .fg { fill: #ffffff; font: 700 120px 'VT323', 'Press Start 2P', monospace; }
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="256" height="256" rx="48" ry="48"/>
+  <text class="fg" x="50%" y="58%" text-anchor="middle" dominant-baseline="middle">GW</text>
+</svg>
+
