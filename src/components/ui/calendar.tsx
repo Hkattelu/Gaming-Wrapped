@@ -54,8 +54,12 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: ({ ...props }: React.HTMLAttributes<HTMLElement>) => <ChevronLeft className="h-4 w-4" />,
-        IconRight: ({ ...props }: React.HTMLAttributes<HTMLElement>) => <ChevronRight className="h-4 w-4" />,
+        iconLeft: ({ className, ...props }: React.SVGProps<SVGSVGElement>) => (
+          <ChevronLeft className={cn("h-4 w-4", className)} {...props} />
+        ),
+        iconRight: ({ className, ...props }: React.SVGProps<SVGSVGElement>) => (
+          <ChevronRight className={cn("h-4 w-4", className)} {...props} />
+        ),
       }}
       {...props}
     />
