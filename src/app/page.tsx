@@ -1,3 +1,5 @@
+"use client";
+
 import { Logo } from '@/components/logo';
 import { UploadForm } from '@/components/upload-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,8 +7,44 @@ import { FileText, GanttChartSquare, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useState } from 'react';
+import { Input } from '@/components/ui/input';
 
 export default function Home() {
+  const [backloggdUsername, setBackloggdUsername] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleBackloggdExport = async () => {
+    if (!backloggdUsername) {
+      setError('Please enter your Backloggd username.');
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/backloggd?username=${backloggdUsername}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to export data.');
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${backloggdUsername}_games.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
       <div className="absolute inset-0 bg-grid-white/[0.05] z-0" />
@@ -15,7 +53,7 @@ export default function Home() {
         <div className="container max-w-4xl flex flex-col items-center text-center z-10">
           <Logo className="text-5xl" />
           <p className="mt-4 text-xl text-muted-foreground max-w-2xl font-body tracking-wider">
-            Got your game data? Upload your playthrough history from sites like HowLongToBeat and get a personalized, shareable "Gaming Wrapped" story.
+            Got your game data? Upload your playthrough history from sites like HowLongToBeat and get a personalized, shareable &quot;Gaming Wrapped&quot; story.
           </p>
 
           <Card className="mt-10 w-full max-w-lg bg-card/80 backdrop-blur-sm shadow-lg shadow-primary/20 border-primary/20">
@@ -37,22 +75,20 @@ export default function Home() {
                 <DialogHeader>
                   <DialogTitle>Exporting from Backloggd</DialogTitle>
                   <DialogDescription>
-                    Backloggd doesn't have a native export feature, but you can use this community-made tool to get your data.
+                    Enter your Backloggd username to download your games CSV.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
-                  <p>
-                    Download the Python script to export your game data from Backloggd.
-                  </p>
-                  <Button asChild>
-                    <a href="/scripts/backloggd_exporter.py" download>Download Exporter Script</a>
+                  <Input
+                    placeholder="Your Backloggd username"
+                    value={backloggdUsername}
+                    onChange={(e) => setBackloggdUsername(e.target.value)}
+                    disabled={isLoading}
+                  />
+                  <Button onClick={handleBackloggdExport} disabled={isLoading} className="w-full">
+                    {isLoading ? 'Exporting...' : 'Export CSV'}
                   </Button>
-                  <p className="text-sm text-muted-foreground">
-                    To run the script, you'll need Python 3 installed. You may also need to install the following packages:
-                    <code className="block bg-muted p-2 rounded-md mt-2">pip install requests beautifulsoup4</code>
-                    Once installed, run the script from your terminal:
-                    <code className="block bg-muted p-2 rounded-md mt-2">python backloggd_exporter.py YOUR_USERNAME</code>
-                  </p>
+                  {error && <p className="text-sm text-red-500">{error}</p>}
                 </div>
               </DialogContent>
             </Dialog>
@@ -76,7 +112,7 @@ export default function Home() {
                     2. Go to your Profile page.
                   </p>
                   <p>
-                    3. Click on 'Options' and select 'Export Game List'.
+                    3. Click on &apos;Options&apos; and select &apos;Export Game List&apos;.
                   </p>
                   <p>
                     4. This will download a CSV file of your game library.
@@ -97,7 +133,7 @@ export default function Home() {
                   </DialogDescription>
                 </DialogHeader>
                 <p>
-                  You may need to use third-party tools to export your data and format it into a CSV with a "Title" column.
+                  You may need to use third-party tools to export your data and format it into a CSV with a &quot;Title&quot; column.
                 </p>
               </DialogContent>
             </Dialog>
