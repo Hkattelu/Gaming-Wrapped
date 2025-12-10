@@ -7,6 +7,10 @@ import {
 	type GenerateGamingWrappedInput,
 } from './flows/generate-gaming-wrapped';
 
+function isCardType(value: string): value is CardType {
+	return CARD_TYPES.includes(value as CardType);
+}
+
 const [cardTypeArg, gameTitle] = process.argv.slice(2);
 
 if (!cardTypeArg || !gameTitle) {
@@ -15,13 +19,13 @@ if (!cardTypeArg || !gameTitle) {
 	process.exit(1);
 }
 
-if (!CARD_TYPES.includes(cardTypeArg as CardType)) {
+if (!isCardType(cardTypeArg)) {
 	console.error(`Unknown card type "${cardTypeArg}".`);
 	console.error(`Valid card types: ${CARD_TYPES.join(', ')}`);
 	process.exit(1);
 }
 
-const cardType = cardTypeArg as CardType;
+const cardType: CardType = cardTypeArg;
 
 const game = devGames.find(g => g.title === gameTitle);
 
