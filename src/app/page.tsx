@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 export default function Home() {
   const [backloggdUsername, setBackloggdUsername] = useState('');
@@ -24,7 +25,7 @@ export default function Home() {
     setError(null);
 
     try {
-      const response = await fetch(`/api/backloggd?username=${backloggdUsername}`);
+      const response = await fetch(`/api/backloggd?username=${encodeURIComponent(backloggdUsername)}`);
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || 'Failed to export data.');
@@ -163,6 +164,34 @@ export default function Home() {
                 <p className="text-base font-body text-muted-foreground">Get a shareable link to your personalized slideshow to show off.</p>
               </Card>
             </div>
+          </div>
+
+          <div className="mt-24 w-full text-left max-w-4xl">
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="item-2">
+                <AccordionTrigger className="font-headline text-xl">How We Use Your Data</AccordionTrigger>
+                <AccordionContent className="text-base text-xl font-body text-muted-foreground space-y-4 pt-4">
+                  <p>Your privacy is paramount. Here&apos;s the deal:</p>
+                  <ul className="list-disc pl-6 space-y-2">
+                    <li>The CSV data you upload is sent to our server for processing and is NOT stored long-term.</li>
+                    <li>We use the data *only* to generate your personalized Game Wrapped. It is not used for any other purpose, sold, or shared with third parties.</li>
+                    <li>The AI model that processes your data is prohibited from training on it.</li>
+                    <li>Your generated Wrapped is accessible via a unique, shareable link, but the underlying data is discarded after your session.</li>
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="item-3">
+                <AccordionTrigger className="font-headline text-xl">Terms of Service</AccordionTrigger>
+                <AccordionContent className="text-base text-xl font-body text-muted-foreground space-y-4 pt-4">
+                  <p>By using Gaming Wrapped, you agree to the following terms:</p>
+                   <ul className="list-disc pl-6 space-y-2">
+                    <li>This service is provided &quot;as is&quot; for entertainment purposes. We make no guarantees about the accuracy or availability of the service.</li>
+                    <li>You are responsible for the data you upload. Ensure you have the right to use and share it. Do not upload sensitive personal information.</li>
+                    <li>We reserve the right to modify or discontinue the service at any time.</li>
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </div>
         </div>
       </main>
