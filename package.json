@@ -38,6 +38,7 @@
     "@radix-ui/react-toast": "^1.2.6",
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.8",
+    "@types/uuid": "^10.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
@@ -51,6 +52,7 @@
     "papaparse": "^5.5.3",
     "patch-package": "^8.0.0",
     "react": "19.1.1",
+    "react-day-picker": "^9.12.0",
     "react-dom": "19.1.1",
     "react-hook-form": "^7.54.2",
     "react-markdown": "^9.0.1",
@@ -58,6 +60,7 @@
     "remark-gfm": "^4.0.0",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
+    "vibe-kanban-web-companion": "^0.0.5",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -71,13 +74,15 @@
     "@types/react": "19.1.9",
     "@types/react-dom": "19.1.7",
     "babel-jest": "^30.0.5",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.0.7",
     "genkit-cli": "^1.14.1",
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "ts-jest": "^29.4.0",
-    "typescript": "^5"
+    "typescript": "^5.9.3"
   },
   "overrides": {
     "@types/react": "19.1.9",
