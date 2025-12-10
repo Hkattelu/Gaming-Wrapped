@@ -168,7 +168,7 @@ const GenerateGamingWrappedOutputSchema = z.object({
 export type GenerateGamingWrappedOutput = z.infer<typeof GenerateGamingWrappedOutputSchema>;
 
 export async function generateGamingWrapped(input: GenerateGamingWrappedInput): Promise<GenerateGamingWrappedOutput> {
-  if (process.env.USE_MOCK_WRAPPED_OUTPUT === 'true') {
+  if (process.env.NODE_ENV !== 'production' && process.env.USE_MOCK_WRAPPED_OUTPUT === 'true') {
     return {
       cards: [
         {
