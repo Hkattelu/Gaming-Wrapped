@@ -42,7 +42,7 @@ const GenerateGamingWrappedInputSchema = z.object({
 });
 export type GenerateGamingWrappedInput = z.infer<typeof GenerateGamingWrappedInputSchema>;
 
-const CARD_TYPES = [
+export const CARD_TYPES = [
   'platform_stats', 
   'top_game', 
   'summary', 
@@ -55,6 +55,8 @@ const CARD_TYPES = [
   'roast',
   'recommendations',
 ] as const;
+
+export type CardType = (typeof CARD_TYPES)[number];
 
 const PlatformStatsCardSchema = z.object({
   type: z.enum(CARD_TYPES),
