@@ -1,16 +1,7 @@
 import { jest } from '@jest/globals';
+import { MOCK_WRAPPED_OUTPUT } from '@/ai/dev-wrapped';
 
-const MOCK_RESPONSE_TEXT = JSON.stringify({
-  cards: [
-    {
-      type: 'summary',
-      title: 'Mock Summary',
-      description: 'This is a mock summary',
-      totalGames: 10,
-      averageScore: 8.5,
-    },
-  ],
-});
+const MOCK_RESPONSE_TEXT = JSON.stringify(MOCK_WRAPPED_OUTPUT);
 
 const generateMock = jest.fn(async () => ({
   candidates: [

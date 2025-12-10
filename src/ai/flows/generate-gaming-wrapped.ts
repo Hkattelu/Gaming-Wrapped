@@ -2,6 +2,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { MOCK_WRAPPED_OUTPUT } from '@/ai/dev-wrapped';
 
 const GenerateGamingWrappedInputSchema = z.object({
   games: z.array(z.object({
@@ -171,17 +172,7 @@ export type GenerateGamingWrappedOutput = z.infer<typeof GenerateGamingWrappedOu
 
 export async function generateGamingWrapped(input: GenerateGamingWrappedInput): Promise<GenerateGamingWrappedOutput> {
   if (process.env.NODE_ENV !== 'production' && process.env.USE_MOCK_WRAPPED_OUTPUT === 'true') {
-    return {
-      cards: [
-        {
-          type: 'summary',
-          title: 'Mock Summary',
-          description: 'This is a mock summary',
-          totalGames: 10,
-          averageScore: 8.5,
-        },
-      ],
-    };
+    return MOCK_WRAPPED_OUTPUT;
   }
   const result = await generateGamingWrappedFlow(input);
   return { cards: result.cards as any };
