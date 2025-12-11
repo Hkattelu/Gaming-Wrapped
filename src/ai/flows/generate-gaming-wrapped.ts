@@ -2,6 +2,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { MOCK_WRAPPED_OUTPUT } from '@/ai/dev-wrapped';
 
 const GenerateGamingWrappedInputSchema = z.object({
   games: z.array(z.object({
@@ -42,7 +43,7 @@ const GenerateGamingWrappedInputSchema = z.object({
 });
 export type GenerateGamingWrappedInput = z.infer<typeof GenerateGamingWrappedInputSchema>;
 
-const CARD_TYPES = [
+export const CARD_TYPES = [
   'platform_stats', 
   'top_game', 
   'summary', 
@@ -55,6 +56,8 @@ const CARD_TYPES = [
   'roast',
   'recommendations',
 ] as const;
+
+export type CardType = (typeof CARD_TYPES)[number];
 
 const PlatformStatsCardSchema = z.object({
   type: z.enum(CARD_TYPES),
@@ -168,6 +171,9 @@ const GenerateGamingWrappedOutputSchema = z.object({
 export type GenerateGamingWrappedOutput = z.infer<typeof GenerateGamingWrappedOutputSchema>;
 
 export async function generateGamingWrapped(input: GenerateGamingWrappedInput): Promise<GenerateGamingWrappedOutput> {
+  if (process.env.NODE_ENV !== 'production' && process.env.USE_MOCK_WRAPPED_OUTPUT === 'true') {
+    return MOCK_WRAPPED_OUTPUT;
+  }
   const result = await generateGamingWrappedFlow(input);
   return { cards: result.cards as any };
 }
