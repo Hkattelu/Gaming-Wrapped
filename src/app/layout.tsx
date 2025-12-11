@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
+import { VibeKanbanWrapper } from '@/components/VibeKanbanWrapper';
 
 const HOST_URL = process.env.HOST_URL ?? 'https://gamingwrapped.com';
 
@@ -80,6 +81,7 @@ export default function RootLayout({
         </script>
       </head>
       <body className="font-body antialiased">
+        <VibeKanbanWrapper />
         {children}
         <Toaster />
         <footer className="w-full py-4 text-center text-sm text-muted-foreground">
