@@ -1,12 +1,51 @@
+"use client";
+
 import { Logo } from '@/components/logo';
 import { UploadForm } from '@/components/upload-form';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FileText, GanttChartSquare, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 export default function Home() {
+  const [backloggdUsername, setBackloggdUsername] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleBackloggdExport = async () => {
+    if (!backloggdUsername) {
+      setError('Please enter your Backloggd username.');
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/backloggd?username=${encodeURIComponent(backloggdUsername)}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to export data.');
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${backloggdUsername}_games.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
       <div className="absolute inset-0 bg-grid-white/[0.05] z-0" />
@@ -15,7 +54,7 @@ export default function Home() {
         <div className="container max-w-4xl flex flex-col items-center text-center z-10">
           <Logo className="text-5xl" />
           <p className="mt-4 text-xl text-muted-foreground max-w-2xl font-body tracking-wider">
-            Got your game data? Upload your playthrough history from sites like HowLongToBeat and get a personalized, shareable "Gaming Wrapped" story.
+            Got your game data? Upload your playthrough history from sites like HowLongToBeat and get a personalized, shareable &quot;Gaming Wrapped&quot; story.
           </p>
 
           <Card className="mt-10 w-full max-w-lg bg-card/80 backdrop-blur-sm shadow-lg shadow-primary/20 border-primary/20">
@@ -28,12 +67,78 @@ export default function Home() {
             </CardContent>
           </Card>
           
-          <div className="mt-6">
-            <Button asChild size="lg" className="font-headline tracking-widest text-xl">
-              <Link href="/manual">No CSV? Add your games manually</Link>
-            </Button>
-          </div>
+          <div className="mt-6 flex gap-4">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">From Backloggd</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Exporting from Backloggd</DialogTitle>
+                  <DialogDescription>
+                    Enter your Backloggd username to download your games CSV.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <Input
+                    placeholder="Your Backloggd username"
+                    value={backloggdUsername}
+                    onChange={(e) => setBackloggdUsername(e.target.value)}
+                    disabled={isLoading}
+                  />
+                  <Button onClick={handleBackloggdExport} disabled={isLoading} className="w-full">
+                    {isLoading ? 'Exporting...' : 'Export CSV'}
+                  </Button>
+                  {error && <p className="text-sm text-red-500">{error}</p>}
+                </div>
+              </DialogContent>
+            </Dialog>
 
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">From HowLongToBeat</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Exporting from HowLongToBeat</DialogTitle>
+                  <DialogDescription>
+                    You can export your game list directly from the HowLongToBeat website.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <p>
+                    1. Log in to your account on <a href="https://howlongtobeat.com" target="_blank" rel="noopener noreferrer" className="text-accent underline">howlongtobeat.com</a>.
+                  </p>
+                  <p>
+                    2. Go to your Profile page.
+                  </p>
+                  <p>
+                    3. Click on &apos;Options&apos; and select &apos;Export Game List&apos;.
+                  </p>
+                  <p>
+                    4. This will download a CSV file of your game library.
+                  </p>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">Other</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Other Platforms</DialogTitle>
+                  <DialogDescription>
+                    Importing from other platforms like Steam, PlayStation, or Xbox is not directly supported yet.
+                  </DialogDescription>
+                </DialogHeader>
+                <p>
+                  You may need to use third-party tools to export your data and format it into a CSV with a &quot;Title&quot; column.
+                </p>
+              </DialogContent>
+            </Dialog>
+          </div>
           <div className="mt-10 w-full">
             <h2 className="text-3xl font-headline font-semibold tracking-widest">HOW IT WORKS</h2>
             <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
@@ -63,18 +168,10 @@ export default function Home() {
 
           <div className="mt-24 w-full text-left max-w-4xl">
             <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="font-headline text-xl">How To Get Your Data</AccordionTrigger>
-                <AccordionContent className="text-base font-body text-muted-foreground space-y-4 pt-4">
-                  <p><strong className="text-xl text-primary">HowLongToBeat:</strong> Go to your profile, click 'Options' and find the export games list option.</p>
-                  <p><strong className="text-xl text-primary">BackLoggd:</strong> BackLoggd doesn't provide an official way to download a CSV, though it is on <a href="https://backloggd.com/roadmap/">their roadmap</a>.</p>
-                  <p><strong className="text-xl text-primary">Steam/Playstation/Xbox:</strong> Unfortunately, Steam and consoles don't have a direct export feature. You might need to use third-party tools like <a href="https://playtracker.net/welcome/" target="_blank" rel="noopener noreferrer" className="text-accent underline">Playtracker</a>. Another option is manually creating a CSV with columns: Title, Platform, Review, Review Notes.</p>
-                </AccordionContent>
-              </AccordionItem>
               <AccordionItem value="item-2">
                 <AccordionTrigger className="font-headline text-xl">How We Use Your Data</AccordionTrigger>
                 <AccordionContent className="text-base text-xl font-body text-muted-foreground space-y-4 pt-4">
-                  <p>Your privacy is paramount. Here's the deal:</p>
+                  <p>Your privacy is paramount. Here&apos;s the deal:</p>
                   <ul className="list-disc pl-6 space-y-2">
                     <li>The CSV data you upload is sent to our server for processing and is NOT stored long-term.</li>
                     <li>We use the data *only* to generate your personalized Game Wrapped. It is not used for any other purpose, sold, or shared with third parties.</li>
@@ -88,7 +185,7 @@ export default function Home() {
                 <AccordionContent className="text-base text-xl font-body text-muted-foreground space-y-4 pt-4">
                   <p>By using Gaming Wrapped, you agree to the following terms:</p>
                    <ul className="list-disc pl-6 space-y-2">
-                    <li>This service is provided "as is" for entertainment purposes. We make no guarantees about the accuracy or availability of the service.</li>
+                    <li>This service is provided &quot;as is&quot; for entertainment purposes. We make no guarantees about the accuracy or availability of the service.</li>
                     <li>You are responsible for the data you upload. Ensure you have the right to use and share it. Do not upload sensitive personal information.</li>
                     <li>We reserve the right to modify or discontinue the service at any time.</li>
                   </ul>
