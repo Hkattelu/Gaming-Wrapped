@@ -137,11 +137,15 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
             </div>
           </CarouselItem>
 
-          {cards.map((card, index) => (
-            <CarouselItem className="pt-4 pb-4" key={index}>
-              {renderCard(card)}
-            </CarouselItem>
-          ))}
+          {cards.map((card, index) => {
+            const renderedCard = renderCard(card);
+            if (!renderedCard) return null;
+            return (
+              <CarouselItem className="pt-4 pb-4" key={index}>
+                {renderedCard}
+              </CarouselItem>
+            );
+          }).filter(Boolean)}
 
           {/* Final Slide */}
           <CarouselItem>

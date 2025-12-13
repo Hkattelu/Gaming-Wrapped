@@ -66,7 +66,7 @@ export function UploadForm() {
         timeoutRef.current = null;
       }
     };
-  }, [isLoading]);
+  }, [isLoading, loadingMessages.length, toast]);
 
   const MAX_CSV_BYTES = 2_000_000; // ~2 MB
 

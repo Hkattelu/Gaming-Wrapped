@@ -23,7 +23,7 @@ export function ScoreDistributionCard({ card }: { card: ScoreDistributionCardTyp
   } satisfies ChartConfig
 
   return (
-    <Card className="h-[550px] flex flex-col justify-center items-center text-center p-6 bg-card/80 backdrop-blur-sm border-primary/20 shadow-2xl shadow-primary/10 rounded-2xl">
+    <Card className="h-[600px] flex flex-col justify-center items-center text-center p-6 bg-card/80 backdrop-blur-sm border-primary/20 shadow-2xl shadow-primary/10 rounded-2xl">
       <CardHeader>
         <CardTitle className="font-headline text-4xl tracking-widest">{card.title}</CardTitle>
         <CardDescription className="text-lg">{card.description}</CardDescription>
