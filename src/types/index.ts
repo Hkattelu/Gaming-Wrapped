@@ -87,6 +87,7 @@ export interface RoastCard {
 export interface Recommendation {
   game: string;
   blurb: string;
+  igdbUrl?: string;
 }
 
 export interface RecommendationsCard {

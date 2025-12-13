@@ -152,6 +152,42 @@ describe('lib/igdb integration', () => {
     expect(igdbImageUrl('qwe', 'cover_big')).toBe('https://images.igdb.com/igdb/image/upload/t_cover_big/qwe.jpg');
   });
 
+  it('searchGameByTitle: returns url and slug when game is found', async () => {
+    process.env.TWITCH_CLIENT_ID = 'abc';
+    process.env.TWITCH_CLIENT_SECRET = 'shh';
+    global.fetch = mockFetchSequence([
+      async () => ({ ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) }) as any,
+      async () => ({ ok: true, json: async () => [{ name: 'Halo', slug: 'halo', url: 'https://www.igdb.com/games/halo' }] }) as any,
+    ]) as any;
+    const { searchGameByTitle } = await import(IGDB_MODULE_PATH);
+    const res = await searchGameByTitle('Halo');
+    expect(res).toEqual({ url: 'https://www.igdb.com/games/halo', slug: 'halo' });
+  });
+
+  it('searchGameByTitle: returns null when IGDB returns empty list', async () => {
+    process.env.TWITCH_CLIENT_ID = 'abc';
+    process.env.TWITCH_CLIENT_SECRET = 'shh';
+    global.fetch = mockFetchSequence([
+      async () => ({ ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) }) as any,
+      async () => ({ ok: true, json: async () => [] }) as any,
+    ]) as any;
+    const { searchGameByTitle } = await import(IGDB_MODULE_PATH);
+    const res = await searchGameByTitle('NonExistent');
+    expect(res).toBeNull();
+  });
+
+  it('searchGameByTitle: returns null when game has no url', async () => {
+    process.env.TWITCH_CLIENT_ID = 'abc';
+    process.env.TWITCH_CLIENT_SECRET = 'shh';
+    global.fetch = mockFetchSequence([
+      async () => ({ ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) }) as any,
+      async () => ({ ok: true, json: async () => [{ name: 'Foo', slug: 'foo' }] }) as any,
+    ]) as any;
+    const { searchGameByTitle } = await import(IGDB_MODULE_PATH);
+    const res = await searchGameByTitle('Foo');
+    expect(res).toBeNull();
+  });
+
   it('searchCoverByTitle: returns null when IGDB returns empty list', async () => {
     process.env.TWITCH_CLIENT_ID = 'abc';
     process.env.TWITCH_CLIENT_SECRET = 'shh';

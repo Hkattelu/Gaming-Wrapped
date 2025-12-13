@@ -91,6 +91,20 @@ export function igdbImageUrl(imageId: string, size: 'thumb' | 'cover_small' | 'c
   return `https://images.igdb.com/igdb/image/upload/${type}/${imageId}.jpg`;
 }
 
+export async function searchGameByTitle(title: string): Promise<{ url: string; slug: string } | null> {
+  const sanitized = title.replace(/\n/g, ' ').slice(0, 120);
+  const q = [
+    'fields name, slug, url; ',
+    `search "${sanitized}"; `,
+    'limit 1;'
+  ].join('');
+
+  const result = await igdbRequest<Array<{ name: string; slug: string; url: string }>>('games', q);
+  if (!result || result.length === 0) return null;
+  const game = result[0];
+  return game?.url ? { url: game.url, slug: game.slug } : null;
+}
+
 export async function searchCoverByTitle(title: string): Promise<string | null> {
   // Prefer searching games and asking for nested cover.image_id in one call
   const sanitized = title.replace(/\n/g, ' ').slice(0, 120);
