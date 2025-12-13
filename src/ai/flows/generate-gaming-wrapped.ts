@@ -41,9 +41,10 @@ const GenerateGamingWrappedInputSchema = z.object({
     updated: z.string().optional().describe("The date this entry was updaeted"),
   })).describe('Array of game objects'),
 });
-export type GenerateGamingWrappedInput = z.infer<typeof GenerateGamingWrappedInputSchema>;
 
-export const CARD_TYPES = [
+type GenerateGamingWrappedInput = z.infer<typeof GenerateGamingWrappedInputSchema>;
+
+const CARD_TYPES = [
   'platform_stats', 
   'top_game', 
   'summary', 
@@ -57,7 +58,7 @@ export const CARD_TYPES = [
   'recommendations',
 ] as const;
 
-export type CardType = (typeof CARD_TYPES)[number];
+type CardType = (typeof CARD_TYPES)[number];
 
 const PlatformStatsCardSchema = z.object({
   type: z.enum(CARD_TYPES),
@@ -168,7 +169,8 @@ const GenerateGamingWrappedOutputSchema = z.object({
     RecommendationsCardSchema,
   ])),
 });
-export type GenerateGamingWrappedOutput = z.infer<typeof GenerateGamingWrappedOutputSchema>;
+
+type GenerateGamingWrappedOutput = z.infer<typeof GenerateGamingWrappedOutputSchema>;
 
 export async function generateGamingWrapped(input: GenerateGamingWrappedInput): Promise<GenerateGamingWrappedOutput> {
   if (process.env.NODE_ENV !== 'production' && process.env.USE_MOCK_WRAPPED_OUTPUT === 'true') {

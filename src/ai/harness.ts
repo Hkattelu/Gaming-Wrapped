@@ -1,11 +1,13 @@
 
 import { devGames } from './dev-games';
 import {
-	CARD_TYPES,
 	generateGamingWrapped,
+} from './flows/generate-gaming-wrapped';
+import {
+	CARD_TYPES,
 	type CardType,
 	type GenerateGamingWrappedInput,
-} from './flows/generate-gaming-wrapped';
+} from './flows/types';
 
 function isCardType(value: string): value is CardType {
 	return CARD_TYPES.includes(value as CardType);
