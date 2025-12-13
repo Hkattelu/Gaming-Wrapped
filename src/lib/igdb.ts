@@ -98,9 +98,7 @@ function sanitizeIgdbSearchTerm(title: string): string {
     .replace(/"/g, '\\\\"');
 
   let truncated = escaped.slice(0, 120);
-  while (truncated.endsWith('\\')) {
-    truncated = truncated.slice(0, -1);
-  }
+  if (truncated.endsWith('\\')) truncated = truncated.slice(0, -1);
 
   return truncated;
 }
