@@ -39,7 +39,11 @@
     "@radix-ui/react-toast": "^1.2.6",
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.8",
+<<<<<<< HEAD
     "@types/uuid": "^10.0.0",
+=======
+    "cheerio": "^1.1.2",
+>>>>>>> origin/vk/77cc-improve-csv-impo
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
@@ -75,9 +79,14 @@
     "@types/react": "19.1.9",
     "@types/react-dom": "19.1.7",
     "babel-jest": "^30.0.5",
+<<<<<<< HEAD
     "cross-env": "^10.1.0",
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.0.7",
+=======
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.4.5",
+>>>>>>> origin/vk/77cc-improve-csv-impo
     "genkit-cli": "^1.14.1",
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",

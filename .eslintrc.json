@@ -1,3 +1,7 @@
 {
+<<<<<<< HEAD
   "extends": "next"
+=======
+  "extends": "next/core-web-vitals"
+>>>>>>> origin/vk/77cc-improve-csv-impo
 }
