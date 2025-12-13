@@ -188,6 +188,29 @@ describe('lib/igdb integration', () => {
     expect(res).toBeNull();
   });
 
+  it('searchGameByTitle: escapes quotes and backslashes in the IGDB search query', async () => {
+    process.env.TWITCH_CLIENT_ID = 'client-x';
+    process.env.TWITCH_CLIENT_SECRET = 'secret-y';
+
+    const calls: Array<{ url: string; init?: RequestInit }> = [];
+    global.fetch = jest.fn(async (input: any, init?: any) => {
+      calls.push({ url: String(input), init });
+      if (String(input).includes('oauth2/token')) {
+        return { ok: true, json: async () => ({ access_token: 'tok', expires_in: 300 }) } as any;
+      }
+      return { ok: true, json: async () => [{ name: 'X', slug: 'x', url: 'https://www.igdb.com/games/x' }] } as any;
+    }) as any;
+
+    const { searchGameByTitle } = await import(IGDB_MODULE_PATH);
+    await searchGameByTitle('C:\\Games "IV"');
+
+    const igdb = calls.find((c) => c.url.includes('https://api.igdb.com/v4/games'))!;
+    const body = String(igdb.init?.body ?? '');
+    expect(body).toMatch(/search "C:(\\){2,}Games/);
+    expect(body).toContain('\\"IV\\"');
+    expect(body).toContain('"; limit 1;');
+  });
+
   it('searchCoverByTitle: returns null when IGDB returns empty list', async () => {
     process.env.TWITCH_CLIENT_ID = 'abc';
     process.env.TWITCH_CLIENT_SECRET = 'shh';
