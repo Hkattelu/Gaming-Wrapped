@@ -91,8 +91,17 @@ export function igdbImageUrl(imageId: string, size: 'thumb' | 'cover_small' | 'c
   return `https://images.igdb.com/igdb/image/upload/${type}/${imageId}.jpg`;
 }
 
+function sanitizeIgdbSearchTerm(title: string): string {
+  return title
+    .replace(/\n/g, ' ')
+    .trim()
+    .slice(0, 120)
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\\\"');
+}
+
 export async function searchGameByTitle(title: string): Promise<{ url: string; slug: string } | null> {
-  const sanitized = title.replace(/\n/g, ' ').slice(0, 120);
+  const sanitized = sanitizeIgdbSearchTerm(title);
   const q = [
     'fields name, slug, url; ',
     `search "${sanitized}"; `,
@@ -107,7 +116,7 @@ export async function searchGameByTitle(title: string): Promise<{ url: string; s
 
 export async function searchCoverByTitle(title: string): Promise<string | null> {
   // Prefer searching games and asking for nested cover.image_id in one call
-  const sanitized = title.replace(/\n/g, ' ').slice(0, 120);
+  const sanitized = sanitizeIgdbSearchTerm(title);
   const q = [
     'fields name, cover.image_id; ',
     `search "${sanitized}"; `,

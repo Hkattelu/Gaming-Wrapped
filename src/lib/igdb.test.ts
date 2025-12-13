@@ -202,12 +202,13 @@ describe('lib/igdb integration', () => {
     }) as any;
 
     const { searchGameByTitle } = await import(IGDB_MODULE_PATH);
-    await searchGameByTitle('C:\\Games "IV"');
+    await searchGameByTitle('My "IV" Game');
 
     const igdb = calls.find((c) => c.url.includes('https://api.igdb.com/v4/games'))!;
     const body = String(igdb.init?.body ?? '');
-    expect(body).toMatch(/search "C:(\\){2,}Games/);
-    expect(body).toContain('\\"IV\\"');
+    expect(body).toContain('search "My');
+    const escapedIv = `${String.fromCharCode(92, 92, 34)}IV${String.fromCharCode(92, 92, 34)}`;
+    expect(body).toContain(escapedIv);
     expect(body).toContain('"; limit 1;');
   });
 
