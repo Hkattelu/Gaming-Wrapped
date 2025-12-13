@@ -152,6 +152,66 @@ describe('lib/igdb integration', () => {
     expect(igdbImageUrl('qwe', 'cover_big')).toBe('https://images.igdb.com/igdb/image/upload/t_cover_big/qwe.jpg');
   });
 
+  it('searchGameByTitle: returns url and slug when game is found', async () => {
+    process.env.TWITCH_CLIENT_ID = 'abc';
+    process.env.TWITCH_CLIENT_SECRET = 'shh';
+    global.fetch = mockFetchSequence([
+      async () => ({ ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) }) as any,
+      async () => ({ ok: true, json: async () => [{ name: 'Halo', slug: 'halo', url: 'https://www.igdb.com/games/halo' }] }) as any,
+    ]) as any;
+    const { searchGameByTitle } = await import(IGDB_MODULE_PATH);
+    const res = await searchGameByTitle('Halo');
+    expect(res).toEqual({ url: 'https://www.igdb.com/games/halo', slug: 'halo' });
+  });
+
+  it('searchGameByTitle: returns null when IGDB returns empty list', async () => {
+    process.env.TWITCH_CLIENT_ID = 'abc';
+    process.env.TWITCH_CLIENT_SECRET = 'shh';
+    global.fetch = mockFetchSequence([
+      async () => ({ ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) }) as any,
+      async () => ({ ok: true, json: async () => [] }) as any,
+    ]) as any;
+    const { searchGameByTitle } = await import(IGDB_MODULE_PATH);
+    const res = await searchGameByTitle('NonExistent');
+    expect(res).toBeNull();
+  });
+
+  it('searchGameByTitle: returns null when game has no url', async () => {
+    process.env.TWITCH_CLIENT_ID = 'abc';
+    process.env.TWITCH_CLIENT_SECRET = 'shh';
+    global.fetch = mockFetchSequence([
+      async () => ({ ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) }) as any,
+      async () => ({ ok: true, json: async () => [{ name: 'Foo', slug: 'foo' }] }) as any,
+    ]) as any;
+    const { searchGameByTitle } = await import(IGDB_MODULE_PATH);
+    const res = await searchGameByTitle('Foo');
+    expect(res).toBeNull();
+  });
+
+  it('searchGameByTitle: escapes quotes and backslashes in the IGDB search query', async () => {
+    process.env.TWITCH_CLIENT_ID = 'client-x';
+    process.env.TWITCH_CLIENT_SECRET = 'secret-y';
+
+    const calls: Array<{ url: string; init?: RequestInit }> = [];
+    global.fetch = jest.fn(async (input: any, init?: any) => {
+      calls.push({ url: String(input), init });
+      if (String(input).includes('oauth2/token')) {
+        return { ok: true, json: async () => ({ access_token: 'tok', expires_in: 300 }) } as any;
+      }
+      return { ok: true, json: async () => [{ name: 'X', slug: 'x', url: 'https://www.igdb.com/games/x' }] } as any;
+    }) as any;
+
+    const { searchGameByTitle } = await import(IGDB_MODULE_PATH);
+    await searchGameByTitle('My "IV" Game');
+
+    const igdb = calls.find((c) => c.url.includes('https://api.igdb.com/v4/games'))!;
+    const body = String(igdb.init?.body ?? '');
+    expect(body).toContain('search "My');
+    const escapedQuote = String.fromCharCode(92, 92, 34);
+    expect(body).toContain(`${escapedQuote}IV${escapedQuote}`);
+    expect(body).toContain('"; limit 1;');
+  });
+
   it('searchCoverByTitle: returns null when IGDB returns empty list', async () => {
     process.env.TWITCH_CLIENT_ID = 'abc';
     process.env.TWITCH_CLIENT_SECRET = 'shh';

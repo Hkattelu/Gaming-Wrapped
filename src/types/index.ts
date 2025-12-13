@@ -84,10 +84,16 @@ export interface RoastCard {
   roast: string;
 }
 
+export interface Recommendation {
+  game: string;
+  blurb: string;
+  igdbUrl?: string;
+}
+
 export interface RecommendationsCard {
   type: 'recommendations';
   title: string;
-  recommendations: string[];
+  recommendations: Recommendation[];
 }
 
 export type WrappedCard = 

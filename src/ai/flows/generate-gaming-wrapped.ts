@@ -151,7 +151,10 @@ const RoastCardSchema = z.object({
 const RecommendationsCardSchema = z.object({
   type: z.enum(CARD_TYPES),
   title: z.string().describe('Title for the recommendations card'),
-  recommendations: z.array(z.string()).describe('A list of game recommendations'),
+  recommendations: z.array(z.object({
+    game: z.string().describe('The title of the recommended game'),
+    blurb: z.string().describe('A short, personalized reason why this game is recommended based on the user\'s gaming history'),
+  })).describe('A list of game recommendations with personalized explanations'),
 });
 
 const GenerateGamingWrappedOutputSchema = z.object({
