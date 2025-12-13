@@ -138,6 +138,10 @@ export default function Home() {
                 </p>
               </DialogContent>
             </Dialog>
+            
+            <Link href="/manual">
+              <Button variant="outline" size="sm">Manual</Button>
+            </Link>
           </div>
           <div className="mt-10 w-full">
             <h2 className="text-3xl font-headline font-semibold tracking-widest">HOW IT WORKS</h2>

@@ -45,6 +45,25 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
     });
   }, [api]);
 
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowLeft') {
+        api.scrollPrev();
+      } else if (event.key === 'ArrowRight') {
+        api.scrollNext();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [api]);
+
   const handleShare = () => {
     if (id) {
       const shareUrl = `${window.location.origin}/wrapped?id=${id}`;
