@@ -154,7 +154,7 @@ export default function Home() {
                   <GanttChartSquare className="h-8 w-8" />
                 </div>
                 <h3 className="font-semibold mt-2 font-headline text-xl tracking-wider">2. WRAP</h3>
-                <p className="text-base font-body text-muted-foreground">Our AI bot analyzes your year, creating a unique story and stats.</p>
+                <p className="text-base font-body text-muted-foreground">We analyze your year, creating a unique story and stats.</p>
               </Card>
               <Card className="bg-card/50 backdrop-blur-sm p-6 flex flex-col items-center text-center gap-4 hover:border-accent transition-all border-transparent border-2">
                 <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 text-primary">

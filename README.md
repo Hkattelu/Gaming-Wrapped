@@ -44,10 +44,30 @@ Follow these steps to get the project up and running on your local machine.
 
 4.  **Run the development server:**
     ```bash
-    npm run dev
+    npm run dev # using real backends
+    firebase emulators:start # using fake backends
     ```
 
-    The application will be accessible at `http://localhost:3000`.
+The application will be accessible at `http://localhost:3000`.
+
+### Iterating on Wrapped UI components
+
+Sometimes you may simply want to be developing individual UI wrapped components.
+Normally this can get mildly frustrating because you will have to generate a new wrapped
+every time you rebuild your code. To avoid this, you can set:
+
+```bash
+USE_MOCK_WRAPPED_OUTPUT=true
+```
+
+in your environment variables, which will trigger the rendering of a hardcoded wrapped
+you can use to develop against.
+
+### Vibe Kanban
+
+This project uses the VibeKanban WebCompanion, which allows you to render the local web UI
+directly in the vibe kanban UI, which is very useful for vibe coding. You can read more
+about it [here](https://www.vibekanban.com/docs/core-features/testing-your-application#next-js).
 
 ## Project Structure
 

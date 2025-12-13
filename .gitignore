@@ -154,6 +154,7 @@ firestore.rules
 .firebaserc
 firebase.json
 firebase-debug.log
+firestore-debug.log
 .env.development
 .env.production
 .secret.local
