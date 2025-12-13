@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
 import type { AnyNode } from 'domhandler';
+import { isTag } from 'domutils';
 
 const MAX_PAGES = 100;
 
@@ -42,6 +43,10 @@ function extractGameData(
   const gameData: { Title: string; Rating: string }[] = [];
 
   gameEntries.each((_, gameEntry) => {
+    if (!isTag(gameEntry)) {
+      return;
+    }
+
     const $entry = $(gameEntry);
     const titleElement = $entry.find('.game-text-centered');
     const title = titleElement.text().trim() || 'Unknown Title';
