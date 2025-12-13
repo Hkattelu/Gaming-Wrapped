@@ -11,9 +11,9 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
         <CardTitle className="font-headline text-4xl tracking-widest">{card.title}</CardTitle>
         <CardDescription className="text-lg">{card.description}</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col items-center">
+      <CardContent className="flex flex-col items-center overflow-y-auto">
         <Trophy className="w-20 h-20 text-yellow-400" />
-        <p className="text-4xl font-bold font-headline mt-4 text-primary">{card.game.title}</p>
+        <p className="text-4xl font-bold font-headline mt-4 text-primary max-w-md">{card.game.title}</p>
         <p className="text-2xl text-muted-foreground mt-2">on {card.game.platform}</p>
         {typeof card.game.score === 'number' && (
             <div className="flex items-center gap-2 mt-4 text-3xl">

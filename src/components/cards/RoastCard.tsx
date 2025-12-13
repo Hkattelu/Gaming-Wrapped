@@ -11,7 +11,7 @@ export function RoastCardComponent({ card }: RoastCardProps) {
       <CardHeader>
         <CardTitle>{card.title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="overflow-y-auto max-w-md">
         <p>{card.roast}</p>
       </CardContent>
     </Card>

@@ -2,7 +2,7 @@
 
 import { PlatformStatsCard as PlatformStatsCardType } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Bar, BarChart, YAxis, XAxis, Cell } from "recharts";
+import { Bar, BarChart, YAxis, XAxis, Cell, LabelList } from "recharts";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
 const platformColors = [
@@ -28,9 +28,9 @@ export function PlatformStatsCard({ card }: { card: PlatformStatsCardType }) {
         <CardTitle className="font-headline text-4xl tracking-widest">{card.title}</CardTitle>
         <CardDescription className="text-lg">{card.description}</CardDescription>
       </CardHeader>
-      <CardContent className="w-full h-64">
+      <CardContent className="w-full h-96">
         <ChartContainer config={chartConfig} className="w-full h-full">
-          <BarChart accessibilityLayer data={chartData} layout="vertical" margin={{ left: 20, right: 20 }}>
+          <BarChart accessibilityLayer data={chartData} layout="vertical" margin={{ left: 20, right: 40 }}>
             <XAxis type="number" hide />
             <YAxis 
                 dataKey="platform" 
@@ -39,10 +39,10 @@ export function PlatformStatsCard({ card }: { card: PlatformStatsCardType }) {
                 axisLine={false}
                 tick={{ fill: 'hsl(var(--foreground))', fontSize: 14, fontFamily: 'var(--font-vt323)' }}
                 tickMargin={10}
-                width={120}
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" hideLabel />} />
             <Bar dataKey="count" radius={5}>
+                <LabelList dataKey="count" position="right" style={{ fill: 'hsl(var(--foreground))', fontSize: 14, fontFamily: 'var(--font-vt323)' }} />
                 {chartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={platformColors[index % platformColors.length]} />
                 ))}

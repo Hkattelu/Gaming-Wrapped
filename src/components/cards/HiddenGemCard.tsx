@@ -11,12 +11,12 @@ export function HiddenGemCard({ card }: { card: HiddenGemCardType }) {
         <CardTitle className="font-headline text-4xl tracking-widest">{card.title}</CardTitle>
         <CardDescription className="text-lg">{card.description}</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col items-center">
+      <CardContent className="flex flex-col items-center overflow-y-auto">
         <Gem className="w-20 h-20 text-primary" />
         <p className="text-4xl font-bold font-headline mt-4 text-primary">{card.game.title}</p>
         <p className="text-2xl text-muted-foreground mt-2">on {card.game.platform}</p>
         {card.game.notes && (
-            <p className="text-lg mt-4 italic">"{card.game.notes}"</p>
+            <p className="text-lg mt-4 italic max-w-md">"{card.game.notes}"</p>
         )}
       </CardContent>
     </Card>

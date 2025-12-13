@@ -11,7 +11,7 @@ export function GamerAlignmentCardComponent({ card }: GamerAlignmentCardProps) {
       <CardHeader>
         <CardTitle>{card.title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="overflow-y-auto max-w-md">
         <p className="text-2xl font-bold">{card.alignment}</p>
         <p>{card.description}</p>
       </CardContent>

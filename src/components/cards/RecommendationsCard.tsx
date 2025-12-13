@@ -11,8 +11,8 @@ export function RecommendationsCardComponent({ card }: RecommendationsCardProps)
       <CardHeader>
         <CardTitle>{card.title}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <ul>
+      <CardContent className="overflow-y-auto max-w-md">
+        <ul className="list-disc list-inside">
           {card.recommendations.map((rec, index) => (
             <li key={index}>{rec}</li>
           ))}

@@ -11,7 +11,7 @@ export function NarrativeCard({ card }: { card: NarrativeCardType }) {
       <CardHeader>
         <CardTitle className="font-headline text-4xl tracking-widest">{card.title}</CardTitle>
       </CardHeader>
-      <CardContent className="prose prose-invert text-xl leading-relaxed max-w-md">
+      <CardContent className="prose prose-invert text-xl leading-relaxed max-w-md overflow-y-auto">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
           {card.content}
         </ReactMarkdown>
