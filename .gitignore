@@ -147,6 +147,7 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
+# Firebase
 node_modules
 node_modules/*
 firestore.indexes.json
@@ -155,6 +156,5 @@ firestore.rules
 firebase.json
 firebase-debug.log
 firestore-debug.log
-.env.development
-.env.production
+
 .secret.local

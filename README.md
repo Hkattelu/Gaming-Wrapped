@@ -40,6 +40,9 @@ Follow these steps to get the project up and running on your local machine.
     HOST_URL=http://localhost:3000
     TWITCH_CLIENT_ID=your_twitch_client_id
     TWITCH_CLIENT_SECRET=your_twitch_client_secret
+
+    # Prevents GRPC related crashes in local development
+    FIRESTORE_PREFER_REST=true
     ```
 
 4.  **Run the development server:**
