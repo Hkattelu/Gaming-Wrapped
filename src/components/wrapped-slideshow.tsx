@@ -45,6 +45,42 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
     });
   }, [api]);
 
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) {
+        return;
+      }
+
+      const target = event.target;
+      if (target instanceof HTMLElement) {
+        const tag = target.tagName;
+        const isEditable =
+          target.isContentEditable ||
+          tag === 'INPUT' ||
+          tag === 'TEXTAREA' ||
+          tag === 'SELECT';
+        if (isEditable) {
+          return;
+        }
+      }
+
+      if (event.key === 'ArrowLeft') {
+        api.scrollPrev();
+      } else if (event.key === 'ArrowRight') {
+        api.scrollNext();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [api]);
+
   const handleShare = () => {
     if (id) {
       const shareUrl = `${window.location.origin}/wrapped?id=${id}`;
@@ -111,7 +147,7 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
           <CarouselItem>
             <div className="h-[550px] flex flex-col justify-center items-center text-center p-6 bg-card/80 backdrop-blur-sm border-primary/20 shadow-2xl shadow-primary/10 rounded-2xl">
                 <Gift className="w-20 h-20 text-primary" />
-                <h2 className="text-5xl font-headline font-bold mt-4 tracking-widest">THAT'S A WRAP!</h2>
+                <h2 className="text-5xl font-headline font-bold mt-4 tracking-widest">THAT&apos;S A WRAP!</h2>
                 <p className="text-muted-foreground text-lg mt-2 max-w-xs">Share your wrapped with your friends!</p>
                 <Button className="mt-8 font-headline text-xl tracking-wider" onClick={handleShare}>
                     <Share2 className="mr-2 h-5 w-5"/>

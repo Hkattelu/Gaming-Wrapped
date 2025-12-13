@@ -2,7 +2,7 @@ import { jest, describe, expect, it, beforeAll, beforeEach } from '@jest/globals
 import type { ManualGame } from '@/types';
 
 // Mock the fetch function
-global.fetch = jest.fn();
+global.fetch = jest.fn() as any;
 
 // Declare mockParseCsv with 'mock' prefix
 let mockParseCsv: jest.Mock;
@@ -29,11 +29,11 @@ describe('generateWrappedData', () => {
     jest.clearAllMocks();
     jest.resetModules(); // Reset module registry to clear cached imports
 
-    mockParseCsv = jest.requireMock('@/lib/csv').parseCsv;
+    mockParseCsv = (jest.requireMock('@/lib/csv') as any).parseCsv as jest.Mock;
     // Dynamically import generateWrappedData and parseCsv after mocking
     generateWrappedData = require('./actions').generateWrappedData;
 
-    global.fetch = jest.fn(); // Re-assign fetch to a new mock for each test
+    global.fetch = jest.fn() as any; // Re-assign fetch to a new mock for each test
   });
 
   it('should generate wrapped data successfully', async () => {
@@ -45,7 +45,7 @@ describe('generateWrappedData', () => {
     const mockId = 'test-id';
 
     mockParseCsv.mockReturnValue(mockGames);
-    (global.fetch as jest.Mock).mockResolvedValue({
+    (global.fetch as any).mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ id: mockId }),
     });
@@ -87,7 +87,7 @@ describe('generateWrappedData', () => {
     const mockErrorData = { error: 'API error message' };
 
     mockParseCsv.mockReturnValue(mockGames);
-    (global.fetch as jest.Mock).mockResolvedValue({
+    (global.fetch as any).mockResolvedValue({
       ok: false,
       json: () => Promise.resolve(mockErrorData),
     });
@@ -123,7 +123,7 @@ describe('generateWrappedDataFromManual', () => {
 
     // parseCsv is called inside generateWrappedData with the CSV derived from manual games
     mockParseCsv.mockReturnValue(parsedGames as any);
-    (global.fetch as jest.Mock).mockResolvedValue({ ok: true, json: async () => ({ id: mockId }) });
+    (global.fetch as any).mockResolvedValue({ ok: true, json: async () => ({ id: mockId }) });
 
     const result = await generateWrappedDataFromManual(mockManualGames);
 

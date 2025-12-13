@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
+import type { AnyNode } from 'domhandler';
+import { isTag } from 'domutils';
 
 const MAX_PAGES = 100;
 
 type FetchResult =
-  | { success: true; $: cheerio.CheerioAPI; gameEntries: cheerio.Cheerio<cheerio.Element> }
+  | { success: true; $: cheerio.CheerioAPI; gameEntries: cheerio.Cheerio<AnyNode> }
   | { success: false; error: string; status: number };
 
 async function fetchProfilePage(profileUrl: string, page: number): Promise<FetchResult> {
@@ -36,11 +38,15 @@ async function fetchProfilePage(profileUrl: string, page: number): Promise<Fetch
 
 function extractGameData(
   $: cheerio.CheerioAPI,
-  gameEntries: cheerio.Cheerio<cheerio.Element>,
+  gameEntries: cheerio.Cheerio<AnyNode>,
 ): { Title: string; Rating: string }[] {
   const gameData: { Title: string; Rating: string }[] = [];
 
   gameEntries.each((_, gameEntry) => {
+    if (!isTag(gameEntry)) {
+      return;
+    }
+
     const $entry = $(gameEntry);
     const titleElement = $entry.find('.game-text-centered');
     const title = titleElement.text().trim() || 'Unknown Title';

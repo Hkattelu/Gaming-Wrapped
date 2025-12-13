@@ -68,6 +68,21 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Custom Scrollbar Styles */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--primary));
+    border-radius: 6px;
+    border: 3px solid hsl(var(--background));
+  }
 }
 
 .bg-grid-white\/\[0\.05\] {
@@ -78,4 +93,17 @@
     background-color: hsl(var(--background));
     background-position: center;
     opacity: 0.1;
+}
+
+@layer utilities {
+  @keyframes pulse-slow {
+    50% {
+      opacity: 0.5;
+      transform: scale(1.05);
+    }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
 }

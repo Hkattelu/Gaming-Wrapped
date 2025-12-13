@@ -1,7 +1,9 @@
 import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 
 // Mock the lib function used by the route
-const mockTop = jest.fn<Promise<Array<{ title: string; imageUrl: string | null }> | null>, [number, number]>();
+const mockTop = jest.fn() as jest.MockedFunction<
+  (year: number, limit: number) => Promise<Array<{ title: string; imageUrl: string | null }> | null>
+>;
 jest.mock('@/lib/igdb', () => ({
   getTopGamesOfYear: (year: number, limit: number) => mockTop(year, limit),
 }));

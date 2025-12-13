@@ -2,7 +2,7 @@
 
 import { GenreBreakdownCard as GenreBreakdownCardType } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const genreColors = [
     "hsl(var(--chart-1))",
@@ -26,16 +26,18 @@ export function GenreBreakdownCard({ card }: { card: GenreBreakdownCardType }) {
         <CardTitle className="font-headline text-4xl tracking-widest">{card.title}</CardTitle>
         <CardDescription className="text-lg">{card.description}</CardDescription>
       </CardHeader>
-      <CardContent className="w-full h-64">
-        <PieChart width={400} height={250}>
-          <Pie data={processedData} dataKey="count" nameKey="genre" cx="50%" cy="50%" outerRadius={80} fill="#8884d8" labelLine={false} label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}>
-            {processedData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={genreColors[index % genreColors.length]} />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend />
-        </PieChart>
+      <CardContent className="w-full h-96">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie data={processedData} dataKey="count" nameKey="genre" cx="50%" cy="50%" outerRadius={120} fill="#8884d8" labelLine={false}>
+              {processedData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={genreColors[index % genreColors.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
       </CardContent>
     </Card>
   );
