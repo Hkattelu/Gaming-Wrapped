@@ -207,8 +207,8 @@ describe('lib/igdb integration', () => {
     const igdb = calls.find((c) => c.url.includes('https://api.igdb.com/v4/games'))!;
     const body = String(igdb.init?.body ?? '');
     expect(body).toContain('search "My');
-    const escapedIv = `${String.fromCharCode(92, 92, 34)}IV${String.fromCharCode(92, 92, 34)}`;
-    expect(body).toContain(escapedIv);
+    const escapedQuote = String.fromCharCode(92, 92, 34);
+    expect(body).toContain(`${escapedQuote}IV${escapedQuote}`);
     expect(body).toContain('"; limit 1;');
   });
 

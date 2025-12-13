@@ -92,12 +92,17 @@ export function igdbImageUrl(imageId: string, size: 'thumb' | 'cover_small' | 'c
 }
 
 function sanitizeIgdbSearchTerm(title: string): string {
-  return title
-    .replace(/\n/g, ' ')
-    .trim()
-    .slice(0, 120)
+  const normalized = title.replace(/\n/g, ' ').trim();
+  const escaped = normalized
     .replace(/\\/g, '\\\\')
     .replace(/"/g, '\\\\"');
+
+  let truncated = escaped.slice(0, 120);
+  while (truncated.endsWith('\\')) {
+    truncated = truncated.slice(0, -1);
+  }
+
+  return truncated;
 }
 
 export async function searchGameByTitle(title: string): Promise<{ url: string; slug: string } | null> {
