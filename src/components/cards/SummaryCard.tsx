@@ -2,7 +2,7 @@
 
 import { SummaryCard as SummaryCardType } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Gamepad2, Star } from 'lucide-react';
+import { Gamepad2 } from 'lucide-react';
 
 export function SummaryCard({ card }: { card: SummaryCardType }) {
   return (

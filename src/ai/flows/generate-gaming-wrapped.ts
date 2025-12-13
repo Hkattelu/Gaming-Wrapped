@@ -177,7 +177,7 @@ export async function generateGamingWrapped(input: GenerateGamingWrappedInput): 
     return MOCK_WRAPPED_OUTPUT;
   }
   const result = await generateGamingWrappedFlow(input);
-  return { cards: result.cards as any };
+  return result;
 }
 
 const prompt = ai.definePrompt({

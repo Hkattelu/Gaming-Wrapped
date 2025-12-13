@@ -3,7 +3,15 @@ import * as cheerio from 'cheerio';
 import type { AnyNode } from 'domhandler';
 import { isTag } from 'domutils';
 
+export const maxDuration = 300; // 5 minutes for Vercel
+export const dynamic = 'force-dynamic';
+
 const MAX_PAGES = 100;
+const DELAY_BETWEEN_REQUESTS = 1000; // 1 second delay between requests
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 type FetchResult =
   | { success: true; $: cheerio.CheerioAPI; gameEntries: cheerio.Cheerio<AnyNode> }
@@ -15,9 +23,17 @@ async function fetchProfilePage(profileUrl: string, page: number): Promise<Fetch
 
   try {
     const paginatedUrl = `${profileUrl}?page=${page}`;
-    const response = await fetch(paginatedUrl, { signal: controller.signal });
+    const response = await fetch(paginatedUrl, { 
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
 
     if (!response.ok) {
+      if (response.status === 429) {
+        return { success: false, error: 'Rate limited by Backloggd. Please try again in a few minutes.', status: 429 };
+      }
       return { success: false, error: 'Failed to fetch from Backloggd.', status: response.status };
     }
 
@@ -41,6 +57,7 @@ function extractGameData(
   gameEntries: cheerio.Cheerio<AnyNode>,
 ): { Title: string; Rating: string }[] {
   const gameData: { Title: string; Rating: string }[] = [];
+  const seenTitles = new Set<string>();
 
   gameEntries.each((_, gameEntry) => {
     if (!isTag(gameEntry)) {
@@ -50,6 +67,13 @@ function extractGameData(
     const $entry = $(gameEntry);
     const titleElement = $entry.find('.game-text-centered');
     const title = titleElement.text().trim() || 'Unknown Title';
+
+    // Skip if we've seen this title before (duplicate detection)
+    if (seenTitles.has(title)) {
+      console.log(`Duplicate found: ${title}`);
+      return;
+    }
+    seenTitles.add(title);
 
     let rating = 0.0;
     const starsTopElement = $entry.find('.stars-top');
@@ -76,19 +100,142 @@ function extractGameData(
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const username = searchParams.get('username');
+  const stream = searchParams.get('stream') === 'true';
 
   if (!username) {
     return new NextResponse('Username is required', { status: 400 });
   }
 
-  const profileUrl = `https://backloggd.com/u/${username}/games/`;
+  const profileUrl = `https://backloggd.com/u/${username}/games/added:desc/type:played/`;
   const allGameData: { Title: string; Rating: string }[] = [];
+  const seenTitlesGlobal = new Set<string>();
 
+  // If streaming is requested, use SSE for progress updates
+  if (stream) {
+    const encoder = new TextEncoder();
+    const customReadable = new ReadableStream({
+      async start(controller) {
+        try {
+          let consecutiveDuplicatePages = 0;
+          
+          for (let page = 1; page <= MAX_PAGES; page++) {
+            console.log(`Fetching page ${page} for ${username}...`);
+            
+            // Send progress update
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ type: 'progress', page, total: allGameData.length })}\n\n`)
+            );
+
+            const result = await fetchProfilePage(profileUrl, page);
+
+            if (!result.success) {
+              if (result.status === 429 && allGameData.length > 0) {
+                console.log(`Rate limited at page ${page}. Returning ${allGameData.length} games collected so far.`);
+                break;
+              }
+              controller.enqueue(
+                encoder.encode(`data: ${JSON.stringify({ type: 'error', error: result.error })}\n\n`)
+              );
+              controller.close();
+              return;
+            }
+
+            const { $, gameEntries } = result;
+
+            if (gameEntries.length === 0) {
+              console.log('No more game entries found. Wrapping up.');
+              break;
+            }
+
+            const gameData = extractGameData($, gameEntries);
+            
+            // Check for duplicates across all pages
+            let newGamesCount = 0;
+            for (const game of gameData) {
+              if (!seenTitlesGlobal.has(game.Title)) {
+                seenTitlesGlobal.add(game.Title);
+                allGameData.push(game);
+                newGamesCount++;
+              }
+            }
+            
+            console.log(`Page ${page}: Found ${gameData.length} entries, ${newGamesCount} new games (total: ${allGameData.length})`);
+            
+            // If we got no new games, we might be seeing repeats
+            if (newGamesCount === 0) {
+              consecutiveDuplicatePages++;
+              console.log(`Warning: Page ${page} had no new games (${consecutiveDuplicatePages} consecutive duplicate pages)`);
+              
+              // If we see 2 pages in a row with no new games, we're probably done
+              if (consecutiveDuplicatePages >= 2) {
+                console.log('Detected end of unique content. Stopping.');
+                break;
+              }
+            } else {
+              consecutiveDuplicatePages = 0;
+            }
+
+            if (page < MAX_PAGES) {
+              await delay(DELAY_BETWEEN_REQUESTS);
+            }
+          }
+
+          console.log(`Total games found: ${allGameData.length}`);
+
+          if (allGameData.length === 0) {
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ type: 'error', error: 'No game data found' })}\n\n`)
+            );
+            controller.close();
+            return;
+          }
+
+          const headers = Object.keys(allGameData[0]);
+          const csvRows = [
+            headers.join(','),
+            ...allGameData.map((row) =>
+              headers
+                .map((header) => `"${String(row[header as keyof typeof row]).replace(/"/g, '""')}"`)
+                .join(','),
+            ),
+          ];
+          const csvString = csvRows.join('\n');
+
+          // Send completion with CSV data
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ type: 'complete', csv: csvString, total: allGameData.length })}\n\n`)
+          );
+          controller.close();
+        } catch (error) {
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ type: 'error', error: 'An error occurred' })}\n\n`)
+          );
+          controller.close();
+        }
+      },
+    });
+
+    return new NextResponse(customReadable, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    });
+  }
+
+  // Non-streaming fallback (original behavior)
+  let consecutiveDuplicatePages = 0;
+  
   for (let page = 1; page <= MAX_PAGES; page++) {
     console.log(`Fetching page ${page} for ${username}...`);
     const result = await fetchProfilePage(profileUrl, page);
 
     if (!result.success) {
+      if (result.status === 429 && allGameData.length > 0) {
+        console.log(`Rate limited at page ${page}. Returning ${allGameData.length} games collected so far.`);
+        break;
+      }
       return new NextResponse(result.error, { status: result.status });
     }
 
@@ -100,8 +247,39 @@ export async function GET(req: NextRequest) {
     }
 
     const gameData = extractGameData($, gameEntries);
-    allGameData.push(...gameData);
+    
+    // Check for duplicates across all pages
+    let newGamesCount = 0;
+    for (const game of gameData) {
+      if (!seenTitlesGlobal.has(game.Title)) {
+        seenTitlesGlobal.add(game.Title);
+        allGameData.push(game);
+        newGamesCount++;
+      }
+    }
+    
+    console.log(`Page ${page}: Found ${gameData.length} entries, ${newGamesCount} new games (total: ${allGameData.length})`);
+    
+    // If we got no new games, we might be seeing repeats
+    if (newGamesCount === 0) {
+      consecutiveDuplicatePages++;
+      console.log(`Warning: Page ${page} had no new games (${consecutiveDuplicatePages} consecutive duplicate pages)`);
+      
+      // If we see 2 pages in a row with no new games, we're probably done
+      if (consecutiveDuplicatePages >= 2) {
+        console.log('Detected end of unique content. Stopping.');
+        break;
+      }
+    } else {
+      consecutiveDuplicatePages = 0;
+    }
+
+    if (page < MAX_PAGES) {
+      await delay(DELAY_BETWEEN_REQUESTS);
+    }
   }
+
+  console.log(`Total games found: ${allGameData.length}`);
 
   if (allGameData.length === 0) {
     return new NextResponse(
@@ -120,6 +298,8 @@ export async function GET(req: NextRequest) {
     ),
   ];
   const csvString = csvRows.join('\n');
+
+  console.log(`Returning CSV with ${csvRows.length - 1} games`);
 
   return new NextResponse(csvString, {
     status: 200,

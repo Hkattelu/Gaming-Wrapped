@@ -15,6 +15,9 @@ export default function Home() {
   const [backloggdUsername, setBackloggdUsername] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [progress, setProgress] = useState<{ page: number; total: number } | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleBackloggdExport = async () => {
     if (!backloggdUsername) {
@@ -23,14 +26,53 @@ export default function Home() {
     }
     setIsLoading(true);
     setError(null);
+    setProgress(null);
+    setSuccessMessage(null);
 
     try {
-      const response = await fetch(`/api/backloggd?username=${encodeURIComponent(backloggdUsername)}`);
+      const response = await fetch(`/api/backloggd?username=${encodeURIComponent(backloggdUsername)}&stream=true`);
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || 'Failed to export data.');
       }
-      const blob = await response.blob();
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let csvData = '';
+
+      if (!reader) {
+        throw new Error('Failed to read response');
+      }
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = JSON.parse(line.slice(6));
+            
+            if (data.type === 'progress') {
+              setProgress({ page: data.page, total: data.total });
+            } else if (data.type === 'complete') {
+              csvData = data.csv;
+              setProgress({ page: 0, total: data.total });
+            } else if (data.type === 'error') {
+              throw new Error(data.error);
+            }
+          }
+        }
+      }
+
+      if (!csvData) {
+        throw new Error('No data received');
+      }
+
+      // Download the CSV
+      const blob = new Blob([csvData], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -39,10 +81,19 @@ export default function Home() {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
+
+      // Show success message and close dialog
+      const totalGames = progress?.total || 0;
+      setSuccessMessage(`Successfully exported ${totalGames} games from Backloggd!`);
+      setDialogOpen(false);
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (e: any) {
       setError(e.message);
     } finally {
       setIsLoading(false);
+      setProgress(null);
     }
   };
 
@@ -68,7 +119,7 @@ export default function Home() {
           </Card>
           
           <div className="mt-6 flex gap-4">
-            <Dialog>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">From Backloggd</Button>
               </DialogTrigger>
@@ -89,6 +140,24 @@ export default function Home() {
                   <Button onClick={handleBackloggdExport} disabled={isLoading} className="w-full">
                     {isLoading ? 'Exporting...' : 'Export CSV'}
                   </Button>
+                  {progress && (
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">
+                        {progress.page > 0 
+                          ? `Fetching page ${progress.page}... (${progress.total} games found)`
+                          : `Complete! Downloaded ${progress.total} games.`
+                        }
+                      </p>
+                      <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
+                        <div 
+                          className="bg-primary h-full transition-all duration-300 ease-out"
+                          style={{ width: progress.page > 0 ? '100%' : '100%' }}
+                        >
+                          <div className="w-full h-full bg-primary animate-pulse" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   {error && <p className="text-sm text-red-500">{error}</p>}
                 </div>
               </DialogContent>
@@ -143,6 +212,12 @@ export default function Home() {
               <Button variant="outline" size="sm">Manual</Button>
             </Link>
           </div>
+
+          {successMessage && (
+            <div className="mt-4 p-4 bg-green-500/10 border border-green-500/20 rounded-lg text-green-500 text-sm">
+              {successMessage}
+            </div>
+          )}
           <div className="mt-10 w-full">
             <h2 className="text-3xl font-headline font-semibold tracking-widest">HOW IT WORKS</h2>
             <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
