@@ -1,7 +1,7 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 
 // Mock the lib functions used by the route
-const mockSearch = jest.fn<Promise<string | null>, [string]>();
+const mockSearch = jest.fn() as jest.MockedFunction<(title: string) => Promise<string | null>>;
 jest.mock('@/lib/igdb', () => ({
   searchCoverByTitle: (title: string) => mockSearch(title),
 }));

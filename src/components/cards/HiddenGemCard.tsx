@@ -16,7 +16,7 @@ export function HiddenGemCard({ card }: { card: HiddenGemCardType }) {
         <p className="text-4xl font-bold font-headline mt-4 text-primary">{card.game.title}</p>
         <p className="text-2xl text-muted-foreground mt-2">on {card.game.platform}</p>
         {card.game.notes && (
-            <p className="text-lg mt-4 italic max-w-md">"{card.game.notes}"</p>
+            <p className="text-lg mt-4 italic max-w-md">&ldquo;{card.game.notes}&rdquo;</p>
         )}
       </CardContent>
     </Card>
