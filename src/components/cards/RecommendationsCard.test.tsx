@@ -7,32 +7,43 @@ import { act } from 'react';
 const mockReact = React;
 
 jest.mock('@/components/ui/card', () => ({
-  Card: (props: any) => mockReact.createElement('div', { ...props }, props.children),
-  CardContent: (props: any) => mockReact.createElement('div', { ...props }, props.children),
-  CardHeader: (props: any) => mockReact.createElement('div', { ...props }, props.children),
-  CardTitle: (props: any) => mockReact.createElement('h2', { ...props }, props.children),
+  Card: (props: React.HTMLAttributes<HTMLDivElement>) => mockReact.createElement('div', { ...props }, props.children),
+  CardContent: (props: React.HTMLAttributes<HTMLDivElement>) => mockReact.createElement('div', { ...props }, props.children),
+  CardHeader: (props: React.HTMLAttributes<HTMLDivElement>) => mockReact.createElement('div', { ...props }, props.children),
+  CardTitle: (props: React.HTMLAttributes<HTMLHeadingElement>) => mockReact.createElement('h2', { ...props }, props.children),
 }));
 
 jest.mock('lucide-react', () => ({
-  Lightbulb: (props: any) => mockReact.createElement('span', { 'data-testid': 'lightbulb-icon', ...props }),
-  ExternalLink: (props: any) => mockReact.createElement('span', { 'data-testid': 'external-link-icon', ...props }),
+  Lightbulb: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'lightbulb-icon', ...props }),
+  ExternalLink: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'external-link-icon', ...props }),
 }));
 
 import type { RecommendationsCard } from '@/types';
 import { RecommendationsCardComponent } from './RecommendationsCard';
 
-const originalFetch = global.fetch;
+type MockFetch = jest.MockedFunction<typeof fetch>;
+
+const createMockFetch = (): MockFetch => jest.fn() as MockFetch;
 
 describe('RecommendationsCardComponent', () => {
+  let mockFetch: MockFetch;
+  const originalFetch = global.fetch;
+
   beforeEach(() => {
-    // @ts-ignore
-    global.fetch = jest.fn();
+    mockFetch = createMockFetch();
+    global.fetch = mockFetch;
   });
 
   afterEach(() => {
     global.fetch = originalFetch;
     cleanup();
   });
+
+  const mockFetchResponse = (url: string | null) => {
+    mockFetch.mockResolvedValue({
+      json: async () => ({ url }),
+    } as Response);
+  };
 
   it('renders the card title', async () => {
     const card: RecommendationsCard = {
@@ -43,10 +54,7 @@ describe('RecommendationsCardComponent', () => {
       ],
     };
 
-    // @ts-ignore
-    global.fetch.mockResolvedValue({
-      json: async () => ({ url: null }),
-    });
+    mockFetchResponse(null);
 
     await act(async () => {
       render(mockReact.createElement(RecommendationsCardComponent, { card }));
@@ -65,10 +73,7 @@ describe('RecommendationsCardComponent', () => {
       ],
     };
 
-    // @ts-ignore
-    global.fetch.mockResolvedValue({
-      json: async () => ({ url: null }),
-    });
+    mockFetchResponse(null);
 
     await act(async () => {
       render(mockReact.createElement(RecommendationsCardComponent, { card }));
@@ -89,10 +94,7 @@ describe('RecommendationsCardComponent', () => {
       ],
     };
 
-    // @ts-ignore
-    global.fetch.mockResolvedValue({
-      json: async () => ({ url: 'https://www.igdb.com/games/disco-elysium' }),
-    });
+    mockFetchResponse('https://www.igdb.com/games/disco-elysium');
 
     await act(async () => {
       render(mockReact.createElement(RecommendationsCardComponent, { card }));
@@ -115,8 +117,7 @@ describe('RecommendationsCardComponent', () => {
       ],
     };
 
-    // @ts-ignore
-    global.fetch.mockRejectedValue(new Error('Network error'));
+    mockFetch.mockRejectedValue(new Error('Network error'));
 
     await act(async () => {
       render(mockReact.createElement(RecommendationsCardComponent, { card }));
@@ -136,10 +137,7 @@ describe('RecommendationsCardComponent', () => {
       ],
     };
 
-    // @ts-ignore
-    global.fetch.mockResolvedValue({
-      json: async () => ({ url: null }),
-    });
+    mockFetchResponse(null);
 
     await act(async () => {
       render(mockReact.createElement(RecommendationsCardComponent, { card }));
@@ -161,22 +159,18 @@ describe('RecommendationsCardComponent', () => {
       ],
     };
 
-    // @ts-ignore
-    global.fetch.mockResolvedValue({
-      json: async () => ({ url: null }),
-    });
+    mockFetchResponse(null);
 
     await act(async () => {
       render(mockReact.createElement(RecommendationsCardComponent, { card }));
     });
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledTimes(2);
+      expect(mockFetch).toHaveBeenCalledTimes(2);
     });
 
-    // @ts-ignore
-    const calls = global.fetch.mock.calls as any[];
-    const bodies = calls.map((c: any[]) => c[1]?.body);
+    const calls = mockFetch.mock.calls;
+    const bodies = calls.map((c) => c[1]?.body);
     expect(bodies).toContain(JSON.stringify({ title: 'Game One' }));
     expect(bodies).toContain(JSON.stringify({ title: 'Game Two' }));
   });

@@ -1,13 +1,20 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import type { NextRequest } from 'next/server';
 
-const mockSearch = jest.fn() as jest.MockedFunction<(title: string) => Promise<{ url: string; slug: string } | null>>;
+type SearchGameByTitle = (title: string) => Promise<{ url: string; slug: string } | null>;
+
+const mockSearch = jest.fn<SearchGameByTitle>();
+
 jest.mock('@/lib/igdb', () => ({
   searchGameByTitle: (title: string) => mockSearch(title),
 }));
 
+const createMockRequest = (body: Record<string, unknown>): NextRequest => ({
+  json: async () => body,
+}) as unknown as NextRequest;
+
 describe('POST /api/igdb/game', () => {
   beforeEach(() => {
-    jest.resetModules();
     mockSearch.mockReset();
   });
 
@@ -15,7 +22,7 @@ describe('POST /api/igdb/game', () => {
     mockSearch.mockResolvedValue({ url: 'https://www.igdb.com/games/halo', slug: 'halo' });
 
     const { POST } = await import('./route');
-    const res = await POST({ json: async () => ({ title: 'Halo' }) } as any);
+    const res = await POST(createMockRequest({ title: 'Halo' }));
     
     expect(res.status).toBe(200);
     const data = await res.json();
@@ -26,7 +33,7 @@ describe('POST /api/igdb/game', () => {
     mockSearch.mockResolvedValue(null);
 
     const { POST } = await import('./route');
-    const res = await POST({ json: async () => ({ title: 'NonExistent' }) } as any);
+    const res = await POST(createMockRequest({ title: 'NonExistent' }));
     
     expect(res.status).toBe(200);
     const data = await res.json();
@@ -35,7 +42,7 @@ describe('POST /api/igdb/game', () => {
 
   it('returns 400 when title is missing', async () => {
     const { POST } = await import('./route');
-    const res = await POST({ json: async () => ({}) } as any);
+    const res = await POST(createMockRequest({}));
     
     expect(res.status).toBe(400);
     const data = await res.json();
@@ -45,7 +52,7 @@ describe('POST /api/igdb/game', () => {
 
   it('returns 400 when title is empty string', async () => {
     const { POST } = await import('./route');
-    const res = await POST({ json: async () => ({ title: '   ' }) } as any);
+    const res = await POST(createMockRequest({ title: '   ' }));
     
     expect(res.status).toBe(400);
     const data = await res.json();
@@ -57,7 +64,7 @@ describe('POST /api/igdb/game', () => {
     mockSearch.mockRejectedValue(new Error('Network error'));
 
     const { POST } = await import('./route');
-    const res = await POST({ json: async () => ({ title: 'Halo' }) } as any);
+    const res = await POST(createMockRequest({ title: 'Halo' }));
     
     expect(res.status).toBe(200);
     const data = await res.json();
