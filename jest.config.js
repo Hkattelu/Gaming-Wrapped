@@ -11,5 +11,5 @@ module.exports = {
     '^.+\.(ts|tsx)$': ["babel-jest", { "configFile": "./babel.config.test.js" }]
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  testMatch: ['<rootDir>/src/**/*.test.ts'],
+  testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/src/**/*.test.tsx'],
 };
