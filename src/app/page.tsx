@@ -19,6 +19,12 @@ export default function Home() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  const [steamId, setSteamId] = useState('');
+  const [steamLoading, setSteamLoading] = useState(false);
+  const [steamError, setSteamError] = useState<string | null>(null);
+  const [steamDialogOpen, setSteamDialogOpen] = useState(false);
+  const [steamProgress, setSteamProgress] = useState<string | null>(null);
+
   const handleBackloggdExport = async () => {
     if (!backloggdUsername) {
       setError('Please enter your Backloggd username.');
@@ -97,6 +103,80 @@ export default function Home() {
     }
   };
 
+  const handleSteamExport = async () => {
+    if (!steamId) {
+      setSteamError('Please enter your Steam ID.');
+      return;
+    }
+    setSteamLoading(true);
+    setSteamError(null);
+    setSteamProgress(null);
+
+    try {
+      const response = await fetch(`/api/steam?steamId=${encodeURIComponent(steamId)}&stream=true`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to export data.');
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let csvData = '';
+      let totalGames = 0;
+
+      if (!reader) {
+        throw new Error('Failed to read response');
+      }
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = JSON.parse(line.slice(6));
+            
+            if (data.type === 'progress') {
+              setSteamProgress(data.message);
+            } else if (data.type === 'complete') {
+              csvData = data.csv;
+              totalGames = data.total;
+            } else if (data.type === 'error') {
+              throw new Error(data.error);
+            }
+          }
+        }
+      }
+
+      if (!csvData) {
+        throw new Error('No data received');
+      }
+
+      const blob = new Blob([csvData], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `steam_${steamId}_games.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      setSuccessMessage(`Successfully exported ${totalGames} games from Steam!`);
+      setSteamDialogOpen(false);
+      
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (e: any) {
+      setSteamError(e.message);
+    } finally {
+      setSteamLoading(false);
+      setSteamProgress(null);
+    }
+  };
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
       <div className="absolute inset-0 bg-grid-white/[0.05] z-0" />
@@ -118,7 +198,44 @@ export default function Home() {
             </CardContent>
           </Card>
           
-          <div className="mt-6 flex gap-4">
+          <div className="mt-6 flex flex-wrap justify-center gap-4">
+            <Dialog open={steamDialogOpen} onOpenChange={setSteamDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">From Steam</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Exporting from Steam</DialogTitle>
+                  <DialogDescription>
+                    Enter your public Steam ID (64-bit) to download your played games CSV.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <Input
+                    placeholder="Your Steam ID (e.g., 76561198012345678)"
+                    value={steamId}
+                    onChange={(e) => setSteamId(e.target.value)}
+                    disabled={steamLoading}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Your Steam profile and game details must be set to public. Find your Steam ID at <a href="https://steamid.io" target="_blank" rel="noopener noreferrer" className="text-accent underline">steamid.io</a>.
+                  </p>
+                  <Button onClick={handleSteamExport} disabled={steamLoading} className="w-full">
+                    {steamLoading ? 'Exporting...' : 'Export CSV'}
+                  </Button>
+                  {steamProgress && (
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">{steamProgress}</p>
+                      <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
+                        <div className="w-full h-full bg-primary animate-pulse" />
+                      </div>
+                    </div>
+                  )}
+                  {steamError && <p className="text-sm text-red-500">{steamError}</p>}
+                </div>
+              </DialogContent>
+            </Dialog>
+
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">From Backloggd</Button>
