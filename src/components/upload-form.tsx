@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, UploadCloud } from 'lucide-react';
 import { generateWrappedData } from '@/app/actions';
 import { useRouter } from 'next/navigation';
+import { Progress } from "@/components/ui/progress"
 
 export function UploadForm() {
   const [file, setFile] = useState<File | null>(null);
@@ -176,9 +177,12 @@ export function UploadForm() {
       </Button>
 
       {isLoading && (
-        <p className="text-sm text-center text-muted-foreground animate-pulse" aria-live="polite">
-          {loadingMessages[loadingStep]}
-        </p>
+        <div className="space-y-4 pt-4">
+            <Progress value={(loadingStep + 1) * (100 / loadingMessages.length)} className="w-full h-3" />
+            <p className="text-xl text-center text-foreground font-headline tracking-wider animate-pulse" aria-live="polite">
+            {loadingMessages[loadingStep]}
+            </p>
+        </div>
       )}
     </form>
   );
