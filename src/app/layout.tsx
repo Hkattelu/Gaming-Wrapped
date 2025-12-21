@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/theme-provider";
 import { VibeKanbanWrapper } from '@/components/VibeKanbanWrapper';
 import Script from 'next/script';
 import { Press_Start_2P, VT323 } from 'next/font/google';
@@ -95,12 +96,19 @@ export default function RootLayout({
             gtag('config', 'G-X8VX0FC0D2');
           `}
         </Script>
-        <VibeKanbanWrapper />
-        {children}
-        <Toaster />
-        <footer className="w-full py-4 text-center text-sm text-muted-foreground">
-          Made with ❤️ by <a href="https://www.youtube.com/@Glowstringman" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Glowstringman</a>. [<a href="https://ko-fi.com/glowstringman" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Donate</a>] [<a href="https://github.com/Hkattelu/Gaming-Wrapped" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Contribute</a>]
-        </footer>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <VibeKanbanWrapper />
+          {children}
+          <Toaster />
+          <footer className="w-full py-4 text-center text-sm text-muted-foreground">
+            Made with ❤️ by <a href="https://www.youtube.com/@Glowstringman" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Glowstringman</a>. [<a href="https://ko-fi.com/glowstringman" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Donate</a>] [<a href="https://github.com/Hkattelu/Gaming-Wrapped" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Contribute</a>]
+          </footer>
+        </ThemeProvider>
       </body>
     </html>
   );

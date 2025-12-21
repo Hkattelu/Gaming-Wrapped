@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { ModeToggle } from '@/components/ui/mode-toggle';
 
 export default function Home() {
   const [backloggdUsername, setBackloggdUsername] = useState('');
@@ -181,6 +182,9 @@ export default function Home() {
     <div className="relative min-h-screen w-full overflow-hidden">
       <div className="absolute inset-0 bg-grid-white/[0.05] z-0" />
       <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 relative z-10 min-h-screen">
+        <div className="absolute top-4 right-4 z-50">
+          <ModeToggle />
+        </div>
         <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
         <div className="container max-w-4xl flex flex-col items-center text-center z-10">
           <Logo className="text-5xl" />

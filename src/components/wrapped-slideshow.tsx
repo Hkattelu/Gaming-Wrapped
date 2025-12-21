@@ -128,7 +128,7 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
       <Carousel className="w-full max-w-xl z-10" setApi={setApi}>
         <CarouselContent>
           {/* Slide 1: Intro */}
-          <CarouselItem>
+          <CarouselItem className="basis-full">
             <div className="h-[550px] flex flex-col justify-center items-center text-center p-6 bg-card/80 backdrop-blur-sm border-primary/20 shadow-2xl shadow-primary/10 rounded-2xl">
                 <Sparkles className="w-20 h-20 text-accent animate-pulse" />
                 <h2 className="text-5xl font-headline mt-6 tracking-widest">YOUR GAME REWIND</h2>
@@ -141,14 +141,14 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
             const renderedCard = renderCard(card);
             if (!renderedCard) return null;
             return (
-              <CarouselItem className="pt-4 pb-4" key={index}>
+              <CarouselItem className="basis-full pt-4 pb-4" key={index}>
                 {renderedCard}
               </CarouselItem>
             );
           }).filter(Boolean)}
 
           {/* Final Slide */}
-          <CarouselItem>
+          <CarouselItem className="basis-full">
             <div className="h-[550px] flex flex-col justify-center items-center text-center p-6 bg-card/80 backdrop-blur-sm border-primary/20 shadow-2xl shadow-primary/10 rounded-2xl">
                 <Gift className="w-20 h-20 text-primary" />
                 <h2 className="text-5xl font-headline font-bold mt-4 tracking-widest">THAT&apos;S A WRAP!</h2>
