@@ -6,7 +6,6 @@ export const CARD_TYPES = [
   'summary',
   'genre_breakdown',
   'score_distribution',
-  'narrative',
   'player_persona',
   'roast',
   'recommendations',
@@ -84,11 +83,7 @@ const SummaryCardSchema = z.object({
   averageScore: z.number(),
 });
 
-const NarrativeCardSchema = z.object({
-  type: z.enum(CARD_TYPES),
-  title: z.string().describe('Title for the narrative card'),
-  content: z.string().describe("A short, engaging paragraph about the user's gaming year"),
-});
+
 
 const GenreBreakdownCardSchema = z.object({
   type: z.enum(CARD_TYPES),
@@ -141,7 +136,6 @@ const GenerateGamingWrappedOutputSchema = z.object({
     PlatformStatsCardSchema,
     TopGameCardSchema,
     SummaryCardSchema,
-    NarrativeCardSchema,
     GenreBreakdownCardSchema,
     ScoreDistributionCardSchema,
     PlayerPersonaCardSchema,

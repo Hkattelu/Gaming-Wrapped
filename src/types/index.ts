@@ -37,11 +37,7 @@ export interface SummaryCard {
   averageScore: number;
 }
 
-export interface NarrativeCard {
-  type: 'narrative';
-  title: string;
-  content: string;
-}
+
 
 export interface GenreBreakdownCard {
   type: 'genre_breakdown';
@@ -90,7 +86,6 @@ export type WrappedCard =
   | PlatformStatsCard
   | TopGameCard
   | SummaryCard
-  | NarrativeCard
   | GenreBreakdownCard
   | ScoreDistributionCard
   | PlayerPersonaCard

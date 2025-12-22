@@ -56,15 +56,7 @@ export const MOCK_WRAPPED_OUTPUT: GenerateGamingWrappedOutput = {
       ],
     },
 
-    {
-      type: 'narrative',
-      title: 'Your Gaming Story',
-      content: `This year, you embarked on **incredible journeys** across multiple worlds.
 
-From the neon-lit streets of Night City to the mystical lands of the Forgotten Realms, you've proven yourself a true adventurer.
-
-You didn't just play games—you *lived* them. 🎮`,
-    },
     {
       type: 'player_persona',
       title: 'Your Player Persona',

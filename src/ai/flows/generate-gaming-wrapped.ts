@@ -50,7 +50,6 @@ const CARD_TYPES = [
   'summary',
   'genre_breakdown',
   'score_distribution',
-  'narrative',
   'player_persona',
   'roast',
   'recommendations',
@@ -88,11 +87,7 @@ const SummaryCardSchema = z.object({
   averageScore: z.number(),
 });
 
-const NarrativeCardSchema = z.object({
-  type: z.enum(CARD_TYPES),
-  title: z.string().describe('Title for the narrative card'),
-  content: z.string().describe("A short, engaging paragraph about the user's gaming year"),
-});
+
 
 const GenreBreakdownCardSchema = z.object({
   type: z.enum(CARD_TYPES),
@@ -145,7 +140,6 @@ const GenerateGamingWrappedOutputSchema = z.object({
     PlatformStatsCardSchema,
     TopGameCardSchema,
     SummaryCardSchema,
-    NarrativeCardSchema,
     GenreBreakdownCardSchema,
     ScoreDistributionCardSchema,
     PlayerPersonaCardSchema,
@@ -183,12 +177,11 @@ Generate a JSON object with a "cards" array. Each card in the array should be on
 1.  summary: A card with the total number of games and the average score.
 2.  platform_stats: A card with the distribution of games by platform.
 3.  top_game: A card with the user's top-rated game. If many entries are unrated, infer a likely top pick using notes, completion status, or platform frequency.
-4.  narrative: A card with a short, engaging paragraph about the user's gaming year.
-5.  genre_breakdown: A card that analyzes the game titles and notes to show the user's most played genres.
-6.  score_distribution: A chart that shows how many games fall into different score ranges (e.g., 9-10, 7-8, etc.). Ignore missing scores rather than treating them as zero.
-7.  player_persona: Assigns a persona based on a holistic view of their gaming habits. See the Player Persona Taxonomy below and choose EXACTLY ONE persona.
-8.  roast: Provide a light-hearted, specific, PG-13 roast (1–2 sentences) based on patterns (backlog size, platform bias, abandoned games, sequel marathons, etc.). Avoid personal/sensitive topics; keep it playful, not mean.
-9.  recommendations: The AI recommends you new games based on your history.
+4.  genre_breakdown: A card that analyzes the game titles and notes to show the user's most played genres.
+5.  score_distribution: A chart that shows how many games fall into different score ranges (e.g., 9-10, 7-8, etc.). Ignore missing scores rather than treating them as zero.
+6.  player_persona: Assigns a persona based on a holistic view of their gaming habits. See the Player Persona Taxonomy below and choose EXACTLY ONE persona.
+7.  roast: Provide a light-hearted, specific, PG-13 roast (1–2 sentences) based on patterns (backlog size, platform bias, abandoned games, sequel marathons, etc.). Avoid personal/sensitive topics; keep it playful, not mean.
+8.  recommendations: The AI recommends you new games based on your history.
 
 Additional guidance:
 - Be lenient with missing ratings: do not fixate on "nothing is rated". Use notes, completion, platform frequency, and common sense signals to draw conclusions.
@@ -196,7 +189,7 @@ Additional guidance:
 - Prefer concise, vivid language with concrete details.
 - When unsure, make a sensible assumption and move on rather than dwelling on missing data.
 
-You can create multiple narrative cards.
+
 
 ### Player Persona Taxonomy
 Choose exactly one persona below. Set the card fields as:

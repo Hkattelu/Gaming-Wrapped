@@ -70,11 +70,22 @@ kill $(lsof -t -i:9002)
 
 
 
+### Hydration Mismatch
+If you see a hydration error related to the `<html>` tag (often caused by `next-themes`), ensure the `<html>` tag in `src/app/layout.tsx` has the `suppressHydrationWarning` attribute.
+
 ### If emulator still crashes:
-1. Delete `firestore-debug.log`
-2. Clear emulator cache: `firebase emulators:export ./emulator-data` then restart
-3. Check Windows Firewall isn't blocking ports
-4. Make sure no other services are using ports 4000, 5001, 8080, or 9002
+1. **Force Host Binding**: In `firebase.json`, ensure emulators are explicitly bound to `127.0.0.1` to avoid Windows localhost resolution timeouts:
+   ```json
+   "emulators": {
+     "firestore": { "port": 8080, "host": "127.0.0.1" },
+     "ui": { "port": 4000, "host": "127.0.0.1" }
+   }
+   ```
+2. **Selective Startup**: Use the updated emulator script which only starts critical services: `npm run dev:emulators` (runs `firebase emulators:start --only firestore,ui`).
+3. Delete `firestore-debug.log`
+4. Clear emulator cache: `firebase emulators:export ./emulator-data` then restart
+5. Check Windows Firewall isn't blocking ports
+6. Make sure no other services are using ports 4000, 5001, 8080, or 9002
 
 ### Iterating on Wrapped UI components
 
