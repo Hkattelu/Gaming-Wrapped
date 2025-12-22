@@ -45,10 +45,10 @@ export function SummaryCard({ card }: { card: SummaryCardType }) {
               <BarChart3 className="w-36 h-36 rotate-12" />
             </div>
 
-            {/* Year badge */}
+            {/* Data badge */}
             <div className="relative z-10 mb-8">
               <span className="inline-block bg-accent text-accent-foreground font-headline text-xs px-3 py-1 uppercase tracking-widest border-2 border-foreground shadow-[2px_2px_0px_rgba(0,0,0,1)]">
-                {new Date().getFullYear()} Overview
+                Library Overview
               </span>
             </div>
 

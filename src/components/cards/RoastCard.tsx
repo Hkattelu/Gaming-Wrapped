@@ -13,7 +13,7 @@ export function RoastCardComponent({ card }: RoastCardProps) {
     <div className="h-[550px] w-full flex flex-col items-center gap-6 p-4 perspective-1000">
       <div className="text-center space-y-2">
         <h2 className="font-headline text-2xl md:text-3xl text-foreground uppercase tracking-widest drop-shadow-[4px_4px_0px_rgba(255,46,80,0.4)] flex items-center justify-center gap-3">
-          <Flame className="w-8 h-8 text-primary animate-bounce" />
+          <Flame className="w-8 h-8 text-primary" />
           {card.title.toUpperCase()}
         </h2>
         <p className="text-muted-foreground text-lg md:text-xl font-body">
@@ -30,28 +30,25 @@ export function RoastCardComponent({ card }: RoastCardProps) {
             {/* Background Pattern */}
             <div className="absolute inset-0 bg-noise-pattern opacity-30 pointer-events-none mix-blend-overlay" />
 
-            {/* Decorative Elements */}
-            <div className="absolute top-10 right-10 w-20 h-20 border-2 border-cyan-500/20 opacity-10 rotate-45 pointer-events-none" />
-            <div className="absolute bottom-20 left-4 w-4 h-4 bg-primary opacity-30 pointer-events-none" />
+            <div className="relative z-20">
+              <div className="relative">
+                <div className="bg-card border-4 border-foreground p-6 pixel-corners shadow-[4px_4px_0px_rgba(0,0,0,0.1)]">
+                  <p className="font-headline text-[10px] md:text-xs leading-loose text-card-foreground">
+                    {card.roast}
+                  </p>
+                </div>
+                {/* Speech bubble tail: outside the clipped pixel-corners div */}
+                <div className="absolute -bottom-3 right-10 w-6 h-6 bg-card border-r-4 border-b-4 border-foreground transform rotate-45 z-10" />
+              </div>
+            </div>
 
-            <div className="relative z-20 mb-auto">
-              <div className="bg-card border-4 border-foreground p-6 pixel-corners shadow-[4px_4px_0px_rgba(0,0,0,0.1)] relative">
-                <p className="font-headline text-[10px] md:text-xs leading-loose text-card-foreground">
-                  {card.roast}
-                </p>
-                <div className="mt-6 text-center transform -rotate-2">
+            <div className="relative z-20 flex items-end justify-end w-full">
+              <div className="mr-4 mb-4 text-right">
+                <div className="mt-6 text-center transform -rotate-2 mb-4">
                   <span className="font-glitch text-3xl md:text-5xl text-primary glitch-text-shadow bg-foreground/5 px-2 uppercase">
                     Pathetic.
                   </span>
                 </div>
-                {/* Speech bubble tail */}
-                <div className="absolute -bottom-4 right-6 w-6 h-6 bg-card border-r-4 border-b-4 border-foreground transform rotate-45 z-30" />
-              </div>
-            </div>
-
-            <div className="relative z-20 mt-4 flex items-end justify-end w-full">
-              <div className="mr-4 mb-2 text-right">
-
                 <span className="block font-headline text-[10px] text-primary uppercase font-bold">GLITCH GOBLIN</span>
               </div>
 

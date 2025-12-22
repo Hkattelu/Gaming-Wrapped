@@ -64,7 +64,7 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
             {/* Top badge */}
             <div className="absolute top-4 left-4">
               <span className="inline-block bg-accent text-accent-foreground font-headline text-xs px-2 py-1 uppercase tracking-widest border-2 border-foreground shadow-[2px_2px_0px_rgba(0,0,0,1)]">
-                #1 in {new Date().getFullYear()}
+                #1 Ranked Game
               </span>
             </div>
 

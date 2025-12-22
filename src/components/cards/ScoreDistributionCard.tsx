@@ -83,7 +83,7 @@ export function ScoreDistributionCard({ card }: { card: ScoreDistributionCardTyp
           Ratings Breakdown
         </h1>
         <p className="text-muted-foreground text-xl md:text-2xl max-w-2xl mx-auto font-body">
-          How your year measured up against your own scale.
+          How your library measured up against your own scale.
         </p>
       </div>
 
