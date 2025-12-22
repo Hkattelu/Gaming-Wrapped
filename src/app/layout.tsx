@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { VibeKanbanWrapper } from '@/components/VibeKanbanWrapper';
 import Script from 'next/script';
-import { Press_Start_2P, VT323 } from 'next/font/google';
+import { Press_Start_2P, VT323, Rubik_Glitch } from 'next/font/google';
 
 const pressStart2P = Press_Start_2P({
   weight: '400',
@@ -17,6 +17,13 @@ const vt323 = VT323({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-vt323',
+  display: 'swap',
+});
+
+const rubikGlitch = Rubik_Glitch({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-rubik-glitch',
   display: 'swap',
 });
 
@@ -83,7 +90,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </head>
-      <body className={`${pressStart2P.variable} ${vt323.variable} font-body antialiased`}>
+      <body className={`${pressStart2P.variable} ${vt323.variable} ${rubikGlitch.variable} font-body antialiased`}>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-X8VX0FC0D2"
           strategy="afterInteractive"
