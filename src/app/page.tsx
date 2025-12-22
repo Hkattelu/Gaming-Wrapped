@@ -205,7 +205,7 @@ export default function Home() {
           <div className="mt-6 flex flex-wrap justify-center gap-4">
             <Dialog open={steamDialogOpen} onOpenChange={setSteamDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">From Steam</Button>
+                <Button variant="outline" size="lg" className="text-base font-semibold">From Steam</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -242,7 +242,7 @@ export default function Home() {
 
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">From Backloggd</Button>
+                <Button variant="outline" size="lg" className="text-base font-semibold">From Backloggd</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -286,7 +286,7 @@ export default function Home() {
 
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">From HowLongToBeat</Button>
+                <Button variant="outline" size="lg" className="text-base font-semibold">From HowLongToBeat</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -314,7 +314,7 @@ export default function Home() {
 
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">Other</Button>
+                <Button variant="outline" size="lg" className="text-base font-semibold">Other</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -330,7 +330,7 @@ export default function Home() {
             </Dialog>
             
             <Link href="/manual">
-              <Button variant="outline" size="sm">Manual</Button>
+              <Button variant="outline" size="lg" className="text-base font-semibold">Manual</Button>
             </Link>
           </div>
 

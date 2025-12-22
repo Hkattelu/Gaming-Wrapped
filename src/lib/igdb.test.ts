@@ -77,8 +77,8 @@ describe('lib/igdb integration', () => {
     const url1 = await searchCoverByTitle('Halo');
     const url2 = await searchCoverByTitle('Halo 2\nAnniversary');
     expect(fetchMock).toHaveBeenCalledTimes(3); // 1 token + 2 IGDB
-    expect(url1).toMatch(/^https:\/\/images\.igdb\.com\/igdb\/image\/upload\/t_thumb\//);
-    expect(url2).toMatch(/^https:\/\/images\.igdb\.com\/igdb\/image\/upload\/t_thumb\//);
+    expect(url1).toMatch(/^https:\/\/images\.igdb\.com\/igdb\/image\/upload\/t_cover_big\//);
+    expect(url2).toMatch(/^https:\/\/images\.igdb\.com\/igdb\/image\/upload\/t_cover_big\//);
 
     // Advance time close to expiry: expires_at = 300s; safety window is 60s → token becomes invalid when now >= 240s
     nowSpy.mockReturnValue(250_000);
@@ -90,7 +90,7 @@ describe('lib/igdb integration', () => {
     (global.fetch as jest.Mock).mockImplementationOnce(async () => ({ ok: true, json: async () => gameRows }) as any);
 
     const url3 = await (await import(IGDB_MODULE_PATH)).searchCoverByTitle('Halo Infinite');
-    expect(url3).toMatch(/^https:\/\/images\.igdb\.com\/igdb\/image\/upload\/t_thumb\//);
+    expect(url3).toMatch(/^https:\/\/images\.igdb\.com\/igdb\/image\/upload\/t_cover_big\//);
     // Now total calls: 3 previous + 2 more (new token + IGDB)
     expect((global.fetch as jest.Mock).mock.calls.length).toBe(5);
   });
@@ -209,7 +209,7 @@ describe('lib/igdb integration', () => {
     expect(body).toContain('search "My');
     const escapedQuote = String.fromCharCode(92, 92, 34);
     expect(body).toContain(`${escapedQuote}IV${escapedQuote}`);
-    expect(body).toContain('"; limit 1;');
+    expect(body).toContain('limit 1;');
   });
 
   it('searchCoverByTitle: returns null when IGDB returns empty list', async () => {

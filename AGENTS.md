@@ -4,24 +4,15 @@ This document provides instructions and learnings for working with the Gaming Wr
 
 ## Setup Instructions
 
-1.  **Environment Variables**:
-    *   Copy `.env.example` to `.env`.
-    *   Populate the `.env` file with the required API keys.
-        *   `GEMINI_API_KEY`: Required for AI generation.
-        *   `HOST_URL`: The URL where the app is running (e.g., `http://localhost:9002`).
-        *   `TWITCH_CLIENT_ID` & `TWITCH_CLIENT_SECRET`: Required for fetching game data from IGDB.
-        *   `STEAM_API_KEY`: Required for fetching Steam data.
-    *   For local development/exploration, dummy values can be used to start the server, but features relying on these APIs will fail or behave unexpectedly.
-
-2.  **Installation**:
+1.  **Installation**:
     *   Run `npm install` to install dependencies.
 
-3.  **Running the Application**:
+2.  **Running the Application**:
     *   Run `npm run dev` to start the development server.
     *   The server runs on port **9002** by default (configured in `package.json` scripts).
     *   Access the app at `http://localhost:9002`.
 
-4.  **Running Tests**:
+3.  **Running Tests**:
     *   Run `npm test` to run the test suite.
     *   *Note*: Some tests (`RecommendationsCardComponent`) were observed to fail with "Element type is invalid" errors. This might be due to issues with component imports in the test environment.
 

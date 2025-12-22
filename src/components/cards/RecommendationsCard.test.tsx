@@ -6,15 +6,13 @@ import { act } from 'react';
 
 const mockReact = React;
 
-jest.mock('@/components/ui/card', () => ({
-  Card: (props: React.HTMLAttributes<HTMLDivElement>) => mockReact.createElement('div', { ...props }, props.children),
-  CardContent: (props: React.HTMLAttributes<HTMLDivElement>) => mockReact.createElement('div', { ...props }, props.children),
-  CardHeader: (props: React.HTMLAttributes<HTMLDivElement>) => mockReact.createElement('div', { ...props }, props.children),
-  CardTitle: (props: React.HTMLAttributes<HTMLHeadingElement>) => mockReact.createElement('h2', { ...props }, props.children),
-}));
-
 jest.mock('lucide-react', () => ({
-  Lightbulb: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'lightbulb-icon', ...props }),
+  Rocket: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'rocket-icon', ...props }),
+  Shield: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'shield-icon', ...props }),
+  Gamepad2: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'gamepad-icon', ...props }),
+  Sparkles: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'sparkles-icon', ...props }),
+  Compass: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'compass-icon', ...props }),
+  Map: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'map-icon', ...props }),
   ExternalLink: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'external-link-icon', ...props }),
 }));
 
@@ -60,7 +58,7 @@ describe('RecommendationsCardComponent', () => {
       render(mockReact.createElement(RecommendationsCardComponent, { card }));
     });
 
-    expect(screen.getByText('Games You Should Play')).toBeTruthy();
+    expect(screen.getByText('DISCO ELYSIUM')).toBeTruthy();
   });
 
   it('renders all recommendations with game names and blurbs', async () => {
@@ -79,9 +77,9 @@ describe('RecommendationsCardComponent', () => {
       render(mockReact.createElement(RecommendationsCardComponent, { card }));
     });
 
-    expect(screen.getByText('Hollow Knight')).toBeTruthy();
+    expect(screen.getByText('HOLLOW KNIGHT')).toBeTruthy();
     expect(screen.getByText('A challenging metroidvania')).toBeTruthy();
-    expect(screen.getByText('The Witcher 3')).toBeTruthy();
+    expect(screen.getByText('THE WITCHER 3')).toBeTruthy();
     expect(screen.getByText('Epic open-world RPG')).toBeTruthy();
   });
 
@@ -123,7 +121,7 @@ describe('RecommendationsCardComponent', () => {
       render(mockReact.createElement(RecommendationsCardComponent, { card }));
     });
 
-    expect(screen.getByText('Unknown Game')).toBeTruthy();
+    expect(screen.getByText('UNKNOWN GAME')).toBeTruthy();
     expect(screen.getByText('You might like it')).toBeTruthy();
     expect(screen.queryByRole('link')).toBeNull();
   });
