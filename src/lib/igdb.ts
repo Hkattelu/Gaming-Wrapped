@@ -1,13 +1,17 @@
 import type { NextRequest } from 'next/server';
 
-// Simple, in-memory cache for the Twitch App access token used with IGDB
+// Simple, in-memory cache and a lock to prevent concurrent token refreshes
 let cachedToken: { value: string; expiresAt: number } | null = null;
+let tokenRefreshPromise: Promise<string | null> | null = null;
 
 async function fetchTwitchAppToken(): Promise<string | null> {
-  const clientId = process.env.TWITCH_CLIENT_ID;
-  const clientSecret = process.env.TWITCH_CLIENT_SECRET;
+  const clientId = process.env.TWITCH_CLIENT_ID?.trim();
+  const clientSecret = process.env.TWITCH_CLIENT_SECRET?.trim();
 
-  if (!clientId || !clientSecret) return null;
+  if (!clientId || !clientSecret) {
+    console.error('[Twitch] Credentials missing in environment variables!');
+    return null;
+  }
 
   // Reuse cached token if still valid (with a small safety window)
   const now = Date.now();
@@ -15,41 +19,60 @@ async function fetchTwitchAppToken(): Promise<string | null> {
     return cachedToken.value;
   }
 
-  try {
-    const resp = await fetch('https://id.twitch.tv/oauth2/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
+  // If a refresh is already in progress, wait for it
+  if (tokenRefreshPromise) {
+    return tokenRefreshPromise;
+  }
+
+  // Define the refresh logic
+  tokenRefreshPromise = (async () => {
+    try {
+      const body = new URLSearchParams({
         client_id: clientId,
         client_secret: clientSecret,
         grant_type: 'client_credentials',
-      }),
-    });
+      }).toString();
 
-    if (!resp.ok) {
-      console.error('Failed to fetch Twitch token:', await resp.text());
+      const resp = await fetch('https://id.twitch.tv/oauth2/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json'
+        },
+        body,
+      });
+
+      if (!resp.ok) {
+        const errText = await resp.text();
+        console.error('[Twitch] Failed to fetch access token:', errText);
+        return null;
+      }
+
+      const data = (await resp.json()) as { access_token: string; expires_in: number };
+      cachedToken = {
+        value: data.access_token,
+        expiresAt: Date.now() + data.expires_in * 1000,
+      };
+      return cachedToken.value;
+    } catch (err) {
+      console.error('[Twitch] Error during token refresh:', err);
       return null;
+    } finally {
+      tokenRefreshPromise = null;
     }
+  })();
 
-    const data = (await resp.json()) as { access_token: string; expires_in: number };
-    cachedToken = {
-      value: data.access_token,
-      expiresAt: Date.now() + data.expires_in * 1000,
-    };
-    return cachedToken.value;
-  } catch (err) {
-    console.error('Error fetching Twitch token:', err);
-    return null;
-  }
+  return tokenRefreshPromise;
 }
 
 async function igdbRequest<T>(endpoint: 'games' | 'covers', query: string): Promise<T | null> {
-  const clientId = process.env.TWITCH_CLIENT_ID;
+  const clientId = process.env.TWITCH_CLIENT_ID?.trim();
   if (!clientId) return null;
 
   const doFetch = async () => {
     const token = await fetchTwitchAppToken();
     if (!token) return null;
+
     return fetch(`https://api.igdb.com/v4/${endpoint}`, {
       method: 'POST',
       headers: {
@@ -58,7 +81,6 @@ async function igdbRequest<T>(endpoint: 'games' | 'covers', query: string): Prom
         'Accept': 'application/json',
       },
       body: query,
-      // IGDB requires text body, not JSON
     });
   };
 
@@ -73,7 +95,8 @@ async function igdbRequest<T>(endpoint: 'games' | 'covers', query: string): Prom
   }
 
   if (!resp.ok) {
-    console.error('IGDB API error:', endpoint, await resp.text());
+    const errText = await resp.text();
+    console.error(`[IGDB] API error (${resp.status}):`, errText);
     return null;
   }
 
@@ -108,10 +131,10 @@ function sanitizeIgdbSearchTerm(title: string): string {
 export async function searchGameByTitle(title: string): Promise<{ url: string; slug: string } | null> {
   const sanitized = sanitizeIgdbSearchTerm(title);
   const q = [
-    'fields name, slug, url; ',
-    `search "${sanitized}"; `,
+    `search "${sanitized}";`,
+    'fields name, slug, url;',
     'limit 1;'
-  ].join('');
+  ].join('\n');
 
   const result = await igdbRequest<Array<{ name: string; slug: string; url: string }>>('games', q);
   if (!result || result.length === 0) return null;
@@ -123,11 +146,11 @@ export async function searchCoverByTitle(title: string): Promise<string | null> 
   // Prefer searching games and asking for nested cover.image_id in one call
   const sanitized = sanitizeIgdbSearchTerm(title);
   const q = [
-    'fields name, cover.image_id; ',
-    `search "${sanitized}"; `,
-    'where cover != null; ',
+    `search "${sanitized}";`,
+    'fields name, cover.image_id;',
+    'where cover != null;',
     'limit 1;'
-  ].join('');
+  ].join('\n');
 
   const result = await igdbRequest<Array<{ name: string; cover?: { image_id: string } }>>('games', q);
   if (!result || result.length === 0) return null;
@@ -146,10 +169,10 @@ export interface GameDetails {
 export async function getGameDetails(title: string): Promise<GameDetails | null> {
   const sanitized = sanitizeIgdbSearchTerm(title);
   const q = [
-    'fields name, slug, url, total_rating, cover.image_id; ',
-    `search "${sanitized}"; `,
+    `search "${sanitized}";`,
+    'fields name, slug, url, total_rating, cover.image_id;',
     'limit 1;'
-  ].join('');
+  ].join('\n');
 
   const result = await igdbRequest<Array<{
     name: string;
@@ -214,24 +237,21 @@ export async function getTopGamesOfYear(year: number, limit = 8): Promise<TopGam
 
   // Pull popular games released in the given year, require a cover to ensure good UX
   const q = [
-    'fields name, cover.image_id, first_release_date, total_rating_count; ',
-    `where first_release_date >= ${start} & first_release_date < ${end} & cover != null; `,
-    'sort total_rating_count desc; ',
-    // Use the requested limit (capped to 20). When refetching because the
-    // cached list was shorter than requested, this ensures we fetch enough
-    // items for the current caller.
+    'fields name, cover.image_id, first_release_date, total_rating_count;',
+    `where first_release_date >= ${start} & first_release_date < ${end} & cover != null;`,
+    'sort total_rating_count desc;',
     `limit ${Math.max(1, Math.min(limit, 20))};`
-  ].join('');
+  ].join('\n');
 
   let rows = await igdbRequest<Array<{ name: string; cover?: { image_id: string } }>>('games', q);
   // Fallback: only when the primary query returned an empty array (not on null/error)
   if (Array.isArray(rows) && rows.length === 0) {
     const qFallback = [
-      'fields name, cover.image_id, first_release_date, total_rating, total_rating_count; ',
-      `where first_release_date >= ${start} & first_release_date < ${end} & cover != null; `,
-      'sort total_rating desc; ',
+      'fields name, cover.image_id, first_release_date, total_rating, total_rating_count;',
+      `where first_release_date >= ${start} & first_release_date < ${end} & cover != null;`,
+      'sort total_rating desc;',
       `limit ${Math.max(1, Math.min(limit, 20))};`
-    ].join('');
+    ].join('\n');
     rows = await igdbRequest<Array<{ name: string; cover?: { image_id: string } }>>('games', qFallback) ?? [];
   }
   if (!rows || rows.length === 0) return null;
