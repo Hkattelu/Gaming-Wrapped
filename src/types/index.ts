@@ -35,6 +35,7 @@ export interface SummaryCard {
   description: string;
   totalGames: number;
   averageScore: number;
+  completionPercentage?: number;
 }
 
 

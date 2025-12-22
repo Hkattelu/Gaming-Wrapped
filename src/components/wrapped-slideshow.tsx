@@ -213,13 +213,12 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
                       </span>
                     </div>
 
-                    {/* Summary Stats */}
                     {(() => {
                       const summaryCard = cards.find(c => c.type === 'summary') as any;
                       const totalGames = summaryCard?.totalGames ?? 0;
                       const avgScore = summaryCard?.averageScore ?? 0;
                       const estimatedHours = totalGames * 20; // estimate
-                      const completionRate = avgScore >= 8 ? 85 : 65;
+                      const completionRate = summaryCard?.completionPercentage;
 
                       return (
                         <>
@@ -243,20 +242,24 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
                           <div className="w-full relative z-10 bg-background/40 border border-border p-4 pixel-corners">
                             <div className="flex justify-between items-center text-left">
                               <div>
-                                <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Total Playtime</p>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Estimated Playtime</p>
                                 <p className="font-headline text-lg text-cyan-600 dark:text-cyan-400">{estimatedHours.toLocaleString()} <span className="text-xs text-muted-foreground font-body">HRS</span></p>
                               </div>
-                              <div className="text-right">
-                                <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Completion Rate</p>
-                                <p className="font-headline text-lg text-emerald-600 dark:text-emerald-400">{completionRate}%</p>
+                              {completionRate !== undefined && (
+                                <div className="text-right">
+                                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Completion Rate</p>
+                                  <p className="font-headline text-lg text-emerald-600 dark:text-emerald-400">{completionRate}%</p>
+                                </div>
+                              )}
+                            </div>
+                            {completionRate !== undefined && (
+                              <div className="w-full bg-secondary h-2 mt-3 pixel-corners overflow-hidden">
+                                <div
+                                  className="bg-gradient-to-r from-primary to-accent h-full transition-all duration-1000"
+                                  style={{ width: `${completionRate}%` }}
+                                />
                               </div>
-                            </div>
-                            <div className="w-full bg-secondary h-2 mt-3 pixel-corners overflow-hidden">
-                              <div
-                                className="bg-gradient-to-r from-primary to-accent h-full transition-all duration-1000"
-                                style={{ width: `${completionRate}%` }}
-                              />
-                            </div>
+                            )}
                           </div>
                         </>
                       );

@@ -85,9 +85,8 @@ const SummaryCardSchema = z.object({
   description: z.string().describe('A short description of the summary'),
   totalGames: z.number(),
   averageScore: z.number(),
+  completionPercentage: z.number().optional().describe('Percentage of games completed'),
 });
-
-
 
 const GenreBreakdownCardSchema = z.object({
   type: z.enum(CARD_TYPES),
@@ -109,16 +108,12 @@ const ScoreDistributionCardSchema = z.object({
   })).describe('Array of score distribution stats'),
 });
 
-
-
 const PlayerPersonaCardSchema = z.object({
   type: z.enum(CARD_TYPES),
   title: z.string().describe('Title for the player persona card'),
   persona: z.string().describe('The assigned player persona'),
   description: z.string().describe('A description of the player persona'),
 });
-
-
 
 const RoastCardSchema = z.object({
   type: z.enum(CARD_TYPES),
@@ -160,11 +155,13 @@ export async function generateGamingWrapped(input: GenerateGamingWrappedInput): 
 
 const prompt = ai.definePrompt({
   name: 'generateGamingWrappedPrompt',
-  input: { schema: z.object({ games: z.string() }) },
+  input: { schema: z.object({ games: z.string(), context: z.string() }) },
   output: { schema: GenerateGamingWrappedOutputSchema },
   prompt: `You are a creative storyteller who specializes in generating personalized gaming history summaries.
 
 Analyze the following gaming data and create a fun and engaging "Gaming Wrapped" in the form of a series of cards.
+
+{{context}}
 
 =====
 Gaming Data: {{games}}
@@ -172,15 +169,16 @@ Gaming Data: {{games}}
 
 ## Instructions
 
-Generate a JSON object with a "cards" array. Each card in the array should be one of the following types:
+Generate a JSON object with a "cards" array. Each card in the array should be one of the following types. 
+IMPORTANT: Adhere strictly to the "Context" instructions above regarding which cards to include or exclude.
 
-1.  summary: A card with the total number of games and the average score.
+1.  summary: A card with the total number of games and the average score. Always include this.
 2.  platform_stats: A card with the distribution of games by platform.
 3.  top_game: A card with the user's top-rated game. If many entries are unrated, infer a likely top pick using notes, completion status, or platform frequency.
 4.  genre_breakdown: A card that analyzes the game titles and notes to show the user's most played genres.
-5.  score_distribution: A chart that shows how many games fall into different score ranges (e.g., 9-10, 7-8, etc.). Ignore missing scores rather than treating them as zero.
+5.  score_distribution: A chart that shows how many games fall into different score ranges (e.g., 9-10, 7-8, etc.).
 6.  player_persona: Assigns a persona based on a holistic view of their gaming habits. See the Player Persona Taxonomy below and choose EXACTLY ONE persona.
-7.  roast: Provide a light-hearted, specific, PG-13 roast (1–2 sentences) based on patterns (backlog size, platform bias, abandoned games, sequel marathons, etc.). Avoid personal/sensitive topics; keep it playful, not mean.
+7.  roast: Provide a light-hearted, specific, PG-13 roast (1–2 sentences) based on patterns (backlog size, platform bias, abandoned games, sequel marathons, etc.).
 8.  recommendations: The AI recommends you new games based on your history.
 
 Additional guidance:
@@ -218,7 +216,64 @@ const generateGamingWrappedFlow = ai.defineFlow(
     outputSchema: GenerateGamingWrappedOutputSchema,
   },
   async input => {
-    const { output } = await prompt({ games: JSON.stringify(input.games) });
+    // Analyze input data for quality/sufficiency
+    const games = input.games || [];
+    const totalGames = games.length;
+
+    // Count rated games (assuming 'review' is the score field)
+    const ratedGames = games.filter(g => g.review && g.review.trim() !== '').length;
+
+    // Count platforms
+    const platforms = new Set(games.map(g => g.platform).filter(p => p && p.trim() !== ''));
+    const uniquePlatforms = platforms.size;
+
+    // Count completions
+    const completedGames = games.filter(g => g.completed === 'true' || g.completed === 'check' || g.mainStory === 'check').length;
+
+    // Build Context Instructions
+    let contextInstructions = "### DATA QUALITY & INCLUSION RULES\n";
+
+    // Rule 1: Platform Stats
+    if (uniquePlatforms <= 1) {
+      contextInstructions += "- Only one platform detected. DO NOT generate the 'platform_stats' card.\n";
+    } else {
+      contextInstructions += "- Multiple platforms detected. YOU MUST generate the 'platform_stats' card.\n";
+    }
+
+    // Rule 2: Score Distribution
+    if (ratedGames < 5) {
+      contextInstructions += `- Only ${ratedGames} games are rated. DO NOT generate the 'score_distribution' card as there is insufficient data.\n`;
+      contextInstructions += "- For the 'summary' card, you may calculate the average score if at least one game is rated, otherwise set it to 0.\n";
+    } else {
+      contextInstructions += "- Sufficient ratings available. YOU MUST generate the 'score_distribution' card.\n";
+    }
+
+    // Rule 3: Completion Data
+    if (completedGames === 0) {
+      contextInstructions += "- No completion data found. Do not mention completion rates or 100% completion in the 'summary' or 'roast'.\n";
+    }
+
+    // Rule 4: General Robustness
+    contextInstructions += "- If a specific card type's required data is completely missing, SKIP that card type rather than hallucinating data.\n";
+
+    // Execute the Generation.
+    const { output } = await prompt({
+      games: JSON.stringify(input.games),
+      context: contextInstructions
+    });
+
+    // Post-processing: Inject accurate stats if available
+    if (output && output.cards) {
+      const summaryCard = output.cards.find(c => c.type === 'summary');
+      if (summaryCard) {
+        // Determine completion percentage if data exists
+        if (completedGames > 0 && totalGames > 0) {
+          // @ts-ignore
+          summaryCard.completionPercentage = Math.round((completedGames / totalGames) * 100);
+        }
+      }
+    }
+
     return output!;
   }
 );
