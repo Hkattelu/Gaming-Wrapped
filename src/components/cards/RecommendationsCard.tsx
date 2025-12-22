@@ -19,13 +19,15 @@ interface RecommendationsCardProps {
 
 interface RecommendationWithUrl extends Recommendation {
   igdbUrl?: string;
+  imageUrl?: string;
+  rating?: number;
 }
 
 const ACCENT_COLORS = [
-  { text: "text-cyan-600 dark:text-cyan-400", border: "border-cyan-500/30", shadow: "shadow-cyan-500/10", icon: Rocket },
-  { text: "text-amber-600 dark:text-amber-400", border: "border-amber-500/30", shadow: "shadow-amber-500/10", icon: Shield },
-  { text: "text-purple-600 dark:text-purple-400", border: "border-purple-500/30", shadow: "shadow-purple-500/10", icon: Gamepad2 },
-  { text: "text-emerald-600 dark:text-emerald-400", border: "border-emerald-500/30", shadow: "shadow-emerald-500/10", icon: Sparkles },
+  { text: "text-cyan-600 dark:text-cyan-400", border: "border-cyan-500/30", shadow: "shadow-cyan-500/10", icon: Rocket, bg: "bg-cyan-500/10" },
+  { text: "text-amber-600 dark:text-amber-400", border: "border-amber-500/30", shadow: "shadow-amber-500/10", icon: Shield, bg: "bg-amber-500/10" },
+  { text: "text-purple-600 dark:text-purple-400", border: "border-purple-500/30", shadow: "shadow-purple-500/10", icon: Gamepad2, bg: "bg-purple-500/10" },
+  { text: "text-emerald-600 dark:text-emerald-400", border: "border-emerald-500/30", shadow: "shadow-emerald-500/10", icon: Sparkles, bg: "bg-emerald-500/10" },
 ];
 
 export function RecommendationsCardComponent({ card }: RecommendationsCardProps) {
@@ -37,7 +39,7 @@ export function RecommendationsCardComponent({ card }: RecommendationsCardProps)
     async function fetchIgdbUrls() {
       const updated = await Promise.all(
         card.recommendations.map(async (rec) => {
-          if (rec.igdbUrl) return rec;
+          if (rec.igdbUrl && rec.imageUrl) return rec;
           try {
             const res = await fetch('/api/igdb/game', {
               method: 'POST',
@@ -45,7 +47,12 @@ export function RecommendationsCardComponent({ card }: RecommendationsCardProps)
               body: JSON.stringify({ title: rec.game }),
             });
             const data = await res.json();
-            return { ...rec, igdbUrl: data.url ?? undefined };
+            return {
+              ...rec,
+              igdbUrl: data.url ?? rec.igdbUrl,
+              imageUrl: data.imageUrl ?? undefined,
+              rating: data.rating ?? undefined
+            };
           } catch {
             return rec;
           }
@@ -73,9 +80,9 @@ export function RecommendationsCardComponent({ card }: RecommendationsCardProps)
         <div className="absolute -bottom-2 -right-2 h-full w-full bg-foreground/10 dark:bg-black/50 -z-10 pixel-corners translate-y-2" />
 
         <div className="relative bg-card border-4 border-border p-1 pixel-corners shadow-xl transition-transform transform group-hover:-translate-y-1 duration-300">
-          <div className="relative bg-card/50 border-2 border-border/50 p-6 md:p-8 flex flex-col items-center min-h-[400px] overflow-hidden">
+          <div className="relative bg-card/50 border-2 border-border/50 p-4 md:p-6 flex flex-col items-center min-h-[400px] overflow-hidden">
             {/* Background Pattern */}
-            <div className="absolute inset-0 quest-pattern opacity-40 pointer-events-none" />
+            <div className="absolute inset-0 quest-pattern opacity-10 pointer-events-none" />
 
             {/* Large background icon */}
             <div className="absolute -top-4 -right-4 opacity-5 pointer-events-none rotate-12">
@@ -88,7 +95,7 @@ export function RecommendationsCardComponent({ card }: RecommendationsCardProps)
               </span>
             </div>
 
-            <div className="w-full flex flex-col gap-4 relative z-10 flex-grow justify-center">
+            <div className="w-full flex flex-col gap-3 relative z-10 flex-grow justify-center">
               {recommendations.slice(0, 3).map((rec, index) => {
                 const accent = ACCENT_COLORS[index % ACCENT_COLORS.length];
                 const Icon = accent.icon;
@@ -96,40 +103,60 @@ export function RecommendationsCardComponent({ card }: RecommendationsCardProps)
                 return (
                   <div
                     key={index}
-                    className="group/item flex items-start gap-4 p-3 hover:bg-foreground/5 pixel-corners transition-colors cursor-default"
+                    className="group/item flex items-center gap-4 p-2 hover:bg-foreground/5 pixel-corners transition-colors cursor-default border border-transparent hover:border-border/50"
                   >
                     <div className={cn(
-                      "flex-shrink-0 mt-1 bg-card border p-2 pixel-corners shadow-sm transition-transform group-hover/item:scale-110",
+                      "flex-shrink-0 w-16 h-20 bg-card border overflow-hidden pixel-corners shadow-sm transition-transform group-hover/item:scale-105",
                       accent.border,
                       accent.shadow
                     )}>
-                      <Icon className={cn("w-6 h-6", accent.text)} />
+                      {rec.imageUrl ? (
+                        <img
+                          src={rec.imageUrl}
+                          alt={rec.game}
+                          className="w-full h-full object-cover"
+                          style={{ imageRendering: 'pixelated' }}
+                        />
+                      ) : (
+                        <div className={cn("w-full h-full flex items-center justify-center", accent.bg)}>
+                          <Icon className={cn("w-6 h-6", accent.text)} />
+                        </div>
+                      )}
                     </div>
                     <div className="flex-grow min-w-0">
-                      <div className="flex items-center gap-2">
-                        {rec.igdbUrl ? (
-                          <a
-                            href={rec.igdbUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={cn(
-                              "font-headline text-xs md:text-sm mb-1 leading-relaxed hover:underline flex items-center gap-1 transition-colors",
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <div className="flex items-center gap-2 overflow-hidden">
+                          {rec.igdbUrl ? (
+                            <a
+                              href={rec.igdbUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={cn(
+                                "font-headline text-xs md:text-sm leading-relaxed hover:underline flex items-center gap-1 transition-colors truncate",
+                                accent.text
+                              )}
+                            >
+                              {rec.game.toUpperCase()}
+                              <ExternalLink className="w-3 h-3 opacity-50 shrink-0" />
+                            </a>
+                          ) : (
+                            <h3 className={cn(
+                              "font-headline text-xs md:text-sm leading-relaxed group-hover/item:text-foreground transition-colors truncate",
                               accent.text
-                            )}
-                          >
-                            {rec.game.toUpperCase()}
-                            <ExternalLink className="w-3 h-3 opacity-50" />
-                          </a>
-                        ) : (
-                          <h3 className={cn(
-                            "font-headline text-xs md:text-sm mb-1 leading-relaxed group-hover/item:text-foreground transition-colors",
-                            accent.text
-                          )}>
-                            {rec.game.toUpperCase()}
-                          </h3>
+                            )}>
+                              {rec.game.toUpperCase()}
+                            </h3>
+                          )}
+                        </div>
+                        {rec.rating && (
+                          <div className="flex-shrink-0 bg-secondary px-1.5 py-0.5 pixel-corners border border-border">
+                            <span className="font-headline text-[8px] text-foreground">
+                              {Math.round(rec.rating)}%
+                            </span>
+                          </div>
                         )}
                       </div>
-                      <p className="font-body text-base md:text-lg text-muted-foreground leading-tight line-clamp-2">
+                      <p className="font-body text-sm md:text-base text-muted-foreground leading-tight line-clamp-2">
                         {rec.blurb}
                       </p>
                     </div>

@@ -10,7 +10,7 @@ import {
   CarouselPrevious
 } from "@/components/ui/carousel";
 import { Logo } from "./logo";
-import { Gift, Share2, Sparkles } from "lucide-react";
+import { Gift, Share2, Sparkles, Gamepad2, ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { PlatformStatsCard } from './cards/PlatformStatsCard';
@@ -126,11 +126,57 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
         <CarouselContent>
           {/* Slide 1: Intro */}
           <CarouselItem className="basis-full">
-            <div className="h-[550px] flex flex-col justify-center items-center text-center p-6 bg-card/80 backdrop-blur-sm border-primary/20 shadow-2xl shadow-primary/10 rounded-2xl">
-              <Sparkles className="w-20 h-20 text-accent animate-pulse" />
-              <h2 className="text-5xl font-headline mt-6 tracking-widest">YOUR GAME REWIND</h2>
-              <p className="text-muted-foreground mt-2 text-lg">A look back at your epic year in gaming.</p>
-              <Logo className="mt-8 text-4xl" />
+            <div className="h-[550px] w-full flex flex-col items-center justify-center p-4 relative font-body perspective-1000">
+              <div className="text-center space-y-4 mb-8 z-10">
+                <h1 className="font-headline text-3xl md:text-5xl text-primary uppercase tracking-[0.2em] drop-shadow-[4px_4px_0px_rgba(0,0,0,0.2)]">
+                  Gaming Wrapped
+                </h1>
+                <p className="text-muted-foreground text-lg md:text-xl font-body tracking-wider max-w-2xl mx-auto">
+                  A look back at your journey in gaming.
+                </p>
+              </div>
+
+              <div className="w-full max-w-md group relative">
+                {/* Shadow layer */}
+                <div className="absolute -bottom-4 left-4 right-[-10px] h-full w-full bg-foreground/10 dark:bg-black/50 -z-10 pixel-corners transform translate-y-2" />
+
+                <div className="relative bg-card border-4 border-border p-1 pixel-corners shadow-xl transition-transform transform group-hover:-translate-y-2 duration-300">
+                  <div className="relative bg-card/50 border-2 border-border p-8 flex flex-col items-center text-center overflow-hidden min-h-[400px] justify-center">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none text-primary">
+                      <Gamepad2 className="w-32 h-32 rotate-12" />
+                    </div>
+
+                    <div className="w-48 h-48 mb-6 relative mt-2">
+                      <div className="absolute inset-0 bg-primary opacity-20 blur-xl rounded-full animate-pulse-slow"></div>
+                      <div className="relative w-full h-full bg-background border-4 border-foreground shadow-[4px_4px_0px_hsl(var(--primary))] pixel-corners overflow-hidden group-hover:scale-105 transition-transform duration-500 flex items-center justify-center">
+                        <Gamepad2 className="w-24 h-24 text-primary" />
+                        <div className="absolute inset-0 crt-overlay opacity-40"></div>
+                      </div>
+                    </div>
+
+                    <h2 className="font-headline text-2xl md:text-3xl text-foreground uppercase leading-tight mb-2 tracking-wide drop-shadow-md">
+                      Your<br />Highlights
+                    </h2>
+
+                    <div className="w-full border-t-2 border-dashed border-border my-6"></div>
+
+                    <div className="animate-pulse">
+                      <span className="font-headline text-primary text-sm md:text-base uppercase tracking-widest">
+                        &gt; Press Start &lt;
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => api?.scrollNext()}
+                    className="w-full bg-foreground text-background py-4 px-4 text-center cursor-pointer hover:bg-primary hover:text-white transition-all duration-200 group/btn"
+                  >
+                    <span className="font-headline text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+                      Start Wrapped <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                    </span>
+                  </button>
+                </div>
+              </div>
             </div>
           </CarouselItem>
 

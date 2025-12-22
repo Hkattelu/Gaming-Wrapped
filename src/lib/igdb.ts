@@ -132,7 +132,43 @@ export async function searchCoverByTitle(title: string): Promise<string | null> 
   const result = await igdbRequest<Array<{ name: string; cover?: { image_id: string } }>>('games', q);
   if (!result || result.length === 0) return null;
   const coverId = result[0]?.cover?.image_id;
-  return coverId ? igdbImageUrl(coverId, 'thumb') : null;
+  return coverId ? igdbImageUrl(coverId, 'cover_big') : null;
+}
+
+export interface GameDetails {
+  name: string;
+  url: string;
+  rating?: number;
+  imageUrl?: string;
+  slug: string;
+}
+
+export async function getGameDetails(title: string): Promise<GameDetails | null> {
+  const sanitized = sanitizeIgdbSearchTerm(title);
+  const q = [
+    'fields name, slug, url, total_rating, cover.image_id; ',
+    `search "${sanitized}"; `,
+    'limit 1;'
+  ].join('');
+
+  const result = await igdbRequest<Array<{
+    name: string;
+    slug: string;
+    url: string;
+    total_rating?: number;
+    cover?: { image_id: string }
+  }>>('games', q);
+
+  if (!result || result.length === 0) return null;
+  const game = result[0];
+
+  return {
+    name: game.name,
+    slug: game.slug,
+    url: game.url,
+    rating: game.total_rating,
+    imageUrl: game.cover?.image_id ? igdbImageUrl(game.cover.image_id, 'cover_big') : undefined
+  };
 }
 
 export interface TopGameSuggestion {

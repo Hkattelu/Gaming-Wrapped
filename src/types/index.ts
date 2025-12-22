@@ -74,6 +74,8 @@ export interface Recommendation {
   game: string;
   blurb: string;
   igdbUrl?: string;
+  imageUrl?: string;
+  rating?: number;
 }
 
 export interface RecommendationsCard {

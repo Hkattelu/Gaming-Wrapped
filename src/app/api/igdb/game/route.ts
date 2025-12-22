@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { searchGameByTitle } from '@/lib/igdb';
+import { getGameDetails } from '@/lib/igdb';
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,8 +8,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing or invalid title' }, { status: 400 });
     }
 
-    const game = await searchGameByTitle(title);
-    return NextResponse.json({ url: game?.url ?? null });
+    const game = await getGameDetails(title);
+    return NextResponse.json(game ?? { url: null });
   } catch (err) {
     console.error('IGDB game lookup failed:', err);
     return NextResponse.json({ url: null }, { status: 200 });

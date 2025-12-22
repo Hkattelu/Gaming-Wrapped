@@ -3,7 +3,30 @@
 import { TopGameCard as TopGameCardType } from '@/types';
 import { Gamepad2, Monitor, ArrowLeft, ArrowRight } from 'lucide-react';
 
+import { useEffect, useState } from 'react';
+
 export function TopGameCard({ card }: { card: TopGameCardType }) {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchImage() {
+      try {
+        const res = await fetch('/api/igdb/game', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: card.game.title }),
+        });
+        const data = await res.json();
+        if (data.imageUrl) {
+          setImageUrl(data.imageUrl);
+        }
+      } catch (err) {
+        console.error('Failed to fetch game image:', err);
+      }
+    }
+    fetchImage();
+  }, [card.game.title]);
+
   return (
     <div className="relative min-h-[600px] flex flex-col items-center justify-center p-4">
       {/* Retro grid background */}
@@ -46,16 +69,24 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
             </div>
 
             {/* Game Image/Icon Container */}
-            <div className="w-48 h-48 mb-6 relative mt-8">
+            <div className="w-48 h-64 mb-6 relative mt-8">
               {/* Glow effect */}
               <div className="absolute inset-0 bg-primary opacity-20 blur-xl rounded-full"></div>
 
               {/* Image frame */}
               <div className="relative w-full h-full bg-background border-4 border-foreground overflow-hidden shadow-[4px_4px_0px_hsl(var(--primary))] pixel-corners">
-                {/* Placeholder for game image */}
-                <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center hover:scale-110 transition-transform duration-500">
-                  <Gamepad2 className="w-24 h-24 text-foreground/40" />
-                </div>
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={card.game.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    style={{ imageRendering: 'pixelated' }}
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center hover:scale-110 transition-transform duration-500">
+                    <Gamepad2 className="w-24 h-24 text-foreground/40" />
+                  </div>
+                )}
 
                 {/* Scanlines effect */}
                 <div className="absolute inset-0 opacity-20 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
