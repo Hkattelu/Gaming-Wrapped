@@ -148,27 +148,27 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
           <CarouselItem className="basis-full">
             <div className="h-[550px] w-full flex flex-col items-center gap-4 p-4 perspective-1000">
               <div className="text-center space-y-2">
-                <h2 className="font-headline text-2xl md:text-3xl text-white uppercase tracking-widest drop-shadow-[2px_2px_0px_rgba(255,46,80,0.5)]">
+                <h2 className="font-headline text-2xl md:text-3xl text-foreground uppercase tracking-widest drop-shadow-[2px_2px_0px_rgba(255,46,80,0.3)]">
                   That&apos;S A WRAP!
                 </h2>
-                <p className="text-gray-400 text-lg md:text-xl font-body">
+                <p className="text-muted-foreground text-lg md:text-xl font-body">
                   Your gaming journey in numbers.
                 </p>
               </div>
 
               <div className="w-full max-w-lg group relative">
                 {/* Shadow layer */}
-                <div className="absolute -bottom-2 -right-2 h-full w-full bg-black/50 -z-10 pixel-corners translate-y-2" />
+                <div className="absolute -bottom-2 -right-2 h-full w-full bg-foreground/10 dark:bg-black/50 -z-10 pixel-corners translate-y-2" />
 
-                <div className="relative bg-[#0F0F0F] border-4 border-[#2A2A2A] p-1 pixel-corners shadow-xl transition-transform transform group-hover:-translate-y-1 duration-300">
-                  <div className="relative bg-[#111] border-2 border-[#222] p-8 flex flex-col items-center text-center overflow-hidden min-h-[400px]">
+                <div className="relative bg-card border-4 border-border p-1 pixel-corners shadow-xl transition-transform transform group-hover:-translate-y-1 duration-300">
+                  <div className="relative bg-card/50 border-2 border-border p-8 flex flex-col items-center text-center overflow-hidden min-h-[400px]">
                     <div className="absolute inset-0 digital-pattern opacity-30 pointer-events-none" />
-                    <div className="absolute -top-6 -right-6 p-4 opacity-10 pointer-events-none">
-                      <Gift className="w-36 h-36 text-white rotate-12" />
+                    <div className="absolute -top-6 -right-6 p-4 opacity-10 pointer-events-none text-foreground">
+                      <Gift className="w-36 h-36 rotate-12" />
                     </div>
 
                     <div className="relative z-10 mb-8">
-                      <span className="inline-block bg-[#FFE600] text-black font-headline text-[10px] md:text-xs px-3 py-1 uppercase tracking-widest border-2 border-black shadow-[2px_2px_0px_rgba(0,0,0,1)]">
+                      <span className="inline-block bg-accent text-accent-foreground font-headline text-[10px] md:text-xs px-3 py-1 uppercase tracking-widest border-2 border-foreground shadow-[2px_2px_0px_rgba(0,0,0,1)]">
                         {new Date().getFullYear()} Overview
                       </span>
                     </div>
@@ -184,36 +184,36 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
                       return (
                         <>
                           <div className="w-full grid grid-cols-2 gap-6 relative z-10 mb-8">
-                            <div className="flex flex-col items-center justify-center p-4 bg-[#1a1a1a] border-2 border-dashed border-[#333] pixel-corners backdrop-blur-sm">
-                              <Sparkles className="w-8 h-8 text-gray-500 mb-2" />
+                            <div className="flex flex-col items-center justify-center p-4 bg-background/80 border-2 border-dashed border-border pixel-corners backdrop-blur-sm">
+                              <Sparkles className="w-8 h-8 text-muted-foreground mb-2" />
                               <h3 className="font-headline text-3xl md:text-4xl text-primary drop-shadow-[2px_2px_0px_rgba(255,255,255,0.1)] mb-1">
                                 {totalGames}
                               </h3>
-                              <span className="text-gray-400 text-[10px] uppercase tracking-wider font-bold">Games</span>
+                              <span className="text-muted-foreground text-[10px] uppercase tracking-wider font-bold">Games</span>
                             </div>
-                            <div className="flex flex-col items-center justify-center p-4 bg-[#1a1a1a] border-2 border-dashed border-[#333] pixel-corners backdrop-blur-sm">
-                              <Sparkles className="w-8 h-8 text-gray-500 mb-2" />
-                              <h3 className="font-headline text-3xl md:text-4xl text-[#FFE600] drop-shadow-[2px_2px_0px_rgba(255,255,255,0.1)] mb-1">
+                            <div className="flex flex-col items-center justify-center p-4 bg-background/80 border-2 border-dashed border-border pixel-corners backdrop-blur-sm">
+                              <Sparkles className="w-8 h-8 text-muted-foreground mb-2" />
+                              <h3 className="font-headline text-3xl md:text-4xl text-accent drop-shadow-[2px_2px_0px_rgba(255,255,255,0.1)] mb-1">
                                 {avgScore.toFixed(1)}
                               </h3>
-                              <span className="text-gray-400 text-[10px] uppercase tracking-wider font-bold">Avg Score</span>
+                              <span className="text-muted-foreground text-[10px] uppercase tracking-wider font-bold">Avg Score</span>
                             </div>
                           </div>
 
-                          <div className="w-full relative z-10 bg-black/40 border border-[#333] p-4 pixel-corners">
+                          <div className="w-full relative z-10 bg-background/40 border border-border p-4 pixel-corners">
                             <div className="flex justify-between items-center text-left">
                               <div>
-                                <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Total Playtime</p>
-                                <p className="font-headline text-lg text-[#00F0FF]">{estimatedHours.toLocaleString()} <span className="text-xs text-gray-400 font-body">HRS</span></p>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Total Playtime</p>
+                                <p className="font-headline text-lg text-cyan-600 dark:text-cyan-400">{estimatedHours.toLocaleString()} <span className="text-xs text-muted-foreground font-body">HRS</span></p>
                               </div>
                               <div className="text-right">
-                                <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Completion Rate</p>
-                                <p className="font-headline text-lg text-[#00FF94]">{completionRate}%</p>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Completion Rate</p>
+                                <p className="font-headline text-lg text-emerald-600 dark:text-emerald-400">{completionRate}%</p>
                               </div>
                             </div>
-                            <div className="w-full bg-[#222] h-2 mt-3 pixel-corners overflow-hidden">
+                            <div className="w-full bg-secondary h-2 mt-3 pixel-corners overflow-hidden">
                               <div
-                                className="bg-gradient-to-r from-primary to-[#FFE600] h-full transition-all duration-1000"
+                                className="bg-gradient-to-r from-primary to-accent h-full transition-all duration-1000"
                                 style={{ width: `${completionRate}%` }}
                               />
                             </div>
@@ -232,7 +232,7 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
                       <Button
                         asChild
                         variant="outline"
-                        className="w-full border-2 border-primary/20 hover:border-primary/50 text-white font-headline text-[10px] tracking-wider pixel-corners h-10 bg-transparent"
+                        className="w-full border-2 border-primary/20 hover:border-primary/50 text-foreground font-headline text-[10px] tracking-wider pixel-corners h-10 bg-transparent"
                       >
                         <a
                           href="https://ko-fi.com/glowstringman"

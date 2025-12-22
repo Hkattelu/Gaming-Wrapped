@@ -18,13 +18,13 @@ const platformIcons: Record<string, typeof Monitor> = {
   'Android': Smartphone,
 };
 
-// Vibrant retro colors for each platform
+// Vibrant retro colors for each platform - now using adaptive classes
 const platformColors = [
-  { bg: 'bg-cyan-400', text: 'text-cyan-400', border: 'border-cyan-400' },      // Cyan
-  { bg: 'bg-pink-500', text: 'text-pink-500', border: 'border-pink-500' },      // Hot Pink
-  { bg: 'bg-yellow-400', text: 'text-yellow-400', border: 'border-yellow-400' }, // Yellow
-  { bg: 'bg-purple-500', text: 'text-purple-500', border: 'border-purple-500' }, // Purple
-  { bg: 'bg-green-400', text: 'text-green-400', border: 'border-green-400' },    // Green
+  { bg: 'bg-cyan-600 dark:bg-cyan-400', text: 'text-cyan-700 dark:text-cyan-400', border: 'border-cyan-500' },
+  { bg: 'bg-pink-600 dark:bg-pink-500', text: 'text-pink-700 dark:text-pink-500', border: 'border-pink-500' },
+  { bg: 'bg-amber-600 dark:bg-yellow-400', text: 'text-amber-700 dark:text-yellow-400', border: 'border-amber-500' },
+  { bg: 'bg-purple-600 dark:bg-purple-500', text: 'text-purple-700 dark:text-purple-500', border: 'border-purple-500' },
+  { bg: 'bg-emerald-600 dark:bg-green-400', text: 'text-emerald-700 dark:text-green-400', border: 'border-emerald-500' },
 ];
 
 function getPlatformIcon(platform: string) {
@@ -39,20 +39,17 @@ export function PlatformStatsCard({ card }: { card: PlatformStatsCardType }) {
   return (
     <div className="relative min-h-[600px] flex flex-col items-center justify-center p-4">
       {/* Retro grid background */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none"
-           style={{
-             backgroundImage: 'linear-gradient(to right, hsl(var(--primary) / 0.3) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--primary) / 0.3) 1px, transparent 1px)',
-             backgroundSize: '40px 40px'
-           }}>
+      <div className="absolute inset-0 opacity-10 pointer-events-none"
+        style={{
+          backgroundImage: 'linear-gradient(to right, hsl(var(--primary) / 0.3) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--primary) / 0.3) 1px, transparent 1px)',
+          backgroundSize: '40px 40px'
+        }}>
       </div>
 
       {/* Header */}
       <div className="text-center space-y-4 mb-8 relative z-10">
-        <h1 className="font-headline text-2xl md:text-4xl uppercase tracking-widest flex items-center justify-center gap-2"
-            style={{
-              textShadow: '2px 2px 0px hsl(var(--primary) / 0.5)'
-            }}>
-          <Gamepad2 className="w-8 h-8 md:w-10 md:h-10 text-primary" />
+        <h1 className="font-headline text-2xl md:text-4xl text-foreground uppercase tracking-widest flex items-center justify-center gap-2 drop-shadow-[2px_2px_0px_rgba(255,46,80,0.3)]">
+          <Gamepad2 className="w-8 h-8 md:w-10 md:h-10 text-primary animate-pulse" />
           {card.title}
         </h1>
         <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto font-body">
@@ -62,39 +59,30 @@ export function PlatformStatsCard({ card }: { card: PlatformStatsCardType }) {
 
       {/* Main Card */}
       <div className="w-full max-w-2xl relative z-10">
-        <div className="bg-card border-4 border-border shadow-2xl"
-             style={{
-               clipPath: 'polygon(0px 4px, 4px 4px, 4px 0px, calc(100% - 4px) 0px, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 0px calc(100% - 4px))'
-             }}>
-          
+        <div className="bg-card border-4 border-border shadow-2xl pixel-corners">
+
           {/* Inner card */}
           <div className="bg-card/50 border-2 border-border/50 p-8">
-            
+
             {/* Badge and Total */}
             <div className="flex items-start justify-between mb-6">
-              <div className="bg-accent text-accent-foreground font-headline text-xs px-3 py-1.5 uppercase tracking-widest border-2 border-foreground"
-                   style={{
-                     boxShadow: '2px 2px 0px hsl(var(--foreground))'
-                   }}>
+              <div className="bg-accent text-accent-foreground font-headline text-xs px-3 py-1.5 uppercase tracking-widest border-2 border-foreground shadow-[2px_2px_0px_rgba(0,0,0,1)]">
                 Yearly Recap
               </div>
               <div className="text-right">
-                <div className="text-muted-foreground text-sm uppercase font-body">Total Games</div>
-                <div className="text-primary font-headline text-3xl md:text-4xl mt-1">{totalGames}</div>
+                <div className="text-muted-foreground text-sm uppercase font-body font-bold tracking-wider">Total Games</div>
+                <div className="text-primary font-headline text-3xl md:text-4xl mt-1 drop-shadow-[1px_1px_0px_rgba(0,0,0,0.1)]">{totalGames}</div>
               </div>
             </div>
 
             {/* Section Title */}
-            <h2 className="font-headline text-xl md:text-2xl uppercase mb-6 tracking-wide">
-              System<br/>Breakdown
+            <h2 className="font-headline text-xl md:text-2xl text-foreground uppercase mb-6 tracking-wide">
+              System<br />Breakdown
             </h2>
 
             {/* Stacked Bar Chart */}
-            <div className="mb-8">
-              <div className="flex h-12 w-full border-4 border-foreground overflow-hidden"
-                   style={{
-                     clipPath: 'polygon(0px 4px, 4px 4px, 4px 0px, calc(100% - 4px) 0px, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 0px calc(100% - 4px))'
-                   }}>
+            <div className="mb-8 overflow-hidden">
+              <div className="flex h-12 w-full border-4 border-foreground pixel-corners overflow-hidden shadow-inner">
                 {topPlatforms.map((platform, index) => {
                   const percentage = (platform.count / totalGames) * 100;
                   const colors = platformColors[index % platformColors.length];
@@ -108,9 +96,9 @@ export function PlatformStatsCard({ card }: { card: PlatformStatsCardType }) {
                   );
                 })}
               </div>
-              
-              {/* Percentage labels */}
-              <div className="flex justify-between text-xs text-muted-foreground font-body mt-2 px-1">
+
+              {/* Percentage labels split across more markers for precision */}
+              <div className="flex justify-between text-[10px] text-muted-foreground font-headline mt-2 px-1 tracking-tighter">
                 <span>0%</span>
                 <span>25%</span>
                 <span>50%</span>
@@ -125,39 +113,40 @@ export function PlatformStatsCard({ card }: { card: PlatformStatsCardType }) {
                 const Icon = getPlatformIcon(platform.platform);
                 const percentage = ((platform.count / totalGames) * 100).toFixed(0);
                 const colors = platformColors[index % platformColors.length];
-                
+
                 return (
-                  <div key={platform.platform} className="flex items-center gap-4">
+                  <div key={platform.platform} className="flex items-center gap-4 group/item">
                     {/* Icon */}
-                    <div className={`w-10 h-10 flex-shrink-0 flex items-center justify-center ${colors.bg} border-2 border-foreground`}
-                         style={{
-                           clipPath: 'polygon(0px 2px, 2px 2px, 2px 0px, calc(100% - 2px) 0px, calc(100% - 2px) 2px, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 2px calc(100% - 2px), 0px calc(100% - 2px))'
-                         }}>
-                      <Icon className="w-5 h-5 text-foreground" />
+                    <div className={`w-10 h-10 flex-shrink-0 flex items-center justify-center ${colors.bg} border-2 border-foreground pixel-corners shadow-[2px_2px_0px_rgba(0,0,0,1)] transition-transform group-hover/item:scale-110`}
+                      style={{
+                        imageRendering: 'pixelated'
+                      }}>
+                      <Icon className="w-5 h-5 text-white dark:text-background" />
                     </div>
 
                     {/* Platform Name */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-bold text-base md:text-lg truncate">
+                        <span className="font-headline text-sm md:text-base text-foreground truncate uppercase">
                           {platform.platform}
                         </span>
-                        <span className="text-sm text-muted-foreground font-body whitespace-nowrap">
+                        <span className="text-xs text-muted-foreground font-body whitespace-nowrap">
                           {platform.count} Games
                         </span>
                       </div>
-                      
+
                       {/* Progress Bar */}
-                      <div className="relative h-6 bg-muted border-2 border-foreground/20 overflow-hidden">
-                        <div 
-                          className={`h-full ${colors.bg} transition-all duration-500`}
+                      <div className="relative h-6 bg-secondary border border-border pixel-corners overflow-hidden">
+                        <div
+                          className={`h-full ${colors.bg} transition-all duration-700 ease-out`}
                           style={{ width: `${percentage}%` }}
                         />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
                       </div>
                     </div>
 
                     {/* Percentage */}
-                    <div className={`font-headline text-xl md:text-2xl ${colors.text} min-w-[60px] text-right`}>
+                    <div className={`font-headline text-lg md:text-xl ${colors.text} min-w-[60px] text-right drop-shadow-sm`}>
                       {percentage}%
                     </div>
                   </div>
@@ -166,17 +155,14 @@ export function PlatformStatsCard({ card }: { card: PlatformStatsCardType }) {
             </div>
           </div>
 
-          {/* Share Button */}
+          {/* Share Button (Legacy UI but kept for now) */}
           <div className="bg-foreground text-background py-3 px-4 text-center cursor-pointer hover:bg-primary transition-colors duration-200 uppercase">
-            <span className="font-headline text-xs tracking-widest animate-pulse">Share Stats</span>
+            <span className="font-headline text-xs tracking-widest">Share Stats</span>
           </div>
         </div>
 
         {/* Shadow layer */}
-        <div className="absolute -bottom-4 left-4 right-[-10px] h-full w-full bg-black/20 dark:bg-black/50 -z-10 transform translate-y-2"
-             style={{
-               clipPath: 'polygon(0px 4px, 4px 4px, 4px 0px, calc(100% - 4px) 0px, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 0px calc(100% - 4px))'
-             }}>
+        <div className="absolute -bottom-4 left-4 right-[-10px] h-full w-full bg-foreground/10 dark:bg-black/50 -z-10 transform translate-y-2 pixel-corners">
         </div>
       </div>
     </div>
