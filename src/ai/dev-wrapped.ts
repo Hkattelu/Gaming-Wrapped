@@ -55,17 +55,7 @@ export const MOCK_WRAPPED_OUTPUT: GenerateGamingWrappedOutput = {
         { range: '0-2', count: 0 },
       ],
     },
-    {
-      type: 'hidden_gem',
-      title: 'Hidden Gem',
-      description: 'The underrated treasure you discovered',
-      game: {
-        title: 'Dave the Diver',
-        platform: 'PC',
-        score: 9,
-        notes: 'What a surprise hit. So much to do, and all of it is fun.',
-      },
-    },
+
     {
       type: 'narrative',
       title: 'Your Gaming Story',
@@ -81,12 +71,7 @@ You didn't just play games—you *lived* them. 🎮`,
       persona: 'The Completionist Explorer',
       description: 'You love diving deep into richly detailed worlds, exploring every corner and experiencing everything a game has to offer. You appreciate both story-driven RPGs and intricate simulation games.',
     },
-    {
-      type: 'gamer_alignment',
-      title: 'Your Gamer Alignment',
-      alignment: 'Chaotic Good',
-      description: 'You play for the love of the game, jumping between genres and platforms without restraint. You finish what captivates you and drop what doesn\'t—and that\'s perfectly fine.',
-    },
+
     {
       type: 'roast',
       title: 'The Roast',

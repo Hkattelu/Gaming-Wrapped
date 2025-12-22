@@ -1,15 +1,13 @@
 import { z } from 'genkit';
 
 export const CARD_TYPES = [
-  'platform_stats', 
-  'top_game', 
-  'summary', 
-  'genre_breakdown', 
-  'score_distribution', 
-  'hidden_gem', 
+  'platform_stats',
+  'top_game',
+  'summary',
+  'genre_breakdown',
+  'score_distribution',
   'narrative',
   'player_persona',
-  'gamer_alignment',
   'roast',
   'recommendations',
 ] as const;
@@ -112,17 +110,7 @@ const ScoreDistributionCardSchema = z.object({
   })).describe('Array of score distribution stats'),
 });
 
-const HiddenGemCardSchema = z.object({
-  type: z.enum(CARD_TYPES),
-  title: z.string().describe('Title for the hidden gem card'),
-  description: z.string().describe('A short description of the hidden gem'),
-  game: z.object({
-    title: z.string(),
-    platform: z.string(),
-    score: z.union([z.string(), z.number()]),
-    notes: z.string(),
-  }),
-});
+
 
 const PlayerPersonaCardSchema = z.object({
   type: z.enum(CARD_TYPES),
@@ -131,12 +119,7 @@ const PlayerPersonaCardSchema = z.object({
   description: z.string().describe('A description of the player persona'),
 });
 
-const GamerAlignmentCardSchema = z.object({
-  type: z.enum(CARD_TYPES),
-  title: z.string().describe('Title for the gamer alignment card'),
-  alignment: z.string().describe('The assigned gamer alignment'),
-  description: z.string().describe('A description of the gamer alignment'),
-});
+
 
 const RoastCardSchema = z.object({
   type: z.enum(CARD_TYPES),
@@ -161,9 +144,7 @@ const GenerateGamingWrappedOutputSchema = z.object({
     NarrativeCardSchema,
     GenreBreakdownCardSchema,
     ScoreDistributionCardSchema,
-    HiddenGemCardSchema,
     PlayerPersonaCardSchema,
-    GamerAlignmentCardSchema,
     RoastCardSchema,
     RecommendationsCardSchema,
   ])),

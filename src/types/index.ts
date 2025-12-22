@@ -57,12 +57,7 @@ export interface ScoreDistributionCard {
   data: { range: string; count: number }[];
 }
 
-export interface HiddenGemCard {
-  type: 'hidden_gem';
-  title: string;
-  description: string;
-  game: Game;
-}
+
 
 export interface PlayerPersonaCard {
   type: 'player_persona';
@@ -71,12 +66,7 @@ export interface PlayerPersonaCard {
   description: string;
 }
 
-export interface GamerAlignmentCard {
-  type: 'gamer_alignment';
-  title: string;
-  alignment: string;
-  description: string;
-}
+
 
 export interface RoastCard {
   type: 'roast';
@@ -96,16 +86,14 @@ export interface RecommendationsCard {
   recommendations: Recommendation[];
 }
 
-export type WrappedCard = 
-  | PlatformStatsCard 
-  | TopGameCard 
-  | SummaryCard 
-  | NarrativeCard 
-  | GenreBreakdownCard 
-  | ScoreDistributionCard 
-  | HiddenGemCard
+export type WrappedCard =
+  | PlatformStatsCard
+  | TopGameCard
+  | SummaryCard
+  | NarrativeCard
+  | GenreBreakdownCard
+  | ScoreDistributionCard
   | PlayerPersonaCard
-  | GamerAlignmentCard
   | RoastCard
   | RecommendationsCard;
 

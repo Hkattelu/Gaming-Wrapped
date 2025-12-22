@@ -45,15 +45,13 @@ const GenerateGamingWrappedInputSchema = z.object({
 type GenerateGamingWrappedInput = z.infer<typeof GenerateGamingWrappedInputSchema>;
 
 const CARD_TYPES = [
-  'platform_stats', 
-  'top_game', 
-  'summary', 
-  'genre_breakdown', 
-  'score_distribution', 
-  'hidden_gem', 
+  'platform_stats',
+  'top_game',
+  'summary',
+  'genre_breakdown',
+  'score_distribution',
   'narrative',
   'player_persona',
-  'gamer_alignment',
   'roast',
   'recommendations',
 ] as const;
@@ -116,17 +114,7 @@ const ScoreDistributionCardSchema = z.object({
   })).describe('Array of score distribution stats'),
 });
 
-const HiddenGemCardSchema = z.object({
-  type: z.enum(CARD_TYPES),
-  title: z.string().describe('Title for the hidden gem card'),
-  description: z.string().describe('A short description of the hidden gem'),
-  game: z.object({
-    title: z.string(),
-    platform: z.string(),
-    score: z.union([z.string(), z.number()]),
-    notes: z.string(),
-  }),
-});
+
 
 const PlayerPersonaCardSchema = z.object({
   type: z.enum(CARD_TYPES),
@@ -135,12 +123,7 @@ const PlayerPersonaCardSchema = z.object({
   description: z.string().describe('A description of the player persona'),
 });
 
-const GamerAlignmentCardSchema = z.object({
-  type: z.enum(CARD_TYPES),
-  title: z.string().describe('Title for the gamer alignment card'),
-  alignment: z.string().describe('The assigned gamer alignment'),
-  description: z.string().describe('A description of the gamer alignment'),
-});
+
 
 const RoastCardSchema = z.object({
   type: z.enum(CARD_TYPES),
@@ -165,9 +148,7 @@ const GenerateGamingWrappedOutputSchema = z.object({
     NarrativeCardSchema,
     GenreBreakdownCardSchema,
     ScoreDistributionCardSchema,
-    HiddenGemCardSchema,
     PlayerPersonaCardSchema,
-    GamerAlignmentCardSchema,
     RoastCardSchema,
     RecommendationsCardSchema,
   ])),
@@ -185,7 +166,7 @@ export async function generateGamingWrapped(input: GenerateGamingWrappedInput): 
 
 const prompt = ai.definePrompt({
   name: 'generateGamingWrappedPrompt',
-  input: { schema: z.object({games: z.string()}) },
+  input: { schema: z.object({ games: z.string() }) },
   output: { schema: GenerateGamingWrappedOutputSchema },
   prompt: `You are a creative storyteller who specializes in generating personalized gaming year summaries.
 
@@ -205,11 +186,9 @@ Generate a JSON object with a "cards" array. Each card in the array should be on
 4.  narrative: A card with a short, engaging paragraph about the user's gaming year.
 5.  genre_breakdown: A card that analyzes the game titles and notes to show the user's most played genres.
 6.  score_distribution: A chart that shows how many games fall into different score ranges (e.g., 9-10, 7-8, etc.). Ignore missing scores rather than treating them as zero.
-7.  hidden_gem: A card that highlights a game that isn't the highest-rated but seems interesting based on the user's notes.
-8.  player_persona: Assigns a persona based on a holistic view of their gaming habits. See the Player Persona Taxonomy below and choose EXACTLY ONE persona.
-9.  gamer_alignment: Assigns a Dungeons & Dragons-style alignment based on play style.
-10. roast: Provide a light-hearted, specific, PG-13 roast (1–2 sentences) based on patterns (backlog size, platform bias, abandoned games, sequel marathons, etc.). Avoid personal/sensitive topics; keep it playful, not mean.
-11. recommendations: The AI recommends you new games based on your history.
+7.  player_persona: Assigns a persona based on a holistic view of their gaming habits. See the Player Persona Taxonomy below and choose EXACTLY ONE persona.
+8.  roast: Provide a light-hearted, specific, PG-13 roast (1–2 sentences) based on patterns (backlog size, platform bias, abandoned games, sequel marathons, etc.). Avoid personal/sensitive topics; keep it playful, not mean.
+9.  recommendations: The AI recommends you new games based on your history.
 
 Additional guidance:
 - Be lenient with missing ratings: do not fixate on "nothing is rated". Use notes, completion, platform frequency, and common sense signals to draw conclusions.
