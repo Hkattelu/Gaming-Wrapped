@@ -58,7 +58,6 @@ export function GenreBreakdownCard({ card }: { card: GenreBreakdownCardType }) {
       {/* Header */}
       <div className="text-center space-y-4 mb-8 relative z-10">
         <h1 className="font-headline text-2xl md:text-3xl lg:text-4xl text-foreground uppercase tracking-widest flex items-center justify-center gap-2 drop-shadow-[2px_2px_0px_rgba(255,46,80,0.3)]">
-          <Sparkles className="inline-block w-8 h-8 md:w-10 md:h-10 text-accent animate-pulse" />
           Genre Breakdown
         </h1>
         <p className="text-muted-foreground text-xl md:text-2xl max-w-2xl mx-auto font-body">
@@ -76,17 +75,6 @@ export function GenreBreakdownCard({ card }: { card: GenreBreakdownCardType }) {
             {/* Background decoration */}
             <div className="absolute -top-6 -right-6 p-4 opacity-10 pointer-events-none text-foreground">
               <Sparkles className="w-36 h-36 rotate-12" />
-            </div>
-
-            {/* Top badges */}
-            <div className="flex justify-between items-center mb-8">
-              <span className="inline-block bg-accent text-accent-foreground font-headline text-[10px] px-2 py-1 uppercase tracking-widest border-2 border-foreground shadow-[2px_2px_0px_rgba(0,0,0,1)]">
-                Multi-Class
-              </span>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span className="text-muted-foreground font-headline text-[10px] uppercase tracking-wider">Analysis Live</span>
-              </div>
             </div>
 
             {/* Genre bars */}
@@ -128,33 +116,6 @@ export function GenreBreakdownCard({ card }: { card: GenreBreakdownCardType }) {
                 );
               })}
             </div>
-
-            {/* Stats footer */}
-            <div className="grid grid-cols-2 gap-4 border-t-2 border-dashed border-border pt-6 mt-8">
-              <div className="flex flex-col items-center">
-                <span className="text-muted-foreground text-[8px] uppercase tracking-widest mb-1 font-body font-bold">
-                  Main Class
-                </span>
-                <div className={`font-headline text-xs md:text-sm uppercase ${getGenreConfig(dominantGenre.genre).colorClass}`}>
-                  {dominantGenre.genre}
-                </div>
-              </div>
-              <div className="flex flex-col items-center border-l-2 border-dashed border-border">
-                <span className="text-muted-foreground text-[8px] uppercase tracking-widest mb-1 font-body font-bold">
-                  Variety Multiplier
-                </span>
-                <div className="text-accent font-headline text-xs md:text-sm">
-                  x{(processedData.length * 0.5).toFixed(1)} DMG
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Share Button */}
-          <div className="bg-foreground text-background py-3 px-4 text-center cursor-pointer hover:bg-primary transition-colors duration-200">
-            <span className="font-headline text-xs uppercase tracking-widest flex items-center justify-center gap-2">
-              View Extended Dossier
-            </span>
           </div>
         </div>
 

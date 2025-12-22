@@ -119,25 +119,10 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
               )}
             </div>
           </div>
-
-          {/* Share Button */}
-          <div className="bg-foreground text-background py-3 px-4 text-center cursor-pointer hover:bg-primary transition-colors duration-200">
-            <span className="font-headline text-xs uppercase tracking-widest animate-pulse">Share Card</span>
-          </div>
         </div>
 
         {/* Shadow layer */}
         <div className="absolute -bottom-4 left-4 right-[-10px] h-full w-full bg-foreground/10 dark:bg-black/50 -z-10 transform translate-y-2 pixel-corners" />
-      </div>
-
-      {/* Navigation Buttons */}
-      <div className="flex gap-4 mt-8 relative z-10 w-full max-w-md">
-        <button className="flex-1 bg-background border-2 border-border hover:bg-muted px-4 py-3 font-headline text-[10px] uppercase transition-all pixel-corners flex items-center justify-center gap-2">
-          <ArrowLeft className="w-3 h-3" /> Prev
-        </button>
-        <button className="flex-1 bg-primary text-primary-foreground border-2 border-primary hover:bg-primary/90 px-4 py-3 font-headline text-[10px] uppercase transition-all pixel-corners active:translate-y-1 shadow-[4px_4px_0px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2">
-          Next Game <ArrowRight className="w-3 h-3" />
-        </button>
       </div>
     </div>
   );

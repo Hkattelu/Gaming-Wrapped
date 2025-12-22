@@ -167,9 +167,6 @@ export function RecommendationsCardComponent({ card }: RecommendationsCardProps)
           </div>
 
           <div className="bg-secondary text-muted-foreground py-2 px-4 text-center flex justify-between items-center group/btn border-t border-border">
-            <span className="font-headline text-[8px] uppercase tracking-widest group-hover/btn:text-foreground transition-colors">
-              QUEST LOG 0{card.recommendations.length}
-            </span>
             <span className="font-headline text-[8px] uppercase tracking-widest animate-pulse group-hover/btn:animate-none group-hover/btn:text-primary transition-colors">
               READY TO PLAY
             </span>

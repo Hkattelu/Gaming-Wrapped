@@ -49,10 +49,9 @@ export function PlatformStatsCard({ card }: { card: PlatformStatsCardType }) {
       {/* Header */}
       <div className="text-center space-y-4 mb-8 relative z-10">
         <h1 className="font-headline text-2xl md:text-4xl text-foreground uppercase tracking-widest flex items-center justify-center gap-2 drop-shadow-[2px_2px_0px_rgba(255,46,80,0.3)]">
-          <Gamepad2 className="w-8 h-8 md:w-10 md:h-10 text-primary animate-pulse" />
           {card.title}
         </h1>
-        <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto font-body">
+        <p className="text-muted-foreground text-xl md:text-2xl max-w-2xl mx-auto font-body">
           {card.description}
         </p>
       </div>
@@ -64,21 +63,16 @@ export function PlatformStatsCard({ card }: { card: PlatformStatsCardType }) {
           {/* Inner card */}
           <div className="bg-card/50 border-2 border-border/50 p-8">
 
-            {/* Badge and Total */}
+            {/* Title and Total */}
             <div className="flex items-start justify-between mb-6">
-              <div className="bg-accent text-accent-foreground font-headline text-xs px-3 py-1.5 uppercase tracking-widest border-2 border-foreground shadow-[2px_2px_0px_rgba(0,0,0,1)]">
-                Yearly Recap
-              </div>
+              <h2 className="font-headline text-xl md:text-2xl text-foreground uppercase mb-6 tracking-wide">
+                System<br />Breakdown
+              </h2>
               <div className="text-right">
                 <div className="text-muted-foreground text-sm uppercase font-body font-bold tracking-wider">Total Games</div>
                 <div className="text-primary font-headline text-3xl md:text-4xl mt-1 drop-shadow-[1px_1px_0px_rgba(0,0,0,0.1)]">{totalGames}</div>
               </div>
             </div>
-
-            {/* Section Title */}
-            <h2 className="font-headline text-xl md:text-2xl text-foreground uppercase mb-6 tracking-wide">
-              System<br />Breakdown
-            </h2>
 
             {/* Stacked Bar Chart */}
             <div className="mb-8 overflow-hidden">
@@ -153,11 +147,6 @@ export function PlatformStatsCard({ card }: { card: PlatformStatsCardType }) {
                 );
               })}
             </div>
-          </div>
-
-          {/* Share Button (Legacy UI but kept for now) */}
-          <div className="bg-foreground text-background py-3 px-4 text-center cursor-pointer hover:bg-primary transition-colors duration-200 uppercase">
-            <span className="font-headline text-xs tracking-widest">Share Stats</span>
           </div>
         </div>
 

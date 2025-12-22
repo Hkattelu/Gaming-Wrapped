@@ -107,13 +107,6 @@ export function SummaryCard({ card }: { card: SummaryCardType }) {
               </div>
             </div>
           </div>
-
-          {/* Share Button */}
-          <div className="bg-foreground text-background py-3 px-4 text-center cursor-pointer hover:bg-primary transition-colors duration-200">
-            <span className="font-headline text-xs uppercase tracking-widest animate-pulse">
-              Share Card
-            </span>
-          </div>
         </div>
 
         {/* Shadow layer */}

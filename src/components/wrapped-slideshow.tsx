@@ -126,7 +126,7 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
         <CarouselContent>
           {/* Slide 1: Intro */}
           <CarouselItem className="basis-full">
-            <div className="h-[550px] w-full flex flex-col items-center justify-center p-4 relative font-body perspective-1000">
+            <div className="h-[550px] w-full flex flex-col items-center p-4 relative font-body perspective-1000">
               <div className="text-center space-y-4 mb-8 z-10">
                 <h1 className="font-headline text-3xl md:text-5xl text-primary uppercase tracking-[0.2em] drop-shadow-[4px_4px_0px_rgba(0,0,0,0.2)]">
                   Gaming Wrapped
@@ -142,9 +142,7 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
 
                 <div className="relative bg-card border-4 border-border p-1 pixel-corners shadow-xl transition-transform transform group-hover:-translate-y-2 duration-300">
                   <div className="relative bg-card/50 border-2 border-border p-8 flex flex-col items-center text-center overflow-hidden min-h-[400px] justify-center">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none text-primary">
-                      <Gamepad2 className="w-32 h-32 rotate-12" />
-                    </div>
+                    <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none text-primary"></div>
 
                     <div className="w-48 h-48 mb-6 relative mt-2">
                       <div className="absolute inset-0 bg-primary opacity-20 blur-xl rounded-full animate-pulse-slow"></div>
@@ -160,11 +158,7 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
 
                     <div className="w-full border-t-2 border-dashed border-border my-6"></div>
 
-                    <div className="animate-pulse">
-                      <span className="font-headline text-primary text-sm md:text-base uppercase tracking-widest">
-                        &gt; Press Start &lt;
-                      </span>
-                    </div>
+
                   </div>
 
                   <button
@@ -215,7 +209,7 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
 
                     <div className="relative z-10 mb-8">
                       <span className="inline-block bg-accent text-accent-foreground font-headline text-[10px] md:text-xs px-3 py-1 uppercase tracking-widest border-2 border-foreground shadow-[2px_2px_0px_rgba(0,0,0,1)]">
-                        {new Date().getFullYear()} Overview
+                        All-Time Overview
                       </span>
                     </div>
 
@@ -277,8 +271,7 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
 
                       <Button
                         asChild
-                        variant="outline"
-                        className="w-full border-2 border-primary/20 hover:border-primary/50 text-foreground font-headline text-[10px] tracking-wider pixel-corners h-10 bg-transparent"
+                        className="w-full border-2 border-primary/20 hover:border-primary/50 text-white font-headline text-[10px] tracking-wider pixel-corners h-10 bg-[#72aee6] hover:bg-[#5c9cd8]"
                       >
                         <a
                           href="https://ko-fi.com/glowstringman"

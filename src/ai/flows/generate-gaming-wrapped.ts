@@ -162,7 +162,7 @@ const prompt = ai.definePrompt({
   name: 'generateGamingWrappedPrompt',
   input: { schema: z.object({ games: z.string() }) },
   output: { schema: GenerateGamingWrappedOutputSchema },
-  prompt: `You are a creative storyteller who specializes in generating personalized gaming year summaries.
+  prompt: `You are a creative storyteller who specializes in generating personalized gaming history summaries.
 
 Analyze the following gaming data and create a fun and engaging "Gaming Wrapped" in the form of a series of cards.
 

@@ -15,7 +15,7 @@ export function PlayerPersonaCardComponent({ card }: PlayerPersonaCardProps) {
   return (
     <div className="h-[550px] w-full flex flex-col items-center gap-6 p-4 perspective-1000">
       <div className="text-center space-y-2">
-        <h2 className="font-headline text-2xl md:text-4xl text-foreground uppercase tracking-widest drop-shadow-[4px_4px_0px_rgba(255,46,80,0.3)] animate-pulse">
+        <h2 className="font-headline text-2xl md:text-4xl text-foreground uppercase tracking-widest drop-shadow-[4px_4px_0px_rgba(255,46,80,0.3)]">
           YOUR PERSONA
         </h2>
         <p className="text-muted-foreground text-lg md:text-xl font-body">

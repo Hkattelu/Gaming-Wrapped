@@ -45,41 +45,50 @@ export function RoastCardComponent({ card }: RoastCardProps) {
                   </span>
                 </div>
                 {/* Speech bubble tail */}
-                <div className="absolute -bottom-4 right-12 w-6 h-6 bg-card border-r-4 border-b-4 border-foreground transform rotate-45 z-30" />
+                <div className="absolute -bottom-4 right-6 w-6 h-6 bg-card border-r-4 border-b-4 border-foreground transform rotate-45 z-30" />
               </div>
             </div>
 
             <div className="relative z-20 mt-4 flex items-end justify-end w-full">
               <div className="mr-4 mb-2 text-right">
-                <span className="block font-headline text-[8px] text-muted-foreground uppercase tracking-widest">Your Agent</span>
-                <span className="block font-headline text-[10px] text-primary uppercase font-bold">GLITCH_GOBLIN_v2</span>
+
+                <span className="block font-headline text-[10px] text-primary uppercase font-bold">GLITCH GOBLIN</span>
               </div>
 
               {/* Pixel Character (Glitch Goblin) */}
               <div className="relative group/goblin cursor-pointer hover:scale-110 transition-transform origin-bottom">
                 <div className="w-16 h-16 md:w-20 md:h-20 grid grid-cols-8 grid-rows-8 gap-0">
-                  {/* Row 1-2: Ears */}
-                  <div className="col-start-3 col-span-1 bg-emerald-500" />
-                  <div className="col-start-6 col-span-1 bg-emerald-500" />
-                  <div className="col-start-2 col-span-1 bg-emerald-500" />
-                  <div className="col-start-3 col-span-1 bg-emerald-500" />
-                  <div className="col-start-6 col-span-1 bg-emerald-500" />
-                  <div className="col-start-7 col-span-1 bg-emerald-500" />
-                  {/* Row 3: Head Top */}
-                  <div className="col-start-2 col-span-6 bg-emerald-500" />
-                  {/* Row 4: Eyes */}
-                  <div className="col-start-1 col-span-8 bg-emerald-500 flex items-center justify-around px-2">
-                    <div className="w-2 h-2 bg-white pixel-corners animate-pulse" />
-                    <div className="w-2 h-2 bg-white pixel-corners animate-pulse" />
-                  </div>
-                  {/* Row 5: Mouth */}
-                  <div className="col-start-1 col-span-8 bg-emerald-500 flex justify-center">
-                    <div className="w-4 h-1 bg-black mt-1" />
-                  </div>
-                  {/* Row 6-8: Body */}
-                  <div className="col-start-1 col-span-8 bg-emerald-500 opacity-80" />
-                  <div className="col-start-2 col-span-6 bg-emerald-500" />
+                  {/* Row 1: Ears */}
+                  <div className="col-start-1 col-span-1 bg-emerald-600" />
+                  <div className="col-start-8 col-span-1 bg-emerald-600" />
+
+                  {/* Row 2: Ears/Head Top */}
+                  <div className="col-start-1 col-span-1 bg-emerald-600" />
                   <div className="col-start-3 col-span-4 bg-emerald-500" />
+                  <div className="col-start-8 col-span-1 bg-emerald-600" />
+
+                  {/* Row 3: Head */}
+                  <div className="col-start-2 col-span-6 bg-emerald-500" />
+
+                  {/* Row 4: Eyes */}
+                  <div className="col-start-2 col-span-6 bg-emerald-500 flex items-center justify-around px-1">
+                    <div className="w-3 h-3 bg-white border-2 border-black pixel-corners shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                    <div className="w-3 h-3 bg-white border-2 border-black pixel-corners shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                  </div>
+
+                  {/* Row 5: Nose/Face */}
+                  <div className="col-start-2 col-span-6 bg-emerald-500 flex justify-center">
+                    <div className="w-2 h-2 bg-emerald-700 mt-1" />
+                  </div>
+
+                  {/* Row 6: Mouth */}
+                  <div className="col-start-1 col-span-8 bg-emerald-500 flex justify-center">
+                    <div className="w-6 h-2 bg-black mt-1" />
+                  </div>
+
+                  {/* Row 7-8: Body */}
+                  <div className="col-start-2 col-span-6 bg-emerald-600" />
+                  <div className="col-start-3 col-span-4 bg-emerald-700" />
                 </div>
               </div>
             </div>
@@ -90,13 +99,6 @@ export function RoastCardComponent({ card }: RoastCardProps) {
                 Warning: Skill Issue Detected // Warning: Skill Issue Detected // Warning: Skill Issue Detected // Warning: Skill Issue Detected
               </div>
             </div>
-          </div>
-
-          <div className="bg-secondary text-muted-foreground py-3 px-4 text-center flex items-center justify-center gap-2 group/btn border-t border-border hover:bg-primary/10 transition-colors">
-            <Share2 className="w-4 h-4" />
-            <span className="font-headline text-[10px] uppercase tracking-widest group-hover/btn:text-foreground transition-colors">
-              Share The Shame
-            </span>
           </div>
         </div>
       </div>
