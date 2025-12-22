@@ -47,11 +47,34 @@ Follow these steps to get the project up and running on your local machine.
 
 4.  **Run the development server:**
     ```bash
-    npm run dev # using real backends
-    firebase emulators:start # using fake backends
+    npm run dev # Start up nextJS FE
+    npm run dev:emulators # Start up the fake firebase backends
     ```
 
 The application will be accessible at `http://localhost:3000`.
+
+
+## Troubleshooting
+
+### If ports are still in use:
+
+
+```bash
+# Windows - Kill process on a specific port
+netstat -ano | findstr :9002
+taskkill /PID <PID> /F
+
+# Linux
+kill $(lsof -t -i:9002)
+```
+
+
+
+### If emulator still crashes:
+1. Delete `firestore-debug.log`
+2. Clear emulator cache: `firebase emulators:export ./emulator-data` then restart
+3. Check Windows Firewall isn't blocking ports
+4. Make sure no other services are using ports 4000, 5001, 8080, or 9002
 
 ### Iterating on Wrapped UI components
 
