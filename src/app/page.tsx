@@ -19,6 +19,7 @@ export default function Home() {
   const [progress, setProgress] = useState<{ page: number; total: number } | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
 
   const [steamId, setSteamId] = useState('');
   const [steamLoading, setSteamLoading] = useState(false);
@@ -61,7 +62,7 @@ export default function Home() {
         for (const line of lines) {
           if (line.startsWith('data: ')) {
             const data = JSON.parse(line.slice(6));
-            
+
             if (data.type === 'progress') {
               setProgress({ page: data.page, total: data.total });
             } else if (data.type === 'complete') {
@@ -78,7 +79,11 @@ export default function Home() {
         throw new Error('No data received');
       }
 
-      // Download the CSV
+      // Create a File object and set it to the state
+      const exportedFile = new File([csvData], `${backloggdUsername}_games.csv`, { type: 'text/csv' });
+      setFile(exportedFile);
+
+      // Also trigger a download for the user's records
       const blob = new Blob([csvData], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -93,9 +98,9 @@ export default function Home() {
       const totalGames = progress?.total || 0;
       setSuccessMessage(`Successfully exported ${totalGames} games from Backloggd!`);
       setDialogOpen(false);
-      
-      // Clear success message after 3 seconds
-      setTimeout(() => setSuccessMessage(null), 3000);
+
+      // Clear success message after 5 seconds
+      setTimeout(() => setSuccessMessage(null), 5000);
     } catch (e: any) {
       setError(e.message);
     } finally {
@@ -139,7 +144,7 @@ export default function Home() {
         for (const line of lines) {
           if (line.startsWith('data: ')) {
             const data = JSON.parse(line.slice(6));
-            
+
             if (data.type === 'progress') {
               setSteamProgress(data.message);
             } else if (data.type === 'complete') {
@@ -156,6 +161,11 @@ export default function Home() {
         throw new Error('No data received');
       }
 
+      // Create a File object and set it to the state
+      const exportedFile = new File([csvData], `steam_${steamId}_games.csv`, { type: 'text/csv' });
+      setFile(exportedFile);
+
+      // Also trigger a download
       const blob = new Blob([csvData], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -168,8 +178,8 @@ export default function Home() {
 
       setSuccessMessage(`Successfully exported ${totalGames} games from Steam!`);
       setSteamDialogOpen(false);
-      
-      setTimeout(() => setSuccessMessage(null), 3000);
+
+      setTimeout(() => setSuccessMessage(null), 5000);
     } catch (e: any) {
       setSteamError(e.message);
     } finally {
@@ -192,16 +202,22 @@ export default function Home() {
             Got your game data? Upload your playthrough history from sites like HowLongToBeat and get a personalized, shareable &quot;Gaming Wrapped&quot; story.
           </p>
 
-          <Card className="mt-10 w-full max-w-lg bg-card/80 backdrop-blur-sm shadow-lg shadow-primary/20 border-primary/20">
-            <CardHeader>
-              <CardTitle className="font-headline text-2xl tracking-widest">UPLOAD YOUR DATA</CardTitle>
-              <CardDescription className="font-body text-base">Drop your .csv file here to start the magic.</CardDescription>
+          <Card className={`mt-10 w-full max-w-lg bg-card/80 backdrop-blur-sm shadow-lg border-2 transition-all duration-500 ${file ? 'shadow-accent/40 border-accent' : 'shadow-primary/20 border-primary/20'}`}>
+            <CardHeader className="text-center">
+              <CardTitle className={`font-headline text-2xl tracking-widest transition-colors duration-500 ${file ? 'text-accent' : 'text-foreground'}`}>
+                {file ? 'DATA RECEIVED!' : 'UPLOAD YOUR DATA'}
+              </CardTitle>
+              <CardDescription className="font-body text-base">
+                {file
+                  ? 'Your gaming history is ready for the magic. Click below to generate your rewind.'
+                  : 'Drop your .csv file here to start the magic.'}
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <UploadForm />
+              <UploadForm file={file} onFileChange={setFile} />
             </CardContent>
           </Card>
-          
+
           <div className="mt-6 flex flex-wrap justify-center gap-4">
             <Dialog open={steamDialogOpen} onOpenChange={setSteamDialogOpen}>
               <DialogTrigger asChild>
@@ -264,13 +280,13 @@ export default function Home() {
                   {progress && (
                     <div className="space-y-2">
                       <p className="text-sm text-muted-foreground">
-                        {progress.page > 0 
+                        {progress.page > 0
                           ? `Fetching page ${progress.page}... (${progress.total} games found)`
                           : `Complete! Downloaded ${progress.total} games.`
                         }
                       </p>
                       <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
-                        <div 
+                        <div
                           className="bg-primary h-full transition-all duration-300 ease-out"
                           style={{ width: progress.page > 0 ? '100%' : '100%' }}
                         >
@@ -328,7 +344,7 @@ export default function Home() {
                 </p>
               </DialogContent>
             </Dialog>
-            
+
             <Link href="/manual">
               <Button variant="outline" size="lg" className="text-base font-semibold">Manual</Button>
             </Link>
@@ -384,7 +400,7 @@ export default function Home() {
                 <AccordionTrigger className="font-headline text-xl">Terms of Service</AccordionTrigger>
                 <AccordionContent className="text-base text-xl font-body text-muted-foreground space-y-4 pt-4">
                   <p>By using Gaming Wrapped, you agree to the following terms:</p>
-                   <ul className="list-disc pl-6 space-y-2">
+                  <ul className="list-disc pl-6 space-y-2">
                     <li>This service is provided &quot;as is&quot; for entertainment purposes. We make no guarantees about the accuracy or availability of the service.</li>
                     <li>You are responsible for the data you upload. Ensure you have the right to use and share it. Do not upload sensitive personal information.</li>
                     <li>We reserve the right to modify or discontinue the service at any time.</li>
