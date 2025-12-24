@@ -31,6 +31,32 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
   const [api, setApi] = useState<any>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const [heroImage, setHeroImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchHeroImage() {
+      // Find top game title
+      const topGameCard = cards.find(c => c.type === 'top_game') as any;
+      const title = topGameCard?.game?.title;
+
+      if (!title) return;
+
+      try {
+        const res = await fetch('/api/igdb/game', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title }),
+        });
+        const data = await res.json();
+        if (data.imageUrl) {
+          setHeroImage(data.imageUrl);
+        }
+      } catch (err) {
+        console.error('Failed to fetch hero image:', err);
+      }
+    }
+    fetchHeroImage();
+  }, [cards]);
 
   useEffect(() => {
     if (!api) {
@@ -144,11 +170,24 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
                   <div className="relative bg-card/50 border-2 border-border p-8 flex flex-col items-center text-center overflow-hidden min-h-[400px] justify-center">
                     <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none text-primary"></div>
 
-                    <div className="w-48 h-48 mb-6 relative mt-2">
-                      <div className="absolute inset-0 bg-primary opacity-20 blur-xl rounded-full animate-pulse-slow"></div>
+                    <div className="w-48 h-64 mb-6 relative mt-2">
+                      <div className="absolute inset-0 bg-primary opacity-20 blur-xl rounded-full"></div>
                       <div className="relative w-full h-full bg-background border-4 border-foreground shadow-[4px_4px_0px_hsl(var(--primary))] pixel-corners overflow-hidden group-hover:scale-105 transition-transform duration-500 flex items-center justify-center">
-                        <Gamepad2 className="w-24 h-24 text-primary" />
-                        <div className="absolute inset-0 crt-overlay opacity-40"></div>
+                        {heroImage ? (
+                          <img
+                            src={heroImage}
+                            alt="Top Game"
+                            className="w-full h-full object-cover"
+                            style={{ imageRendering: 'pixelated' }}
+                          />
+                        ) : (
+                          <>
+                            <Gamepad2 className="w-24 h-24 text-primary" />
+                            <div className="absolute inset-0 crt-overlay opacity-40"></div>
+                          </>
+                        )}
+                        {/* Scanlines effect */}
+                        <div className="absolute inset-0 opacity-20 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
                       </div>
                     </div>
 
