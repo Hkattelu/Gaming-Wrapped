@@ -19,25 +19,45 @@ interface UploadFormProps {
 export function UploadForm({ file, onFileChange }: UploadFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
+  const [fakeProgress, setFakeProgress] = useState(0);
   const { toast } = useToast();
   const router = useRouter();
 
   const intervalRef = useRef<number | null>(null);
+  const progressIntervalRef = useRef<number | null>(null);
   const timeoutRef = useRef<number | null>(null);
 
   const loadingMessages = [
-    'Analyzing your CSV... 🧠',
-    'Crunching stats... 📊',
-    'Crafting your story... ✍️',
-    'Building your slideshow... 🎬',
-    'Adding some flair... ✨',
+    'Analyzing your playthroughs...',
+    'Crunching the numbers...',
+    'Opening some treasure...',
+    'Counting your achievements...',
+    'Drafting your player persona...',
+    'Consulting the lore experts...',
+    'Judging your build...',
+    'Adding a layer of polish...',
+    'Almost there, finale in sight...',
   ];
 
   useEffect(() => {
     if (isLoading) {
+      setFakeProgress(0);
+      setLoadingStep(0);
+
+      // Rotate status text every 6s (total ~54s for one full cycle)
       intervalRef.current = window.setInterval(() => {
         setLoadingStep((prev) => (prev + 1) % loadingMessages.length);
-      }, 4000);
+      }, 6000);
+
+      // Increment progress smoothly
+      progressIntervalRef.current = window.setInterval(() => {
+        setFakeProgress((prev) => {
+          if (prev >= 99) return 99;
+          // Slowly decrease the increment as we get closer to 100
+          const increment = Math.max(0.1, (100 - prev) / 100);
+          return Math.min(99, prev + increment);
+        });
+      }, 100);
 
       timeoutRef.current = window.setTimeout(() => {
         toast({
@@ -48,26 +68,21 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
         setIsLoading(false);
       }, 90000);
     } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+      intervalRef.current = null;
+      progressIntervalRef.current = null;
+      timeoutRef.current = null;
       setLoadingStep(0);
+      setFakeProgress(0);
     }
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [isLoading, loadingMessages.length, toast]);
 
@@ -208,8 +223,12 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
 
       {isLoading && (
         <div className="space-y-4 pt-4">
-          <Progress value={(loadingStep + 1) * (100 / loadingMessages.length)} className="w-full h-3" />
-          <p className="text-xl text-center text-foreground font-headline tracking-wider animate-pulse" aria-live="polite">
+          <div className="flex justify-between items-center px-1">
+            <span className="text-xs font-headline tracking-widest text-muted-foreground uppercase">Progress</span>
+            <span className="text-xs font-headline tracking-widest text-accent">{Math.floor(fakeProgress)}%</span>
+          </div>
+          <Progress value={fakeProgress} className="w-full h-3" />
+          <p className="min-h-[2rem] text-xl text-center text-foreground font-headline tracking-wider animate-pulse" aria-live="polite">
             {loadingMessages[loadingStep]}
           </p>
         </div>
