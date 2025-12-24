@@ -256,9 +256,18 @@ const generateGamingWrappedFlow = ai.defineFlow(
     // Rule 4: General Robustness
     contextInstructions += "- If a specific card type's required data is completely missing, SKIP that card type rather than hallucinating data.\n";
 
+    // Rule 5: Score Scale Detection
+    const rawScores = games.map(g => parseFloat(g.review || '')).filter(s => !isNaN(s));
+    if (rawScores.length > 0) {
+      const maxScore = Math.max(...rawScores);
+      if (maxScore <= 5) {
+        contextInstructions += "- The ratings appear to be on a 5-point scale. PLEASE NORMALIZE THESE TO A 10-POINT SCALE (multiply by 2) for the 'averageScore' and 'score_distribution' ranges.\n";
+      }
+    }
+
     // Execute the Generation.
     const { output } = await prompt({
-      games: JSON.stringify(input.games),
+      games: JSON.stringify(games),
       context: contextInstructions
     });
 

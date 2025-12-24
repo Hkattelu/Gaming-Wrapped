@@ -57,7 +57,7 @@ export function PlayerPersonaCardComponent({ card }: PlayerPersonaCardProps) {
                   className="w-full h-full object-cover rendering-pixelated shadow-inner"
                 />
                 <div className="absolute -bottom-2 -right-2 bg-accent text-accent-foreground font-headline text-[10px] px-2 py-1 border-2 border-foreground transform rotate-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  {config.tag}-RANK
+                  {config.tag}
                 </div>
               </div>
             </div>

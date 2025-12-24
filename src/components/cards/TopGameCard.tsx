@@ -40,7 +40,7 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
       {/* Header */}
       <div className="text-center space-y-4 mb-12 relative z-10">
         <h1 className="font-headline text-2xl md:text-4xl text-foreground uppercase tracking-widest drop-shadow-[2px_2px_0px_rgba(255,46,80,0.3)]">
-          <Gamepad2 className="inline-block w-8 h-8 md:w-10 md:h-10 text-primary mr-2 mb-1 animate-bounce" />
+          <Gamepad2 className="inline-block w-8 h-8 md:w-10 md:h-10 text-primary mr-2 mb-1" />
           Your Top Pick
         </h1>
         <p className="text-muted-foreground text-xl md:text-2xl max-w-2xl mx-auto font-body">
@@ -99,12 +99,17 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
             </h2>
 
             {/* Platform */}
-            <div className="flex items-center gap-3 text-base md:text-lg text-muted-foreground font-bold mb-6 font-body uppercase tracking-tight">
-              <span className="flex items-center gap-1">
-                <Monitor className="w-4 h-4" />
-                {card.game.platform}
-              </span>
-            </div>
+            {card.game.platform && card.game.platform !== 'N/A' && card.game.platform !== 'Unknown' && (
+              <div className="flex flex-col items-center gap-1 mb-6">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-headline">Platform</span>
+                <div className="flex items-center gap-3 text-base md:text-lg text-muted-foreground font-bold font-body uppercase tracking-tight">
+                  <span className="flex items-center gap-1">
+                    <Monitor className="w-4 h-4" />
+                    {card.game.platform}
+                  </span>
+                </div>
+              </div>
+            )}
 
             {/* Stats Grid */}
             <div className="w-full grid grid-cols-1 gap-4 border-t-2 border-dashed border-border pt-6 mt-2">

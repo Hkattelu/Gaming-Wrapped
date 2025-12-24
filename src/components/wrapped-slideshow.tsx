@@ -215,10 +215,16 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
 
                     {(() => {
                       const summaryCard = cards.find(c => c.type === 'summary') as any;
+                      const platformCard = cards.find(c => c.type === 'platform_stats') as any;
+
                       const totalGames = summaryCard?.totalGames ?? 0;
                       const avgScore = summaryCard?.averageScore ?? 0;
                       const estimatedHours = totalGames * 20; // estimate
                       const completionRate = summaryCard?.completionPercentage;
+                      const topPlatform = platformCard?.data?.[0]?.platform;
+
+                      const secondaryStatLabel = completionRate !== undefined ? "Completion Rate" : (topPlatform ? "Top Platform" : null);
+                      const secondaryStatValue = completionRate !== undefined ? `${completionRate}%` : topPlatform;
 
                       return (
                         <>
@@ -241,14 +247,14 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
 
                           <div className="w-full relative z-10 bg-background/40 border border-border p-4 pixel-corners">
                             <div className="flex justify-between items-center text-left">
-                              <div>
+                              <div className={secondaryStatLabel ? "" : "w-full text-center"}>
                                 <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Estimated Playtime</p>
                                 <p className="font-headline text-lg text-cyan-600 dark:text-cyan-400">{estimatedHours.toLocaleString()} <span className="text-xs text-muted-foreground font-body">HRS</span></p>
                               </div>
-                              {completionRate !== undefined && (
+                              {secondaryStatLabel && (
                                 <div className="text-right">
-                                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Completion Rate</p>
-                                  <p className="font-headline text-lg text-emerald-600 dark:text-emerald-400">{completionRate}%</p>
+                                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">{secondaryStatLabel}</p>
+                                  <p className="font-headline text-lg text-emerald-600 dark:text-emerald-400 truncate max-w-[150px]">{secondaryStatValue}</p>
                                 </div>
                               )}
                             </div>
