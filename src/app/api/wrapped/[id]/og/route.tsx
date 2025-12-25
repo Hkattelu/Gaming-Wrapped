@@ -61,6 +61,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)',
             backgroundSize: '40px 40px',
             opacity: 0.5,
+            display: 'flex',
           }} />
 
           {/* Header */}
@@ -86,13 +87,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             {/* Left Column: Persona & Top Game */}
             <div style={{ display: 'flex', flexDirection: 'column', flex: 1, gap: '20px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(255,255,255,0.03)', border: '2px solid rgba(255,255,255,0.1)', padding: '24px', borderRadius: '16px' }}>
-                <div style={{ fontSize: 18, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Your Persona</div>
-                <div style={{ fontSize: 32, fontWeight: 700, color: '#f8fafc' }}>{persona}</div>
+                <div style={{ display: 'flex', fontSize: 18, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Your Persona</div>
+                <div style={{ display: 'flex', fontSize: 32, fontWeight: 700, color: '#f8fafc' }}>{persona}</div>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(255,255,255,0.03)', border: '2px solid rgba(255,255,255,0.1)', padding: '24px', borderRadius: '16px' }}>
-                <div style={{ fontSize: 18, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Top Game</div>
-                <div style={{ fontSize: 28, fontWeight: 700, color: '#f8fafc' }}>{topGame}</div>
+                <div style={{ display: 'flex', fontSize: 18, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Top Game</div>
+                <div style={{ display: 'flex', fontSize: 28, fontWeight: 700, color: '#f8fafc' }}>{topGame}</div>
               </div>
             </div>
 
@@ -100,22 +101,22 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', flex: 1.2 }}>
               <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(59, 130, 246, 0.1)', border: '2px solid #3b82f6', padding: '20px', borderRadius: '16px', alignItems: 'center', flex: 1 }}>
-                  <div style={{ fontSize: 48, fontWeight: 800, color: '#3b82f6' }}>{totalGames}</div>
-                  <div style={{ fontSize: 16, color: '#94a3b8', textTransform: 'uppercase' }}>Games Played</div>
+                  <div style={{ display: 'flex', fontSize: 48, fontWeight: 800, color: '#3b82f6' }}>{totalGames}</div>
+                  <div style={{ display: 'flex', fontSize: 16, color: '#94a3b8', textTransform: 'uppercase' }}>Games Played</div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(245, 158, 11, 0.1)', border: '2px solid #f59e0b', padding: '20px', borderRadius: '16px', alignItems: 'center', flex: 1 }}>
-                  <div style={{ fontSize: 48, fontWeight: 800, color: '#f59e0b' }}>{avgScore}</div>
-                  <div style={{ fontSize: 16, color: '#94a3b8', textTransform: 'uppercase' }}>Avg Score</div>
+                  <div style={{ display: 'flex', fontSize: 48, fontWeight: 800, color: '#f59e0b' }}>{avgScore}</div>
+                  <div style={{ display: 'flex', fontSize: 16, color: '#94a3b8', textTransform: 'uppercase' }}>Avg Score</div>
                 </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '2px solid #10b981', padding: '20px', borderRadius: '16px', alignItems: 'center', width: '100%' }}>
-                <div style={{ fontSize: 42, fontWeight: 800, color: '#10b981' }}>{playtime.toLocaleString()} HRS</div>
-                <div style={{ fontSize: 16, color: '#94a3b8', textTransform: 'uppercase' }}>Estimated Playtime</div>
+                <div style={{ display: 'flex', fontSize: 42, fontWeight: 800, color: '#10b981' }}>{`${playtime.toLocaleString()} HRS`}</div>
+                <div style={{ display: 'flex', fontSize: 16, color: '#94a3b8', textTransform: 'uppercase' }}>Estimated Playtime</div>
               </div>
             </div>
           </div>
 
-          <div style={{ position: 'absolute', bottom: '20px', right: '40px', fontSize: 14, color: '#4b5563' }}>
+          <div style={{ position: 'absolute', bottom: '20px', right: '40px', fontSize: 14, color: '#4b5563', display: 'flex' }}>
             gaming-wrapped.vercel.app
           </div>
         </div>
