@@ -44,7 +44,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     // Fetch font (Press Start 2P)
     const fontData = await fetch(
-      new URL('https://fonts.gstatic.com/s/pressstart2p/v15/e3t4euP8mA7RjloreMATdCd2frD4.ttf', 'https://fonts.gstatic.com')
+      new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/pressstart2p/PressStart2P-Regular.ttf')
     ).then((res) => res.arrayBuffer());
 
     // Fetch Avatar
