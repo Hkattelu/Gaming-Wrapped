@@ -8,5 +8,7 @@ env:
    secret: twitchClientId@1
  - variable: TWITCH_CLIENT_SECRET
    secret: twitchClientSecret@2
+ - variable: STEAM_API_KEY
+   secret: steamApiKey@1
  - variable: HOST_URL
    value: https://gaming-wrapped--game-rewind-fpatu.us-central1.hosted.app
