@@ -6,9 +6,12 @@ import { cn } from "@/lib/utils";
 // More comprehensive category mapping
 function getScoreCategory(range: string) {
   const parts = range.split(/[ -]/); // Handle "9-10", "9 10", "9"
-  const val = parts.length > 1
+  const rawVal = parts.length > 1
     ? (parseFloat(parts[0]) + parseFloat(parts[1])) / 2
     : parseFloat(range);
+
+  // Normalize to 10-point scale if it looks like a 100-point scale
+  const val = rawVal > 10 ? rawVal / 10 : rawVal;
 
   if (val >= 9.5) return { label: "Masterpiece", color: "bg-yellow-400 text-yellow-500", icon: Hotel };
   if (val >= 8.5) return { label: "Elite", color: "bg-fuchsia-500 text-fuchsia-500", icon: Trophy };
@@ -40,8 +43,10 @@ export function ScoreDistributionCard({ card }: { card: ScoreDistributionCardTyp
     return acc + (val || 0) * item.count;
   }, 0);
 
-  const avg = totalCount > 0 ? (weightedSum / totalCount) : 0;
-  const averageScore = avg > 0 ? avg.toFixed(1) : "N/A";
+  const rawAvg = totalCount > 0 ? (weightedSum / totalCount) : 0;
+  // Normalize average for persona logic
+  const avg = rawAvg > 10 ? rawAvg / 10 : rawAvg;
+  const averageScore = rawAvg > 0 ? rawAvg.toFixed(1) : "N/A";
 
   // Derive Gamer Persona based on average
   let persona = "Gamer";

@@ -67,7 +67,6 @@ export function RecommendationsCardComponent({ card }: RecommendationsCardProps)
     <div className="h-[550px] w-full flex flex-col items-center gap-6 p-4 perspective-1000">
       <div className="text-center space-y-2">
         <h2 className="font-headline text-2xl md:text-3xl text-foreground uppercase tracking-widest drop-shadow-[2px_2px_0px_rgba(255,46,80,0.3)] flex items-center justify-center gap-3">
-          <Map className="w-8 h-8 text-accent" />
           Discovery Queue
         </h2>
         <p className="text-muted-foreground text-lg md:text-xl font-body">

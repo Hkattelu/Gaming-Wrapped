@@ -18,9 +18,6 @@ export function SummaryCard({ card }: { card: SummaryCardType }) {
       {/* Header */}
       <div className="text-center space-y-4 mb-8 relative z-10">
         <h1 className="font-headline text-2xl md:text-4xl text-foreground uppercase tracking-widest flex items-center justify-center gap-2 drop-shadow-[2px_2px_0px_rgba(255,46,80,0.3)]">
-          <span className="text-cyan-600 dark:text-cyan-400">
-            <BarChart3 className="inline-block w-8 h-8 md:w-10 md:h-10" />
-          </span>
           {card.title}
         </h1>
         <p className="text-muted-foreground text-xl md:text-2xl max-w-2xl mx-auto font-body">
@@ -77,7 +74,7 @@ export function SummaryCard({ card }: { card: SummaryCardType }) {
               <div className="flex justify-between items-center text-left">
                 <div>
                   <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">
-                    Total Playtime
+                    Estimated Playtime
                   </p>
                   <p className="font-headline text-xl text-cyan-600 dark:text-cyan-400">
                     {estimatedHours.toLocaleString()} <span className="text-sm text-muted-foreground font-body">HRS</span>

@@ -35,7 +35,6 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
       {/* Header */}
       <div className="text-center space-y-4 mb-12 relative z-10">
         <h1 className="font-headline text-2xl md:text-4xl text-foreground uppercase tracking-widest drop-shadow-[2px_2px_0px_rgba(255,46,80,0.3)]">
-          <Gamepad2 className="inline-block w-8 h-8 md:w-10 md:h-10 text-primary mr-2 mb-1" />
           Your Top Pick
         </h1>
         <p className="text-muted-foreground text-xl md:text-2xl max-w-2xl mx-auto font-body">
@@ -113,7 +112,7 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
                 <div className="flex flex-col items-center">
                   <span className="text-muted-foreground text-xs uppercase font-headline tracking-widest">Score</span>
                   <div className="text-primary font-headline text-2xl md:text-3xl mt-1 drop-shadow-[2px_2px_0px_rgba(255,255,255,0.1)]">
-                    {card.game.score}<span className="text-sm align-top opacity-70">/10</span>
+                    {card.game.score > 10 ? (card.game.score / 10).toFixed(1) : card.game.score}<span className="text-sm align-top opacity-70">/10</span>
                   </div>
                 </div>
               )}
