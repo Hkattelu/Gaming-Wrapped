@@ -92,6 +92,7 @@
   }
 }
 
+[class~="bg-grid-white/[0.05]"],
 .bg-grid-white-0-05 {
   background-image:
     linear-gradient(to right, oklch(var(--primary) / var(--grid-opacity)) 1px, transparent 1px),
