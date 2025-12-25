@@ -146,7 +146,7 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center p-4 relative font-body">
-      <div className="absolute inset-0 bg-grid-white/[0.05] z-0" />
+      <div className="absolute inset-0 bg-grid-white-0-05 z-0" />
       <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
       <Carousel className="w-full max-w-xl z-10" setApi={setApi}>
         <CarouselContent>
@@ -172,7 +172,7 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
 
                     <div className="w-48 h-64 mb-6 relative mt-2">
                       <div className="absolute inset-0 bg-primary opacity-20 blur-xl rounded-full"></div>
-                      <div className="relative w-full h-full bg-background border-4 border-foreground shadow-[4px_4px_0px_hsl(var(--primary))] pixel-corners overflow-hidden group-hover:scale-105 transition-transform duration-500 flex items-center justify-center">
+                      <div className="relative w-full h-full bg-background border-4 border-foreground shadow-[4px_4px_0px_oklch(var(--primary))] pixel-corners overflow-hidden group-hover:scale-105 transition-transform duration-500 flex items-center justify-center">
                         {heroImage ? (
                           <img
                             src={heroImage}
@@ -319,7 +319,7 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
 
                       <Button
                         asChild
-                        className="w-full border-2 border-primary/20 hover:border-primary/50 text-white font-headline text-[10px] tracking-wider pixel-corners h-10 bg-[#72aee6] hover:bg-[#5c9cd8]"
+                        className="w-full border-2 border-primary/20 hover:border-primary/50 text-white font-headline text-[10px] tracking-wider pixel-corners h-10 bg-cyan-500 hover:bg-cyan-600"
                       >
                         <a
                           href="https://ko-fi.com/glowstringman"

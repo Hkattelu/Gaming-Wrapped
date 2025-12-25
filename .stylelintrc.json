@@ -1,0 +1,17 @@
+{
+  "extends": "stylelint-config-standard",
+  "plugins": ["stylelint-gamut"],
+  "rules": {
+    "gamut/color-no-out-gamut-range": true,
+    "function-disallowed-list": ["rgba", "hsla", "hsl"],
+    "color-function-notation": "modern",
+    "color-no-hex": true,
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": ["tailwind", "layer", "apply"]
+      }
+    ],
+    "custom-property-pattern": null
+  }
+}

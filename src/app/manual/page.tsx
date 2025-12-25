@@ -288,7 +288,7 @@ export default function ManualEntryPage() {
 
   return (
     <div className="relative min-h-screen w-full overflow-y-auto">
-      <div className="absolute inset-0 bg-grid-white/[0.05] z-0" />
+      <div className="absolute inset-0 bg-grid-white-0-05 z-0" />
       <main className="flex flex-col items-center justify-start p-4 sm:p-8 relative z-10 min-h-screen">
         <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
         

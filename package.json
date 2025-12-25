@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:css": "stylelint \"**/*.css\"",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "dev:harness": "tsx src/ai/harness.ts"
@@ -85,6 +86,9 @@
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
     "postcss": "^8",
+    "stylelint": "^16.26.1",
+    "stylelint-config-standard": "^39.0.1",
+    "stylelint-gamut": "^1.3.4",
     "tailwindcss": "^3.4.1",
     "ts-jest": "^29.4.0",
     "typescript": "^5.9.3"

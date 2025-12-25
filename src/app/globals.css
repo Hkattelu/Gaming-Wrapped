@@ -4,62 +4,65 @@
 
 @layer base {
   :root {
-    --background: 45 20% 97%;
-    --foreground: 240 10% 15%;
-    --card: 45 20% 95%;
-    --card-foreground: 240 10% 15%;
-    --popover: 45 20% 97%;
-    --popover-foreground: 240 10% 15%;
-    --primary: 346.8 77.2% 45%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 45 10% 90%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 45 10% 92%;
-    --muted-foreground: 240 10% 40%;
-    --accent: 45 100% 30%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 45 15% 85%;
-    --input: 45 15% 85%;
-    --ring: 346.8 77.2% 49.8%;
-    --chart-1: 12 76% 50%;
-    --chart-2: 45 100% 35%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --background: 0.979 0.003 91.437;
+    --foreground: 0.257 0.014 285.352;
+    --card: 0.966 0.005 91.457;
+    --card-foreground: 0.257 0.014 285.352;
+    --popover: 0.979 0.003 91.437;
+    --popover-foreground: 0.257 0.014 285.352;
+    --primary: 0.544 0.205 17.359;
+    --primary-foreground: 0.985 0.000 0.000;
+    --secondary: 0.927 0.005 91.459;
+    --secondary-foreground: 0.210 0.006 285.883;
+    --muted: 0.942 0.004 91.449;
+    --muted-foreground: 0.482 0.033 285.113;
+    --accent: 0.577 0.118 85.267;
+    --accent-foreground: 0.210 0.006 285.883;
+    --destructive: 0.637 0.208 25.326;
+    --destructive-foreground: 0.985 0.000 0.000;
+    --border: 0.893 0.012 91.523;
+    --input: 0.893 0.012 91.523;
+    --ring: 0.586 0.222 17.555;
+    --chart-1: 0.610 0.198 34.548;
+    --chart-2: 0.645 0.132 84.896;
+    --chart-3: 0.379 0.044 225.539;
+    --chart-4: 0.834 0.119 88.146;
+    --chart-5: 0.783 0.126 58.749;
     --radius: 0.8rem;
     --grid-opacity: 0.04;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 5%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 346.8 77.2% 49.8%;
+    --background: 0.141 0.004 285.824;
+    --foreground: 0.985 0.000 0.000;
+    --card: 0.153 0.005 285.744;
+    --card-foreground: 0.985 0.000 0.000;
+    --popover: 0.141 0.004 285.824;
+    --popover-foreground: 0.985 0.000 0.000;
+    --primary: 0.586 0.222 17.555;
+
     /* Hot Pink */
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
+    --primary-foreground: 0.985 0.000 0.000;
+    --secondary: 0.274 0.005 286.033;
+    --secondary-foreground: 0.985 0.000 0.000;
+    --muted: 0.274 0.005 286.033;
+
     /* Increase muted-foreground lightness for better readability */
-    --muted-foreground: 0 0% 82%;
-    --accent: 47.9 95.8% 53.1%;
+    --muted-foreground: 0.861 0.000 0.000;
+    --accent: 0.860 0.173 91.838;
+
     /* Electric Yellow */
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 22%;
-    --input: 240 3.7% 22%;
-    --ring: 346.8 77.2% 49.8%;
-    --chart-1: 346.8 77.2% 49.8%;
-    --chart-2: 47.9 95.8% 53.1%;
-    --chart-3: 193 96% 48%;
-    --chart-4: 275 100% 55%;
-    --chart-5: 160 60% 45%;
+    --accent-foreground: 0.210 0.006 285.883;
+    --destructive: 0.396 0.133 25.721;
+    --destructive-foreground: 0.985 0.000 0.000;
+    --border: 0.335 0.007 286.003;
+    --input: 0.335 0.007 286.003;
+    --ring: 0.586 0.222 17.555;
+    --chart-1: 0.586 0.222 17.555;
+    --chart-2: 0.860 0.173 91.838;
+    --chart-3: 0.744 0.142 226.087;
+    --chart-4: 0.574 0.289 303.381;
+    --chart-5: 0.698 0.134 165.463;
     --grid-opacity: 0.08;
   }
 }
@@ -79,26 +82,35 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: hsl(var(--background));
+    background: oklch(var(--background));
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--primary));
+    background-color: oklch(var(--primary));
     border-radius: 6px;
-    border: 3px solid hsl(var(--background));
+    border: 3px solid oklch(var(--background));
   }
 }
 
-.bg-grid-white\/\[0\.05\] {
+[class~="bg-grid-white/[0.05]"],
+.bg-grid-white-0-05 {
+  /* Legacy Tailwind arbitrary value class support. */
   background-image:
-    linear-gradient(to right, hsl(var(--primary) / var(--grid-opacity)) 1px, transparent 1px),
-    linear-gradient(to bottom, hsl(var(--primary) / var(--grid-opacity)) 1px, transparent 1px);
+    linear-gradient(to right, oklch(var(--primary) / var(--grid-opacity)) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(var(--primary) / var(--grid-opacity)) 1px, transparent 1px);
   background-size: 60px 60px;
   background-color: transparent;
   background-position: center;
 }
 
 @layer utilities {
+  .bg-retro-grid-40 {
+    background-image:
+      linear-gradient(to right, oklch(var(--primary) / 30%) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(var(--primary) / 30%) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
   @keyframes pulse-slow {
     50% {
       opacity: 0.5;
@@ -111,17 +123,17 @@
   }
 
   .pixel-corners {
-    clip-path: polygon(0px 4px, 4px 4px, 4px 0px,
-        calc(100% - 4px) 0px, calc(100% - 4px) 4px, 100% 4px,
+    clip-path: polygon(0 4px, 4px 4px, 4px 0,
+        calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
         100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%,
-        4px 100%, 4px calc(100% - 4px), 0px calc(100% - 4px));
+        4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px));
   }
 
   .quest-pattern {
     background-image:
-      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-      radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+      linear-gradient(90deg, rgb(255 255 255 / 3%) 1px, transparent 1px),
+      linear-gradient(rgb(255 255 255 / 3%) 1px, transparent 1px),
+      radial-gradient(circle, rgb(255 255 255 / 10%) 1px, transparent 1px);
     background-size: 40px 40px, 40px 40px, 20px 20px;
     background-position: 0 0, 0 0, 10px 10px;
   }
@@ -135,7 +147,7 @@
   }
 
   .glitch-text-shadow {
-    text-shadow: 2px 2px 0px #00F0FF, -2px -2px 0px #FF2E50;
+    text-shadow: 2px 2px 0 oklch(85% 0.1 200deg), -2px -2px 0 oklch(60% 0.20 20deg);
   }
 
   .bg-noise-pattern {
@@ -143,13 +155,13 @@
   }
 
   .digital-pattern {
-    background-image: radial-gradient(#333 15%, transparent 15%), radial-gradient(#333 15%, transparent 15%);
+    background-image: radial-gradient(oklch(20% 0 0deg) 15%, transparent 15%), radial-gradient(oklch(20% 0 0deg) 15%, transparent 15%);
     background-position: 0 0, 10px 10px;
     background-size: 20px 20px;
   }
 
   .crt-overlay {
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background: linear-gradient(rgb(18 16 16 / 0%) 50%, rgb(0 0 0 / 25%) 50%), linear-gradient(90deg, rgb(255 0 0 / 6%), rgb(0 255 0 / 2%), rgb(0 0 255 / 6%));
     background-size: 100% 2px, 3px 100%;
     pointer-events: none;
   }
@@ -158,7 +170,7 @@
     width: 100%;
     height: 100px;
     z-index: 10;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.03) 50%, rgba(0, 0, 0, 0) 100%);
+    background: linear-gradient(0deg, rgb(0 0 0 / 0%) 0%, rgb(255 255 255 / 3%) 50%, rgb(0 0 0 / 0%) 100%);
     opacity: 0.1;
     position: absolute;
     bottom: 100%;
@@ -181,11 +193,11 @@
 
   .bar-pattern {
     background-image: linear-gradient(45deg,
-        rgba(0, 0, 0, 0.1) 25%,
+        rgb(0 0 0 / 10%) 25%,
         transparent 25%,
         transparent 50%,
-        rgba(0, 0, 0, 0.1) 50%,
-        rgba(0, 0, 0, 0.1) 75%,
+        rgb(0 0 0 / 10%) 50%,
+        rgb(0 0 0 / 10%) 75%,
         transparent 75%,
         transparent);
     background-size: 8px 8px;
