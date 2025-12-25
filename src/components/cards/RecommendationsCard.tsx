@@ -99,14 +99,24 @@ export function RecommendationsCardComponent({ card }: RecommendationsCardProps)
               {recommendations.slice(0, 3).map((rec, index) => {
                 const accent = ACCENT_COLORS[index % ACCENT_COLORS.length];
                 const Icon = accent.icon;
+                const Wrapper = rec.igdbUrl ? "a" : "div";
+                const wrapperProps = rec.igdbUrl ? {
+                  href: rec.igdbUrl,
+                  target: "_blank",
+                  rel: "noopener noreferrer"
+                } : {};
 
                 return (
-                  <div
+                  <Wrapper
                     key={index}
-                    className="group/item flex items-center gap-4 p-2 hover:bg-foreground/5 pixel-corners transition-colors cursor-default border border-transparent hover:border-border/50"
+                    {...wrapperProps}
+                    className={cn(
+                      "group/item flex items-center gap-4 p-2 hover:bg-foreground/5 pixel-corners transition-colors border border-transparent hover:border-border/50",
+                      rec.igdbUrl ? "cursor-pointer" : "cursor-default"
+                    )}
                   >
                     <div className={cn(
-                      "flex-shrink-0 w-16 h-20 bg-card border overflow-hidden pixel-corners shadow-sm transition-transform group-hover/item:scale-105",
+                      "flex-shrink-0 w-16 h-24 bg-card border overflow-hidden pixel-corners shadow-sm transition-transform group-hover/item:scale-105",
                       accent.border,
                       accent.shadow
                     )}>
@@ -126,27 +136,14 @@ export function RecommendationsCardComponent({ card }: RecommendationsCardProps)
                     <div className="flex-grow min-w-0">
                       <div className="flex items-center justify-between gap-2 mb-1">
                         <div className="flex items-center gap-2 overflow-hidden">
-                          {rec.igdbUrl ? (
-                            <a
-                              href={rec.igdbUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={cn(
-                                "font-headline text-xs md:text-sm leading-relaxed hover:underline flex items-center gap-1 transition-colors truncate",
-                                accent.text
-                              )}
-                            >
-                              {rec.game.toUpperCase()}
-                              <ExternalLink className="w-3 h-3 opacity-50 shrink-0" />
-                            </a>
-                          ) : (
-                            <h3 className={cn(
-                              "font-headline text-xs md:text-sm leading-relaxed group-hover/item:text-foreground transition-colors truncate",
-                              accent.text
-                            )}>
-                              {rec.game.toUpperCase()}
-                            </h3>
-                          )}
+                          <h3 className={cn(
+                            "font-headline text-xs md:text-sm leading-relaxed transition-colors flex items-center gap-1 min-w-0",
+                            accent.text,
+                            rec.igdbUrl && "group-hover/item:underline"
+                          )}>
+                            <span className="truncate">{rec.game.toUpperCase()}</span>
+                            {rec.igdbUrl && <ExternalLink className="w-3 h-3 opacity-50 shrink-0" />}
+                          </h3>
                         </div>
                         {rec.rating && (
                           <div className="flex-shrink-0 bg-secondary px-1.5 py-0.5 pixel-corners border border-border">
@@ -156,11 +153,11 @@ export function RecommendationsCardComponent({ card }: RecommendationsCardProps)
                           </div>
                         )}
                       </div>
-                      <p className="font-body text-sm md:text-base text-muted-foreground leading-tight line-clamp-2">
+                      <p className="font-body text-sm md:text-base text-muted-foreground leading-tight line-clamp-3">
                         {rec.blurb}
                       </p>
                     </div>
-                  </div>
+                  </Wrapper>
                 );
               })}
             </div>
