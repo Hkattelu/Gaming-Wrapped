@@ -48,10 +48,10 @@ export function RoastCardComponent({ card }: RoastCardProps) {
                     Pathetic.
                   </span>
                 </div>
-                <span className="block font-headline text-[10px] text-primary uppercase font-bold">GLITCH GOBLIN</span>
+                <span className="block font-headline text-[10px] text-primary uppercase font-bold">GAMING GOBLIN</span>
               </div>
 
-              {/* Pixel Character (Glitch Goblin) */}
+              {/* Pixel Character (Gaming Goblin) */}
               <div className="relative group/goblin cursor-pointer hover:scale-110 transition-transform origin-bottom">
                 <div className="w-16 h-16 md:w-20 md:h-20 grid grid-cols-8 grid-rows-8 gap-0">
                   {/* Row 1: Ears */}

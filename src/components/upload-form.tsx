@@ -172,7 +172,7 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
         <label
           htmlFor="dropzone-file"
           className={cn(
-            "flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors",
+            "flex flex-col items-center justify-center w-full border-2 border-dashed rounded-lg cursor-pointer transition-colors",
             file
               ? "border-accent bg-accent/5 hover:bg-accent/10"
               : "border-primary/50 bg-card hover:bg-muted"
@@ -180,19 +180,19 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
         >
           <div className="flex flex-col items-center justify-center pt-5 pb-6 px-4 text-center">
             {file ? (
-              <div className="relative w-full flex flex-col items-center">
-                <div className="p-3 rounded-full bg-accent/20 mb-3">
+              <div className="relative w-full flex flex-col items-center space-y-2">
+                <div className="p-3 rounded-full bg-accent/20 mb-2">
                   <UploadCloud className="w-8 h-8 text-accent" />
                 </div>
-                <p className="mb-1 text-sm font-semibold text-accent truncate max-w-[250px]">
+                <p className="mb-1 text-sm font-semibold text-accent truncate max-w-[200px] text-center">
                   {file.name}
                 </p>
-                <p className="text-xs text-muted-foreground mb-4">Click or drag to change file</p>
+                <p className="text-s text-muted-foreground mb-2">Click or drag to change file</p>
                 <Button
                   type="button"
                   variant="ghost"
-                  size="sm"
-                  className="h-8 text-muted-foreground hover:text-destructive transition-colors"
+                  size="lg"
+                  className="h-12 text-md text-accent hover:text-destructive hover:bg-destructive/10 transition-colors border border-destructive/20"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -236,6 +236,3 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
     </form>
   );
 }
-
-
-
