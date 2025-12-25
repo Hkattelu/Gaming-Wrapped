@@ -92,9 +92,9 @@
   }
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
-.bg-grid-white\/\[0\.05\],
+[class~="bg-grid-white/[0.05]"],
 .bg-grid-white-0-05 {
+  /* Legacy Tailwind arbitrary value class support. */
   background-image:
     linear-gradient(to right, oklch(var(--primary) / var(--grid-opacity)) 1px, transparent 1px),
     linear-gradient(to bottom, oklch(var(--primary) / var(--grid-opacity)) 1px, transparent 1px);
@@ -104,6 +104,13 @@
 }
 
 @layer utilities {
+  .bg-retro-grid-40 {
+    background-image:
+      linear-gradient(to right, oklch(var(--primary) / 30%) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(var(--primary) / 30%) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
   @keyframes pulse-slow {
     50% {
       opacity: 0.5;

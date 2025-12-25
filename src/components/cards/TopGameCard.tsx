@@ -30,12 +30,7 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
   return (
     <div className="relative min-h-[600px] flex flex-col items-center justify-center p-4">
       {/* Retro grid background */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none"
-        style={{
-          backgroundImage: 'linear-gradient(to right, oklch(var(--primary) / 0.3) 1px, transparent 1px), linear-gradient(to bottom, oklch(var(--primary) / 0.3) 1px, transparent 1px)',
-          backgroundSize: '40px 40px'
-        }}>
-      </div>
+      <div className="absolute inset-0 opacity-10 pointer-events-none bg-retro-grid-40" />
 
       {/* Header */}
       <div className="text-center space-y-4 mb-12 relative z-10">
