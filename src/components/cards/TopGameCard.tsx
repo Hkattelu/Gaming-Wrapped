@@ -112,7 +112,16 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
                 <div className="flex flex-col items-center">
                   <span className="text-muted-foreground text-xs uppercase font-headline tracking-widest">Score</span>
                   <div className="text-primary font-headline text-2xl md:text-3xl mt-1 drop-shadow-[2px_2px_0px_rgba(255,255,255,0.1)]">
-                    {card.game.score > 10 ? (card.game.score / 10).toFixed(1) : card.game.score}<span className="text-sm align-top opacity-70">/10</span>
+                    {card.game.formattedScore ? (
+                      card.game.formattedScore
+                    ) : (
+                      <>
+                        {Number(card.game.score) > 10
+                          ? (Number(card.game.score) / 10).toFixed(1)
+                          : card.game.score}
+                        <span className="text-sm align-top opacity-70">/10</span>
+                      </>
+                    )}
                   </div>
                 </div>
               )}

@@ -2,6 +2,7 @@ export interface Game {
   title: string;
   platform: string;
   score: number | string; // Can be number or string like 'N/A'
+  formattedScore?: string;
   notes: string;
 }
 

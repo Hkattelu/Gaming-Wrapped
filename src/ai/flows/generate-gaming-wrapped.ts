@@ -75,6 +75,7 @@ const TopGameCardSchema = z.object({
     title: z.string(),
     platform: z.string(),
     score: z.union([z.string(), z.number()]),
+    formattedScore: z.string().optional().describe("The score formatted with the maximum scale, e.g., '9/10', '4.5/5', '95/100'."),
     notes: z.string(),
   }),
 });
@@ -262,6 +263,9 @@ const generateGamingWrappedFlow = ai.defineFlow(
       const maxScore = Math.max(...rawScores);
       if (maxScore <= 5) {
         contextInstructions += "- The ratings appear to be on a 5-point scale. PLEASE NORMALIZE THESE TO A 10-POINT SCALE (multiply by 2) for the 'averageScore' and 'score_distribution' ranges.\n";
+        contextInstructions += "- However, for the 'top_game' card's 'formattedScore', usage the ORIGINAL 5-point scale (e.g. '5/5').\n";
+      } else {
+        contextInstructions += "- For the 'top_game' card, set 'formattedScore' to the score formatted with its likely maximum (e.g. '9/10' if 10-point, '90/100' if 100-point).\n";
       }
     }
 
