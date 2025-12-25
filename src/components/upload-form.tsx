@@ -5,11 +5,18 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, UploadCloud } from 'lucide-react';
+import { Loader2, UploadCloud, Gamepad2, Layers, Star } from 'lucide-react';
 import { generateWrappedData } from '@/app/actions';
 import { useRouter } from 'next/navigation';
 import { Progress } from "@/components/ui/progress"
 import { cn } from '@/lib/utils';
+import Papa from 'papaparse';
+
+interface PreviewData {
+  totalGames: number;
+  platforms: string[];
+  topGames: string[];
+}
 
 interface UploadFormProps {
   file: File | null;
@@ -20,12 +27,58 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
   const [fakeProgress, setFakeProgress] = useState(0);
+  const [previewData, setPreviewData] = useState<PreviewData | null>(null);
   const { toast } = useToast();
   const router = useRouter();
 
   const intervalRef = useRef<number | null>(null);
   const progressIntervalRef = useRef<number | null>(null);
   const timeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target?.result as string;
+        if (text) {
+          Papa.parse(text, {
+            header: true,
+            skipEmptyLines: true,
+            complete: (results) => {
+              const data = results.data as any[];
+              const totalGames = data.length;
+              
+              // Get unique platforms
+              const platforms = Array.from(new Set(data
+                .map(g => g.Platform || g.platform)
+                .filter(Boolean)
+              )).slice(0, 5) as string[];
+
+              // Get top 3 games by rating/score
+              const topGames = data
+                .filter(g => (g.Rating || g.score || g.Review))
+                .sort((a, b) => {
+                  const scoreA = parseFloat(a.Rating || a.score || a.Review || 0);
+                  const scoreB = parseFloat(b.Rating || b.score || b.Review || 0);
+                  return scoreB - scoreA;
+                })
+                .slice(0, 3)
+                .map(g => g.Title || g.title) as string[];
+
+              setPreviewData({
+                totalGames,
+                platforms,
+                topGames
+              });
+            }
+          });
+        }
+      };
+      reader.readAsText(file);
+    } else {
+      setPreviewData(null);
+    }
+  }, [file]);
 
   const loadingMessages = [
     'Analyzing your playthroughs...',
@@ -215,6 +268,44 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
           <Input id="dropzone-file" type="file" accept=".csv" className="hidden" onChange={handleFileChange} />
         </label>
       </div>
+
+      {file && previewData && !isLoading && (
+        <div className="grid grid-cols-1 gap-3 p-4 bg-accent/5 border-2 border-accent/20 rounded-xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="flex items-center gap-4">
+            <div className="p-2 rounded-lg bg-accent/10">
+              <Gamepad2 className="w-5 h-5 text-accent" />
+            </div>
+            <div className="text-left">
+              <p className="text-sm font-headline tracking-widest text-muted-foreground uppercase">Total Games</p>
+              <p className="text-xl font-headline text-foreground">{previewData.totalGames}</p>
+            </div>
+          </div>
+          
+          {previewData.topGames.length > 0 && (
+            <div className="flex items-start gap-4 border-t border-accent/10 pt-3">
+              <div className="p-2 rounded-lg bg-amber-500/10">
+                <Star className="w-5 h-5 text-amber-500" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-headline tracking-widest text-muted-foreground uppercase">Top Rated</p>
+                <p className="text-sm text-foreground line-clamp-2">{previewData.topGames.join(", ")}</p>
+              </div>
+            </div>
+          )}
+
+          {previewData.platforms.length > 0 && (
+            <div className="flex items-start gap-4 border-t border-accent/10 pt-3">
+              <div className="p-2 rounded-lg bg-blue-500/10">
+                <Layers className="w-5 h-5 text-blue-500" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-headline tracking-widest text-muted-foreground uppercase">Platforms</p>
+                <p className="text-sm text-foreground line-clamp-1">{previewData.platforms.join(", ")}{previewData.platforms.length >= 5 ? "..." : ""}</p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <Button type="submit" className="w-full font-headline tracking-wider text-lg py-6" disabled={isLoading || !file}>
         {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
