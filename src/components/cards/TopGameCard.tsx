@@ -32,7 +32,7 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
       {/* Retro grid background */}
       <div className="absolute inset-0 opacity-10 pointer-events-none"
         style={{
-          backgroundImage: 'linear-gradient(to right, hsl(var(--primary) / 0.3) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--primary) / 0.3) 1px, transparent 1px)',
+          backgroundImage: 'linear-gradient(to right, oklch(var(--primary) / 0.3) 1px, transparent 1px), linear-gradient(to bottom, oklch(var(--primary) / 0.3) 1px, transparent 1px)',
           backgroundSize: '40px 40px'
         }}>
       </div>
@@ -74,7 +74,7 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
               <div className="absolute inset-0 bg-primary opacity-20 blur-xl rounded-full"></div>
 
               {/* Image frame */}
-              <div className="relative w-full h-full bg-background border-4 border-foreground overflow-hidden shadow-[4px_4px_0px_hsl(var(--primary))] pixel-corners">
+              <div className="relative w-full h-full bg-background border-4 border-foreground overflow-hidden shadow-[4px_4px_0px_oklch(var(--primary))] pixel-corners">
                 {imageUrl ? (
                   <img
                     src={imageUrl}

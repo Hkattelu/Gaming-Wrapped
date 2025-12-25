@@ -190,7 +190,7 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
-      <div className="absolute inset-0 bg-grid-white/[0.05] z-0" />
+      <div className="absolute inset-0 bg-grid-white-0-05 z-0" />
       <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 relative z-10 min-h-screen">
         <div className="absolute top-4 right-4 z-50">
           <ModeToggle />
