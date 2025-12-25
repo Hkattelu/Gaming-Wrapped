@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 import { getWrapped } from '@/lib/db';
+import { Game } from '@/types';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,7 +66,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
           {/* Header */}
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '40px' }}>
-            <div style={{ fontSize: 48, fontWeight: 900, letterSpacing: '0.2em', color: '#3b82f6' }}>
+            <div style={{ 
+              fontSize: 60, 
+              fontWeight: 900, 
+              letterSpacing: '0.15em', 
+              color: '#3b82f6',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '20px'
+            }}>
+              <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="20" height="12" x="2" y="6" rx="2" />
+                <path d="M6 12h.01M9 12h.01M15 11h.01M18 11h.01M15 13h.01M18 13h.01" />
+              </svg>
               GAMING WRAPPED
             </div>
           </div>
