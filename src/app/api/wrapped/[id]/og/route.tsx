@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
@@ -97,17 +96,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
               </div>
             </div>
 
-            {/* Right Column: Stats Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', flex: 1.2 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(59, 130, 246, 0.1)', border: '2px solid #3b82f6', padding: '20px', borderRadius: '16px', alignItems: 'center' }}>
-                <div style={{ fontSize: 48, fontWeight: 800, color: '#3b82f6' }}>{totalGames}</div>
-                <div style={{ fontSize: 16, color: '#94a3b8', textTransform: 'uppercase' }}>Games Played</div>
+            {/* Right Column: Stats Grid (Simulated with Flex) */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', flex: 1.2 }}>
+              <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(59, 130, 246, 0.1)', border: '2px solid #3b82f6', padding: '20px', borderRadius: '16px', alignItems: 'center', flex: 1 }}>
+                  <div style={{ fontSize: 48, fontWeight: 800, color: '#3b82f6' }}>{totalGames}</div>
+                  <div style={{ fontSize: 16, color: '#94a3b8', textTransform: 'uppercase' }}>Games Played</div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(245, 158, 11, 0.1)', border: '2px solid #f59e0b', padding: '20px', borderRadius: '16px', alignItems: 'center', flex: 1 }}>
+                  <div style={{ fontSize: 48, fontWeight: 800, color: '#f59e0b' }}>{avgScore}</div>
+                  <div style={{ fontSize: 16, color: '#94a3b8', textTransform: 'uppercase' }}>Avg Score</div>
+                </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(245, 158, 11, 0.1)', border: '2px solid #f59e0b', padding: '20px', borderRadius: '16px', alignItems: 'center' }}>
-                <div style={{ fontSize: 48, fontWeight: 800, color: '#f59e0b' }}>{avgScore}</div>
-                <div style={{ fontSize: 16, color: '#94a3b8', textTransform: 'uppercase' }}>Avg Score</div>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '2px solid #10b981', padding: '20px', borderRadius: '16px', alignItems: 'center', gridColumn: 'span 2' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '2px solid #10b981', padding: '20px', borderRadius: '16px', alignItems: 'center', width: '100%' }}>
                 <div style={{ fontSize: 42, fontWeight: 800, color: '#10b981' }}>{playtime.toLocaleString()} HRS</div>
                 <div style={{ fontSize: 16, color: '#94a3b8', textTransform: 'uppercase' }}>Estimated Playtime</div>
               </div>
