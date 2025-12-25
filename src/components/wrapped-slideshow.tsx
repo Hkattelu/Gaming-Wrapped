@@ -107,9 +107,31 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
     };
   }, [api]);
 
-  const handleShare = () => {
+  const handleShare = async () => {
     if (id) {
       const shareUrl = `${window.location.origin}/wrapped?id=${id}`;
+      const summaryCard = cards.find(c => c.type === 'summary') as any;
+      const totalGames = summaryCard?.totalGames ?? 0;
+      const playtime = totalGames * 20;
+      
+      const shareData = {
+        title: 'My Gaming Wrapped 2025',
+        text: `I played ${totalGames} games for over ${playtime} hours this year! Check out my Gaming Wrapped.`,
+        url: shareUrl,
+      };
+
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+        try {
+          await navigator.share(shareData);
+          return;
+        } catch (err) {
+          if ((err as Error).name !== 'AbortError') {
+            console.error('Error sharing:', err);
+          }
+        }
+      }
+
+      // Fallback to clipboard
       navigator.clipboard.writeText(shareUrl);
       toast({
         title: "LINK COPIED!",
@@ -310,10 +332,20 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
                     })()}
 
                     {/* Action Buttons */}
-                    <div className="mt-8 flex flex-col gap-4 w-full relative z-10">
+                    <div className="mt-8 flex flex-col gap-3 w-full relative z-10">
                       <Button className="w-full font-headline text-xs tracking-wider pixel-corners h-12" onClick={handleShare}>
                         <Share2 className="mr-2 h-4 w-4" />
                         SHARE MY WRAPPED
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        asChild
+                        className="w-full font-headline text-[10px] tracking-wider pixel-corners h-10 border-2"
+                      >
+                        <a href={`/api/wrapped/${id}/og?download=true`} download={`gaming-wrapped-${id}.png`}>
+                          DOWNLOAD SUMMARY IMAGE
+                        </a>
                       </Button>
 
                       <Button

@@ -1,104 +1,74 @@
-
-"use client";
-
 import { Suspense } from 'react';
-import { useEffect, useState } from 'react';
-import type { WrappedData } from '@/types';
-import { WrappedSlideshow } from '@/components/wrapped-slideshow';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ArrowLeft, AlertTriangle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import Loading from './loading';
-import { useRouter, useSearchParams } from 'next/navigation';
+import WrappedPageClient from './wrapped-page-client';
+import { Metadata } from 'next';
+import { getWrapped } from '@/lib/db';
 
-function WrappedPageContent() {
-  const [data, setData] = useState<WrappedData | null>(null);
-  const [id, setId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  useEffect(() => {
-    const searchId = searchParams.get('id');
-
-    if (searchId) {
-      setId(searchId);
-      fetch(`/api/wrapped/${searchId}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to fetch wrapped data');
-          }
-          return response.json();
-        })
-        .then(data => {
-          setData(data.wrapped);
-          setIsLoading(false);
-        })
-        .catch(error => {
-          setError(error.message);
-          setIsLoading(false);
-        });
-    } else {
-      const storedData = sessionStorage.getItem('wrappedData');
-      const storedId = sessionStorage.getItem('wrappedId');
-      if (storedData && storedId) {
-        try {
-          const parsedData: WrappedData = JSON.parse(storedData);
-          setData(parsedData);
-          setId(storedId);
-          router.replace(`/wrapped?id=${storedId}`);
-        } catch (e) {
-          setError('Failed to load your Gaming Wrapped. The data format is invalid.');
-        } finally {
-          setIsLoading(false);
-        }
-      } else if (storedId) {
-        // If we have an id but no cached data, redirect to fetch it server-side
-        router.replace(`/wrapped?id=${storedId}`);
-      } else {
-        setError('No Gaming Wrapped data found. Please start over.');
-        setIsLoading(false);
-      }
-    }
-  }, [searchParams, router]);
-
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
-        <Alert variant="destructive" className="max-w-md">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-        <Button asChild variant="outline" className="mt-4">
-          <Link href="/">Try Again</Link>
-        </Button>
-      </div>
-    );
-  }
-
-  if (data) {
-    return <WrappedSlideshow data={data} id={id} />;
-  }
-
-  return null;
+interface Props {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default function WrappedPage() {
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const params = await searchParams;
+  const id = params.id as string;
+
+  if (!id) {
+    return {
+      title: 'Gaming Wrapped',
+      description: 'Your year in gaming summary.',
+    };
+  }
+
+  const wrapped = await getWrapped(id);
+  if (!wrapped) {
+    return {
+      title: 'Gaming Wrapped',
+      description: 'Your year in gaming summary.',
+    };
+  }
+
+  // Find playtime if available
+  const summaryCard = wrapped.cards.find((c: any) => c.type === 'summary');
+  const totalGames = summaryCard?.totalGames ?? 0;
+  const playtime = totalGames * 20; // Consistent with UI estimate
+
+  return {
+    title: 'My Gaming Wrapped 2025',
+    description: `I played ${totalGames} games for over ${playtime} hours this year! Check out my Gaming Wrapped.`,
+    openGraph: {
+      title: 'My Gaming Wrapped 2025',
+      description: `I played ${totalGames} games for over ${playtime} hours this year!`,
+      images: [
+        {
+          url: `/api/wrapped/${id}/og`,
+          width: 1200,
+          height: 630,
+          alt: 'Gaming Wrapped Summary',
+        },
+      ],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'My Gaming Wrapped 2025',
+      description: `I played ${totalGames} games for over ${playtime} hours this year!`,
+      images: [`/api/wrapped/${id}/og`],
+    },
+  };
+}
+
+export default async function WrappedPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const id = params.id as string;
+  let initialData = null;
+
+  if (id) {
+    initialData = await getWrapped(id);
+  }
+
   return (
     <Suspense fallback={<Loading />}>
-          <div className="w-full flex justify-start">
-             <Button asChild variant="ghost">
-                <Link href="/"><ArrowLeft className="mr-2"/> Back to Home</Link>
-             </Button>
-          </div>
-      <WrappedPageContent />
+      <WrappedPageClient initialData={initialData} initialId={id} />
     </Suspense>
   );
 }
