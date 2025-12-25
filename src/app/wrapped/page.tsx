@@ -27,20 +27,38 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     };
   }
 
+  const host = process.env.HOST_URL || (process.env.NODE_ENV === 'development' ? 'http://localhost:9002' : 'https://gamingwrapped.com');
+  
+  // Ensure host is a valid URL for metadataBase
+  let safeHost;
+  try {
+    safeHost = new URL(host);
+  } catch (e) {
+    safeHost = new URL('http://localhost:9002');
+  }
+
+  const ogImageUrl = `${host}/api/wrapped/${id}/og`;
+  const pageUrl = `${host}/wrapped?id=${id}`;
+  const title = 'My Gaming Wrapped 2025';
+
   // Find playtime if available
   const summaryCard = wrapped.cards.find((c: any) => c.type === 'summary');
   const totalGames = summaryCard?.totalGames ?? 0;
-  const playtime = totalGames * 20; // Consistent with UI estimate
+  const playtime = totalGames * 20; 
+  const description = `I played ${totalGames} games for over ${playtime} hours this year! Check out my Gaming Wrapped.`;
 
   return {
-    title: 'My Gaming Wrapped 2025',
-    description: `I played ${totalGames} games for over ${playtime} hours this year! Check out my Gaming Wrapped.`,
+    metadataBase: safeHost,
+    title,
+    description,
     openGraph: {
-      title: 'My Gaming Wrapped 2025',
-      description: `I played ${totalGames} games for over ${playtime} hours this year!`,
+      title,
+      description,
+      url: pageUrl,
+      siteName: 'Gaming Wrapped',
       images: [
         {
-          url: `/api/wrapped/${id}/og`,
+          url: ogImageUrl,
           width: 1200,
           height: 630,
           alt: 'Gaming Wrapped Summary',
@@ -50,9 +68,9 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'My Gaming Wrapped 2025',
-      description: `I played ${totalGames} games for over ${playtime} hours this year!`,
-      images: [`/api/wrapped/${id}/og`],
+      title,
+      description,
+      images: [ogImageUrl],
     },
   };
 }

@@ -46,26 +46,6 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
-  openGraph: {
-    type: 'website',
-    url: '/',
-    title: 'Gaming Wrapped',
-    description: 'Upload your play history and get a shareable, AI‑generated year‑in‑review.',
-    images: [
-      {
-        url: 'https://placehold.co/1200x630/png?text=Gaming+Wrapped',
-        width: 1200,
-        height: 630,
-        alt: 'Gaming Wrapped',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Gaming Wrapped',
-    description: 'Upload your play history and get a shareable, AI‑generated year‑in‑review.',
-    images: ['https://placehold.co/1200x630/png?text=Gaming+Wrapped'],
-  },
   robots: {
     index: true,
     follow: true,

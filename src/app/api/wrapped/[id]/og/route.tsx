@@ -43,8 +43,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#09090b',
-            backgroundImage: 'radial-gradient(circle at center, #18181b 0%, #09090b 100%)',
+            backgroundColor: '#1c0028',
+            backgroundImage: 'radial-gradient(circle at center, #2e0041 0%, #1c0028 100%)',
             color: 'white',
             fontFamily: 'Inter',
             padding: '40px',
@@ -58,8 +58,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
+            backgroundImage: 'linear-gradient(to right, rgba(255, 0, 146, 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 0, 146, 0.1) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
             opacity: 0.5,
             display: 'flex',
           }} />
@@ -70,12 +70,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
               fontSize: 60, 
               fontWeight: 900, 
               letterSpacing: '0.15em', 
-              color: '#3b82f6',
+              color: '#ff0092',
               display: 'flex',
               alignItems: 'center',
-              gap: '20px'
+              gap: '20px',
+              textShadow: '4px 4px 0px rgba(0,0,0,0.5)'
             }}>
-              <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#ff0092" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <rect width="20" height="12" x="2" y="6" rx="2" />
                 <path d="M6 12h.01M9 12h.01M15 11h.01M18 11h.01M15 13h.01M18 13h.01" />
               </svg>
@@ -86,13 +87,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', gap: '30px' }}>
             {/* Left Column: Persona & Top Game */}
             <div style={{ display: 'flex', flexDirection: 'column', flex: 1, gap: '20px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(255,255,255,0.03)', border: '2px solid rgba(255,255,255,0.1)', padding: '24px', borderRadius: '16px' }}>
-                <div style={{ display: 'flex', fontSize: 18, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Your Persona</div>
+              <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(255, 0, 146, 0.05)', border: '3px solid #ff0092', padding: '24px', borderRadius: '4px' }}>
+                <div style={{ display: 'flex', fontSize: 18, color: '#ff0092', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, marginBottom: '8px' }}>Your Persona</div>
                 <div style={{ display: 'flex', fontSize: 32, fontWeight: 700, color: '#f8fafc' }}>{persona}</div>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(255,255,255,0.03)', border: '2px solid rgba(255,255,255,0.1)', padding: '24px', borderRadius: '16px' }}>
-                <div style={{ display: 'flex', fontSize: 18, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Top Game</div>
+              <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(255, 247, 0, 0.05)', border: '3px solid #fff700', padding: '24px', borderRadius: '4px' }}>
+                <div style={{ display: 'flex', fontSize: 18, color: '#fff700', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, marginBottom: '8px' }}>Top Game</div>
                 <div style={{ display: 'flex', fontSize: 28, fontWeight: 700, color: '#f8fafc' }}>{topGame}</div>
               </div>
             </div>
@@ -100,24 +101,24 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             {/* Right Column: Stats Grid (Simulated with Flex) */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', flex: 1.2 }}>
               <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(59, 130, 246, 0.1)', border: '2px solid #3b82f6', padding: '20px', borderRadius: '16px', alignItems: 'center', flex: 1 }}>
-                  <div style={{ display: 'flex', fontSize: 48, fontWeight: 800, color: '#3b82f6' }}>{totalGames}</div>
-                  <div style={{ display: 'flex', fontSize: 16, color: '#94a3b8', textTransform: 'uppercase' }}>Games Played</div>
+                <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(255, 0, 146, 0.05)', border: '3px solid #ff0092', padding: '20px', borderRadius: '4px', alignItems: 'center', flex: 1 }}>
+                  <div style={{ display: 'flex', fontSize: 48, fontWeight: 800, color: '#ff0092' }}>{totalGames}</div>
+                  <div style={{ display: 'flex', fontSize: 14, color: '#ff0092', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.1em' }}>Games Played</div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(245, 158, 11, 0.1)', border: '2px solid #f59e0b', padding: '20px', borderRadius: '16px', alignItems: 'center', flex: 1 }}>
-                  <div style={{ display: 'flex', fontSize: 48, fontWeight: 800, color: '#f59e0b' }}>{avgScore}</div>
-                  <div style={{ display: 'flex', fontSize: 16, color: '#94a3b8', textTransform: 'uppercase' }}>Avg Score</div>
+                <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(255, 247, 0, 0.05)', border: '3px solid #fff700', padding: '20px', borderRadius: '4px', alignItems: 'center', flex: 1 }}>
+                  <div style={{ display: 'flex', fontSize: 48, fontWeight: 800, color: '#fff700' }}>{avgScore}</div>
+                  <div style={{ display: 'flex', fontSize: 14, color: '#fff700', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.1em' }}>Avg Score</div>
                 </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '2px solid #10b981', padding: '20px', borderRadius: '16px', alignItems: 'center', width: '100%' }}>
-                <div style={{ display: 'flex', fontSize: 42, fontWeight: 800, color: '#10b981' }}>{`${playtime.toLocaleString()} HRS`}</div>
-                <div style={{ display: 'flex', fontSize: 16, color: '#94a3b8', textTransform: 'uppercase' }}>Estimated Playtime</div>
+              <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(255, 255, 255, 0.05)', border: '3px solid rgba(255, 255, 255, 0.2)', padding: '20px', borderRadius: '4px', alignItems: 'center', width: '100%' }}>
+                <div style={{ display: 'flex', fontSize: 42, fontWeight: 800, color: '#f8fafc' }}>{`${playtime.toLocaleString()} HRS`}</div>
+                <div style={{ display: 'flex', fontSize: 14, color: '#94a3b8', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.1em' }}>Estimated Playtime</div>
               </div>
             </div>
           </div>
 
-          <div style={{ position: 'absolute', bottom: '20px', right: '40px', fontSize: 14, color: '#4b5563', display: 'flex' }}>
-            gaming-wrapped.vercel.app
+          <div style={{ position: 'absolute', bottom: '25px', right: '40px', fontSize: 16, color: 'rgba(255, 255, 255, 0.3)', fontWeight: 600, display: 'flex', letterSpacing: '0.1em' }}>
+            gamingwrapped.com
           </div>
         </div>
       ),
