@@ -94,7 +94,7 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
 
             {/* Platform */}
             {card.game.platform && card.game.platform !== 'N/A' && card.game.platform !== 'Unknown' && (
-              <div className="flex flex-col items-center gap-1 mb-6">
+              <div className="flex flex-col items-center gap-1">
                 <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-headline">Platform</span>
                 <div className="flex items-center gap-3 text-base md:text-lg text-muted-foreground font-bold font-body uppercase tracking-tight">
                   <span className="flex items-center gap-1">

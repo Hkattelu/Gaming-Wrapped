@@ -4,8 +4,8 @@ export const MOCK_WRAPPED_OUTPUT: GenerateGamingWrappedOutput = {
   cards: [
     {
       type: 'summary',
-      title: 'Your 2024 Gaming Journey',
-      description: 'A year of epic adventures',
+      title: 'Your Gaming Journey',
+      description: 'A life of epic adventures',
       totalGames: 10,
       averageScore: 8.8,
     },

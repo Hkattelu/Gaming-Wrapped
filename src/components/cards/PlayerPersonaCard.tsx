@@ -68,7 +68,6 @@ export function PlayerPersonaCardComponent({ card }: PlayerPersonaCardProps) {
                 <h2 className="font-headline text-xl md:text-2xl cursor-default text-foreground mb-2 uppercase leading-relaxed break-words">
                   {card.persona}
                 </h2>
-                <div className="h-1 w-16 bg-primary mx-auto md:mx-0" />
               </div>
 
               <div>

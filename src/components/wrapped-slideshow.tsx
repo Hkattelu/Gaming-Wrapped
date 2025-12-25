@@ -241,7 +241,6 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
 
                 <div className="relative bg-card border-4 border-border p-1 pixel-corners shadow-xl transition-transform transform group-hover:-translate-y-1 duration-300">
                   <div className="relative bg-card/50 border-2 border-border p-8 flex flex-col items-center text-center overflow-hidden min-h-[400px]">
-                    <div className="absolute inset-0 digital-pattern opacity-30 pointer-events-none" />
                     <div className="absolute -top-6 -right-6 p-4 opacity-10 pointer-events-none text-foreground">
                       <Gift className="w-36 h-36 rotate-12" />
                     </div>
