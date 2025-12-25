@@ -347,7 +347,7 @@ export default function ManualEntryPage() {
                 </div>
               )}
               {picksError && topThisYear.length === 0 && (
-                <p className="text-xs text-muted-foreground text-left">{picksError}</p>
+                <p className="text-sm text-muted-foreground text-left">{picksError}</p>
               )}
             </div>
 

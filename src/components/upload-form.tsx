@@ -187,7 +187,7 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
                 <p className="mb-1 text-sm font-semibold text-accent truncate max-w-[200px] text-center">
                   {file.name}
                 </p>
-                <p className="text-s text-muted-foreground mb-2">Click or drag to change file</p>
+                <p className="text-sm text-muted-foreground mb-2">Click or drag to change file</p>
                 <Button
                   type="button"
                   variant="ghost"
@@ -208,7 +208,7 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
                 <p className="mb-2 text-sm text-muted-foreground">
                   <span className="font-semibold text-accent">Click to upload</span> or drag and drop
                 </p>
-                <p className="text-xs text-muted-foreground">CSV file only</p>
+                <p className="text-sm text-muted-foreground">CSV file only</p>
               </>
             )}
           </div>
@@ -224,8 +224,8 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
       {isLoading && (
         <div className="space-y-4 pt-4">
           <div className="flex justify-between items-center px-1">
-            <span className="text-xs font-headline tracking-widest text-muted-foreground uppercase">Progress</span>
-            <span className="text-xs font-headline tracking-widest text-accent">{Math.floor(fakeProgress)}%</span>
+            <span className="text-sm font-headline tracking-widest text-muted-foreground uppercase">Progress</span>
+            <span className="text-sm font-headline tracking-widest text-accent">{Math.floor(fakeProgress)}%</span>
           </div>
           <Progress value={fakeProgress} className="w-full h-3" />
           <p className="min-h-[2rem] text-xl text-center text-foreground font-headline tracking-wider animate-pulse" aria-live="polite">

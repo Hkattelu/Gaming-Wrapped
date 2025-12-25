@@ -28,8 +28,14 @@ export default function Home() {
   const [steamProgress, setSteamProgress] = useState<string | null>(null);
 
   const handleBackloggdExport = async () => {
-    if (!backloggdUsername) {
-      setError('Please enter your Backloggd username.');
+    let username = backloggdUsername.trim();
+    if (username.includes('backloggd.com/u/')) {
+      const match = username.match(/backloggd\.com\/u\/([^/]+)/);
+      if (match) username = match[1];
+    }
+
+    if (!username) {
+      setError('Please enter your Backloggd username or profile URL.');
       return;
     }
     setIsLoading(true);
@@ -38,7 +44,7 @@ export default function Home() {
     setSuccessMessage(null);
 
     try {
-      const response = await fetch(`/api/backloggd?username=${encodeURIComponent(backloggdUsername)}&stream=true`);
+      const response = await fetch(`/api/backloggd?username=${encodeURIComponent(username)}&stream=true`);
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || 'Failed to export data.');
@@ -80,7 +86,7 @@ export default function Home() {
       }
 
       // Create a File object and set it to the state
-      const exportedFile = new File([csvData], `${backloggdUsername}_games.csv`, { type: 'text/csv' });
+      const exportedFile = new File([csvData], `${username}_games.csv`, { type: 'text/csv' });
       setFile(exportedFile);
 
       // Also trigger a download for the user's records
@@ -88,7 +94,7 @@ export default function Home() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${backloggdUsername}_games.csv`;
+      a.download = `${username}_games.csv`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -110,8 +116,14 @@ export default function Home() {
   };
 
   const handleSteamExport = async () => {
-    if (!steamId) {
-      setSteamError('Please enter your Steam ID.');
+    let id = steamId.trim();
+    if (id.includes('steamcommunity.com/profiles/')) {
+      const match = id.match(/steamcommunity\.com\/profiles\/(\d+)/);
+      if (match) id = match[1];
+    }
+
+    if (!id) {
+      setSteamError('Please enter your Steam ID or profile URL.');
       return;
     }
     setSteamLoading(true);
@@ -119,7 +131,7 @@ export default function Home() {
     setSteamProgress(null);
 
     try {
-      const response = await fetch(`/api/steam?steamId=${encodeURIComponent(steamId)}&stream=true`);
+      const response = await fetch(`/api/steam?steamId=${encodeURIComponent(id)}&stream=true`);
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || 'Failed to export data.');
@@ -162,7 +174,7 @@ export default function Home() {
       }
 
       // Create a File object and set it to the state
-      const exportedFile = new File([csvData], `steam_${steamId}_games.csv`, { type: 'text/csv' });
+      const exportedFile = new File([csvData], `steam_${id}_games.csv`, { type: 'text/csv' });
       setFile(exportedFile);
 
       // Also trigger a download
@@ -170,7 +182,7 @@ export default function Home() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `steam_${steamId}_games.csv`;
+      a.download = `steam_${id}_games.csv`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -226,32 +238,33 @@ export default function Home() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Exporting from Steam</DialogTitle>
-                  <DialogDescription>
-                    Enter your public Steam ID (64-bit) to download your played games CSV.
+                  <DialogDescription className="text-base">
+                    Enter your public Steam ID (64-bit) or profile URL to download your played games CSV.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <Input
-                    placeholder="Your Steam ID (e.g., 76561198012345678)"
+                    placeholder="Steam ID or Profile URL"
                     value={steamId}
                     onChange={(e) => setSteamId(e.target.value)}
                     disabled={steamLoading}
+                    className="text-base"
                   />
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     Your Steam profile and game details must be set to public. Find your Steam ID at <a href="https://steamid.io" target="_blank" rel="noopener noreferrer" className="text-accent underline">steamid.io</a>.
                   </p>
-                  <Button onClick={handleSteamExport} disabled={steamLoading} className="w-full">
+                  <Button onClick={handleSteamExport} disabled={steamLoading} className="w-full text-base py-6">
                     {steamLoading ? 'Exporting...' : 'Export CSV'}
                   </Button>
                   {steamProgress && (
                     <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">{steamProgress}</p>
+                      <p className="text-base text-muted-foreground">{steamProgress}</p>
                       <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
                         <div className="w-full h-full bg-primary animate-pulse" />
                       </div>
                     </div>
                   )}
-                  {steamError && <p className="text-sm text-red-500">{steamError}</p>}
+                  {steamError && <p className="text-base text-red-500">{steamError}</p>}
                 </div>
               </DialogContent>
             </Dialog>
@@ -263,23 +276,24 @@ export default function Home() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Exporting from Backloggd</DialogTitle>
-                  <DialogDescription>
-                    Enter your Backloggd username to download your games CSV.
+                  <DialogDescription className="text-base">
+                    Enter your Backloggd username or profile URL to download your games CSV.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <Input
-                    placeholder="Your Backloggd username"
+                    placeholder="Backloggd username or Profile URL"
                     value={backloggdUsername}
                     onChange={(e) => setBackloggdUsername(e.target.value)}
                     disabled={isLoading}
+                    className="text-base"
                   />
-                  <Button onClick={handleBackloggdExport} disabled={isLoading} className="w-full">
+                  <Button onClick={handleBackloggdExport} disabled={isLoading} className="w-full text-base py-6">
                     {isLoading ? 'Exporting...' : 'Export CSV'}
                   </Button>
                   {progress && (
                     <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-base text-muted-foreground">
                         {progress.page > 0
                           ? `Fetching page ${progress.page}... (${progress.total} games found)`
                           : `Complete! Downloaded ${progress.total} games.`
@@ -295,7 +309,7 @@ export default function Home() {
                       </div>
                     </div>
                   )}
-                  {error && <p className="text-sm text-red-500">{error}</p>}
+                  {error && <p className="text-base text-red-500">{error}</p>}
                 </div>
               </DialogContent>
             </Dialog>
@@ -307,11 +321,11 @@ export default function Home() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Exporting from HowLongToBeat</DialogTitle>
-                  <DialogDescription>
+                  <DialogDescription className="text-base">
                     You can export your game list directly from the HowLongToBeat website.
                   </DialogDescription>
                 </DialogHeader>
-                <div className="space-y-4">
+                <div className="space-y-4 text-base">
                   <p>
                     1. Log in to your account on <a href="https://howlongtobeat.com" target="_blank" rel="noopener noreferrer" className="text-accent underline">howlongtobeat.com</a>.
                   </p>
@@ -335,11 +349,11 @@ export default function Home() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Other Platforms</DialogTitle>
-                  <DialogDescription>
+                  <DialogDescription className="text-base">
                     Importing from other platforms like Steam, PlayStation, or Xbox is not directly supported yet.
                   </DialogDescription>
                 </DialogHeader>
-                <p>
+                <p className="text-base">
                   You may need to use third-party tools to export your data and format it into a CSV with a &quot;Title&quot; column.
                 </p>
               </DialogContent>
