@@ -6,10 +6,14 @@ import { render, screen, waitFor, cleanup } from '@testing-library/react';
 const mockReact = React;
 
 jest.mock('lucide-react', () => ({
-  Gamepad2: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'gamepad2-icon', ...props }),
-  Monitor: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'monitor-icon', ...props }),
-  ArrowLeft: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'arrow-left-icon', ...props }),
-  ArrowRight: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'arrow-right-icon', ...props }),
+  Gamepad2: ({ className }: React.SVGProps<SVGSVGElement>) =>
+    mockReact.createElement('span', { 'data-testid': 'gamepad2-icon', className }),
+  Monitor: ({ className }: React.SVGProps<SVGSVGElement>) =>
+    mockReact.createElement('span', { 'data-testid': 'monitor-icon', className }),
+  ArrowLeft: ({ className }: React.SVGProps<SVGSVGElement>) =>
+    mockReact.createElement('span', { 'data-testid': 'arrow-left-icon', className }),
+  ArrowRight: ({ className }: React.SVGProps<SVGSVGElement>) =>
+    mockReact.createElement('span', { 'data-testid': 'arrow-right-icon', className }),
 }));
 
 import { TopGameCard } from './TopGameCard';
@@ -34,7 +38,12 @@ describe('TopGameCard', () => {
   });
 
   afterEach(() => {
-    global.fetch = originalFetch;
+    if (typeof originalFetch === 'undefined') {
+      // @ts-expect-error - allow removing the global property if it was missing originally
+      delete global.fetch;
+    } else {
+      global.fetch = originalFetch;
+    }
     cleanup();
   });
 
