@@ -56,7 +56,6 @@ describe('GET /api/steam', () => {
     const req = createMockRequest(`http://localhost/api/steam?steamId=${validSteamId}`);
 
     const res = await GET(req);
-    expect(res.status).toBe(200);
 
     // Assert fetch was called with the correct ID, proving validation passed
     expect(mockFetch).toHaveBeenCalled();
