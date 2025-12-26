@@ -1,4 +1,18 @@
 // jest.setup.js
+const { TextEncoder, TextDecoder } = require('util');
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
+if (typeof global.ReadableStream === 'undefined') {
+    const { ReadableStream } = require('stream/web');
+    global.ReadableStream = ReadableStream;
+}
+
+if (typeof global.MessageChannel === 'undefined') {
+    const { MessageChannel, MessagePort } = require('worker_threads');
+    global.MessageChannel = MessageChannel;
+    global.MessagePort = MessagePort;
+}
 
 // Mock process.env for testing
 process.env.HOST_URL = 'test.vercel.app';
