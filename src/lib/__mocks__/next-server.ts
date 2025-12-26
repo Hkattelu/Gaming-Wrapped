@@ -44,16 +44,14 @@ export class NextResponse {
     this.ok = this.status >= 200 && this.status < 300;
   }
 
-  static json(data: any, init?: ResponseInit) {
+  static json<T>(data: T, init?: ResponseInit) {
     // Return a new instance so it behaves exactly like a constructed response
     // but with the body stringified and proper content-type
     const jsonBody = JSON.stringify(data);
     const response = new NextResponse(jsonBody, init);
-
     if (!response.headers.has('content-type')) {
       response.headers.set('Content-Type', 'application/json');
     }
-
     return response;
   }
 
