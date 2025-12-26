@@ -21,6 +21,7 @@ import type { TopGameCard as TopGameCardType } from '@/types';
 
 // Mock resize observer
 global.ResizeObserver = class ResizeObserver {
+  constructor(_callback: ResizeObserverCallback) {}
   observe() {}
   unobserve() {}
   disconnect() {}
@@ -30,11 +31,11 @@ describe('TopGameCard', () => {
   const originalFetch = global.fetch;
 
   beforeEach(() => {
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        json: () => Promise.resolve({ imageUrl: 'http://example.com/image.jpg' }),
-      })
-    ) as any;
+    global.fetch = jest.fn(async () =>
+      ({
+        json: async () => ({ imageUrl: 'http://example.com/image.jpg' }),
+      }) as unknown as Response
+    ) as unknown as typeof fetch;
   });
 
   afterEach(() => {
