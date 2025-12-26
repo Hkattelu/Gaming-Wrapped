@@ -56,6 +56,10 @@ export async function GET(req: NextRequest) {
     return new NextResponse('Steam ID is required', { status: 400 });
   }
 
+  if (!/^\d{17}$/.test(steamId)) {
+    return new NextResponse('Invalid Steam ID. Expected a 17-digit ID.', { status: 400 });
+  }
+
   if (stream) {
     const encoder = new TextEncoder();
     const customReadable = new ReadableStream({

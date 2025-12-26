@@ -6,10 +6,15 @@ module.exports = {
     // Minimal mock for next/server so route handlers can be imported in Jest without Web Request globals
     '^next/server$': '<rootDir>/src/lib/__mocks__/next-server.ts',
     '^@genkit-ai/googleai$': '<rootDir>/src/lib/__mocks__/googleai.ts',
+    // Force CJS build for cheerio to avoid ESM issues in Jest/jsdom
+    '^cheerio$': '<rootDir>/node_modules/cheerio/dist/commonjs/index.js'
   },
   transform: {
     '^.+\.(ts|tsx)$': ["babel-jest", { "configFile": "./babel.config.test.js" }]
   },
+  // Keep Jest defaults for `transformIgnorePatterns` (i.e., don't transform `node_modules`).
+  // If an ESM-only dependency causes test failures, prefer mocking it in tests or mapping it
+  // to a CJS entrypoint via `moduleNameMapper`.
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/src/**/*.test.tsx'],
 };
