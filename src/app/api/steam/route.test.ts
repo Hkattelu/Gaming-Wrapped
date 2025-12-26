@@ -1,9 +1,10 @@
 import { jest, describe, it, expect } from '@jest/globals';
-import type { NextRequest } from 'next/server';
+import { NextRequest } from 'next/server';
 
-const createMockRequest = (url: string): NextRequest => ({
-  url,
-}) as unknown as NextRequest;
+const createMockRequest = (url: string): NextRequest => {
+    // In our mock, NextRequest constructor takes the url
+    return new NextRequest(url);
+};
 
 // Mock environment variables
 process.env.STEAM_API_KEY = 'mock_key';
@@ -25,26 +26,26 @@ describe('GET /api/steam', () => {
     expect(await res.text()).toContain('Invalid Steam ID');
   });
 
-  it('proceeds when steamId is valid 17-digit number', async () => {
-    // We expect it to try to fetch (or fail later) but pass validation
-    // Mocking global fetch to avoid actual network call
-    global.fetch = jest.fn(() =>
+  it('proceeds to fetch when steamId is valid 17-digit number', async () => {
+    const mockFetch = jest.fn(() =>
         Promise.resolve({
-            ok: false,
-            status: 404, // Simulating a not found or just checking it reached this point
-            json: async () => ({}),
+            ok: true,
+            status: 200,
+            json: async () => ({ response: { games: [] } }),
         })
     ) as jest.Mock;
+    global.fetch = mockFetch;
 
     const { GET } = await import('./route');
-    const req = createMockRequest('http://localhost/api/steam?steamId=76561198006409530');
+    const validSteamId = '76561198006409530';
+    const req = createMockRequest(`http://localhost/api/steam?steamId=${validSteamId}`);
+
     const res = await GET(req);
 
-    // It should not be 400 'Invalid Steam ID'
-    // It might return 404 because our mock fetch returns 404, or 500 etc.
-    // The key is it shouldn't be the validation error.
-    if (res.status === 400) {
-        expect(await res.text()).not.toContain('Invalid Steam ID');
-    }
+    // Assert fetch was called with the correct ID, proving validation passed
+    expect(mockFetch).toHaveBeenCalled();
+    const calledUrl = mockFetch.mock.calls[0][0] as string;
+    expect(calledUrl).toContain(validSteamId);
+    expect(calledUrl).toContain('api.steampowered.com');
   });
 });

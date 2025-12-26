@@ -1,9 +1,9 @@
 import { jest, describe, it, expect } from '@jest/globals';
-import type { NextRequest } from 'next/server';
+import { NextRequest } from 'next/server';
 
-const createMockRequest = (url: string): NextRequest => ({
-  url,
-}) as unknown as NextRequest;
+const createMockRequest = (url: string): NextRequest => {
+    return new NextRequest(url);
+};
 
 describe('GET /api/backloggd', () => {
   it('returns 400 when username is missing', async () => {
@@ -30,24 +30,26 @@ describe('GET /api/backloggd', () => {
       expect(await res.text()).toContain('Invalid username format');
     });
 
-  it('proceeds when username is valid', async () => {
-    // Mocking global fetch to avoid actual network call
-    global.fetch = jest.fn(() =>
+  it('proceeds to fetch when username is valid (alphanumeric with dash/underscore/dot)', async () => {
+    const mockFetch = jest.fn(() =>
         Promise.resolve({
-            ok: false,
-            status: 404,
+            ok: true,
+            status: 200,
+            text: async () => '<html><body></body></html>',
             json: async () => ({}),
-            text: async () => '',
         })
     ) as jest.Mock;
+    global.fetch = mockFetch;
 
     const { GET } = await import('./route');
-    const req = createMockRequest('http://localhost/api/backloggd?username=valid_user-123');
-    const res = await GET(req);
+    const validUsername = 'valid.user-name_123';
+    const req = createMockRequest(`http://localhost/api/backloggd?username=${validUsername}`);
 
-    // Should not be the validation error
-    if (res.status === 400) {
-        expect(await res.text()).not.toContain('Invalid username format');
-    }
+    await GET(req);
+
+    // Assert fetch was called with the correct URL, proving validation passed
+    expect(mockFetch).toHaveBeenCalled();
+    const calledUrl = mockFetch.mock.calls[0][0] as string;
+    expect(calledUrl).toContain(`backloggd.com/u/${validUsername}`);
   });
 });

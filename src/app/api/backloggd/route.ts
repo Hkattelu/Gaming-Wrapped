@@ -106,8 +106,8 @@ export async function GET(req: NextRequest) {
   }
 
   // Validate username to prevent injection/malformed URLs
-  if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
-    return new NextResponse('Invalid username format. Use only alphanumeric characters, underscores, and hyphens.', { status: 400 });
+  if (!/^[a-zA-Z0-9._-]+$/.test(username)) {
+    return new NextResponse('Invalid username format. Use only alphanumeric characters, underscores, periods, and hyphens.', { status: 400 });
   }
 
   const profileUrl = `https://backloggd.com/u/${username}/games/added:desc/type:played/`;
