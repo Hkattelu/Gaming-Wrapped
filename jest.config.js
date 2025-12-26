@@ -12,6 +12,9 @@ module.exports = {
   transform: {
     '^.+\.(ts|tsx)$': ["babel-jest", { "configFile": "./babel.config.test.js" }]
   },
+  // Keep Jest defaults for `transformIgnorePatterns` (i.e., don't transform `node_modules`).
+  // If an ESM-only dependency causes test failures, prefer mocking it in tests or mapping it
+  // to a CJS entrypoint via `moduleNameMapper`.
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/src/**/*.test.tsx'],
 };
