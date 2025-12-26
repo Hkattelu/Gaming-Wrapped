@@ -1,4 +1,4 @@
-import { jest, describe, it, expect, afterEach } from '@jest/globals';
+import { jest, describe, it, expect, afterEach, beforeEach } from '@jest/globals';
 import { NextRequest } from 'next/server';
 
 const createMockRequest = (url: string): NextRequest => {
@@ -10,10 +10,19 @@ const createMockRequest = (url: string): NextRequest => {
 process.env.STEAM_API_KEY = 'mock_key';
 
 type MockFetch = jest.MockedFunction<typeof fetch>;
-const originalFetch = global.fetch;
+let previousFetch: typeof fetch | undefined;
+
+beforeEach(() => {
+  previousFetch = global.fetch;
+});
 
 afterEach(() => {
-  global.fetch = originalFetch;
+  if (typeof previousFetch === 'undefined') {
+    // @ts-expect-error - allow removing the global property if it was missing originally
+    delete global.fetch;
+  } else {
+    global.fetch = previousFetch;
+  }
 });
 
 describe('GET /api/steam', () => {

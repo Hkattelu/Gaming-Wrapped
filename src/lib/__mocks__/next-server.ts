@@ -21,7 +21,13 @@ export class NextRequest {
 
     const requestLike = typeof input === 'string' || input instanceof URL ? undefined : (input as any);
     this.method = init?.method ?? requestLike?.method ?? 'GET';
-    this.headers = new Headers(init?.headers ?? requestLike?.headers);
+
+    const headersInit = init?.headers ?? requestLike?.headers;
+    try {
+      this.headers = new Headers(headersInit as HeadersInit | undefined);
+    } catch {
+      this.headers = new Headers();
+    }
   }
 }
 
