@@ -47,7 +47,12 @@ describe('GET /api/steam', () => {
     mockFetch.mockResolvedValue({
       ok: true,
       status: 200,
-      json: async () => ({ response: { games: [] } }),
+      json: async () => ({
+        response: {
+          game_count: 1,
+          games: [{ appid: 1, name: 'Test Game', playtime_forever: 60 }],
+        },
+      }),
     } as unknown as Response);
     global.fetch = mockFetch;
 
