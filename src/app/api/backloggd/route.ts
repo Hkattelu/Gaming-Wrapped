@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import * as cheerio from 'cheerio';
+import { load, CheerioAPI, Cheerio } from 'cheerio';
 import type { AnyNode } from 'domhandler';
 import { isTag } from 'domutils';
 
@@ -14,7 +14,7 @@ function delay(ms: number): Promise<void> {
 }
 
 type FetchResult =
-  | { success: true; $: cheerio.CheerioAPI; gameEntries: cheerio.Cheerio<AnyNode> }
+  | { success: true; $: CheerioAPI; gameEntries: Cheerio<AnyNode> }
   | { success: false; error: string; status: number };
 
 async function fetchProfilePage(profileUrl: string, page: number): Promise<FetchResult> {
@@ -38,7 +38,7 @@ async function fetchProfilePage(profileUrl: string, page: number): Promise<Fetch
     }
 
     const html = await response.text();
-    const $ = cheerio.load(html);
+    const $ = load(html);
     const gameEntries = $('.rating-hover');
     return { success: true, $, gameEntries };
   } catch (e: unknown) {
@@ -53,8 +53,8 @@ async function fetchProfilePage(profileUrl: string, page: number): Promise<Fetch
 }
 
 function extractGameData(
-  $: cheerio.CheerioAPI,
-  gameEntries: cheerio.Cheerio<AnyNode>,
+  $: CheerioAPI,
+  gameEntries: Cheerio<AnyNode>,
 ): { Title: string; Rating: string }[] {
   const gameData: { Title: string; Rating: string }[] = [];
   const seenTitles = new Set<string>();
@@ -70,7 +70,6 @@ function extractGameData(
 
     // Skip if we've seen this title before (duplicate detection)
     if (seenTitles.has(title)) {
-      console.log(`Duplicate found: ${title}`);
       return;
     }
     seenTitles.add(title);
@@ -106,6 +105,11 @@ export async function GET(req: NextRequest) {
     return new NextResponse('Username is required', { status: 400 });
   }
 
+  // Validate username to prevent injection/malformed URLs
+  if (!/^[a-zA-Z0-9._-]+$/.test(username)) {
+    return new NextResponse('Invalid username format. Use only alphanumeric characters, underscores, periods, and hyphens.', { status: 400 });
+  }
+
   const profileUrl = `https://backloggd.com/u/${username}/games/added:desc/type:played/`;
   const allGameData: { Title: string; Rating: string }[] = [];
   const seenTitlesGlobal = new Set<string>();
@@ -119,7 +123,6 @@ export async function GET(req: NextRequest) {
           let consecutiveDuplicatePages = 0;
           
           for (let page = 1; page <= MAX_PAGES; page++) {
-            console.log(`Fetching page ${page} for ${username}...`);
             
             // Send progress update
             controller.enqueue(
@@ -130,7 +133,6 @@ export async function GET(req: NextRequest) {
 
             if (!result.success) {
               if (result.status === 429 && allGameData.length > 0) {
-                console.log(`Rate limited at page ${page}. Returning ${allGameData.length} games collected so far.`);
                 break;
               }
               controller.enqueue(
@@ -143,7 +145,6 @@ export async function GET(req: NextRequest) {
             const { $, gameEntries } = result;
 
             if (gameEntries.length === 0) {
-              console.log('No more game entries found. Wrapping up.');
               break;
             }
 
@@ -159,16 +160,13 @@ export async function GET(req: NextRequest) {
               }
             }
             
-            console.log(`Page ${page}: Found ${gameData.length} entries, ${newGamesCount} new games (total: ${allGameData.length})`);
             
             // If we got no new games, we might be seeing repeats
             if (newGamesCount === 0) {
               consecutiveDuplicatePages++;
-              console.log(`Warning: Page ${page} had no new games (${consecutiveDuplicatePages} consecutive duplicate pages)`);
               
               // If we see 2 pages in a row with no new games, we're probably done
               if (consecutiveDuplicatePages >= 2) {
-                console.log('Detected end of unique content. Stopping.');
                 break;
               }
             } else {
@@ -180,7 +178,6 @@ export async function GET(req: NextRequest) {
             }
           }
 
-          console.log(`Total games found: ${allGameData.length}`);
 
           if (allGameData.length === 0) {
             controller.enqueue(
@@ -228,12 +225,10 @@ export async function GET(req: NextRequest) {
   let consecutiveDuplicatePages = 0;
   
   for (let page = 1; page <= MAX_PAGES; page++) {
-    console.log(`Fetching page ${page} for ${username}...`);
     const result = await fetchProfilePage(profileUrl, page);
 
     if (!result.success) {
       if (result.status === 429 && allGameData.length > 0) {
-        console.log(`Rate limited at page ${page}. Returning ${allGameData.length} games collected so far.`);
         break;
       }
       return new NextResponse(result.error, { status: result.status });
@@ -242,7 +237,6 @@ export async function GET(req: NextRequest) {
     const { $, gameEntries } = result;
 
     if (gameEntries.length === 0) {
-      console.log('No more game entries found. Wrapping up.');
       break;
     }
 
@@ -258,16 +252,13 @@ export async function GET(req: NextRequest) {
       }
     }
     
-    console.log(`Page ${page}: Found ${gameData.length} entries, ${newGamesCount} new games (total: ${allGameData.length})`);
     
     // If we got no new games, we might be seeing repeats
     if (newGamesCount === 0) {
       consecutiveDuplicatePages++;
-      console.log(`Warning: Page ${page} had no new games (${consecutiveDuplicatePages} consecutive duplicate pages)`);
       
       // If we see 2 pages in a row with no new games, we're probably done
       if (consecutiveDuplicatePages >= 2) {
-        console.log('Detected end of unique content. Stopping.');
         break;
       }
     } else {
@@ -279,7 +270,6 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  console.log(`Total games found: ${allGameData.length}`);
 
   if (allGameData.length === 0) {
     return new NextResponse(
@@ -299,7 +289,6 @@ export async function GET(req: NextRequest) {
   ];
   const csvString = csvRows.join('\n');
 
-  console.log(`Returning CSV with ${csvRows.length - 1} games`);
 
   return new NextResponse(csvString, {
     status: 200,
