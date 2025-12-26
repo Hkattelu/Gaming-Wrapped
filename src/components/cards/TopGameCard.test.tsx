@@ -1,14 +1,19 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import { TopGameCard } from './TopGameCard';
-import { TopGameCard as TopGameCardType } from '@/types';
-import '@testing-library/jest-dom';
+/** @jest-environment jsdom */
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import React from 'react';
+import { render, screen, waitFor, cleanup } from '@testing-library/react';
 
-// Mock fetch
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    json: () => Promise.resolve({ imageUrl: 'http://example.com/image.jpg' }),
-  })
-) as jest.Mock;
+const mockReact = React;
+
+jest.mock('lucide-react', () => ({
+  Gamepad2: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'gamepad2-icon', ...props }),
+  Monitor: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'monitor-icon', ...props }),
+  ArrowLeft: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'arrow-left-icon', ...props }),
+  ArrowRight: (props: React.SVGProps<SVGSVGElement>) => mockReact.createElement('span', { 'data-testid': 'arrow-right-icon', ...props }),
+}));
+
+import { TopGameCard } from './TopGameCard';
+import type { TopGameCard as TopGameCardType } from '@/types';
 
 // Mock resize observer
 global.ResizeObserver = class ResizeObserver {
@@ -18,6 +23,21 @@ global.ResizeObserver = class ResizeObserver {
 };
 
 describe('TopGameCard', () => {
+  const originalFetch = global.fetch;
+
+  beforeEach(() => {
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        json: () => Promise.resolve({ imageUrl: 'http://example.com/image.jpg' }),
+      })
+    ) as any;
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+    cleanup();
+  });
+
   it('renders formattedScore when present', async () => {
     const card: TopGameCardType = {
       type: 'top_game',
@@ -36,11 +56,11 @@ describe('TopGameCard', () => {
 
     // Check for the formatted score text
     await waitFor(() => {
-        expect(screen.getByText('95/100')).toBeInTheDocument();
+        expect(screen.getByText('95/100')).toBeTruthy();
     });
     // Ensure the fallback /10 is NOT present (it might be present in other DOM elements if not careful, but here we check it's not part of the score display logic we touched)
     // Actually /10 is in a span, so we can check it's not there.
-    expect(screen.queryByText('/10')).not.toBeInTheDocument();
+    expect(screen.queryByText('/10')).toBeNull();
   });
 
   it('renders standard score with /10 fallback when formattedScore is missing', async () => {
@@ -59,8 +79,8 @@ describe('TopGameCard', () => {
     render(<TopGameCard card={card} />);
 
     await waitFor(() => {
-        expect(screen.getByText('9')).toBeInTheDocument();
-        expect(screen.getByText('/10')).toBeInTheDocument();
+        expect(screen.getByText('9')).toBeTruthy();
+        expect(screen.getByText('/10')).toBeTruthy();
     });
   });
   
@@ -81,8 +101,8 @@ describe('TopGameCard', () => {
 
     await waitFor(() => {
         // 95 > 10 -> 95/10 = 9.5
-        expect(screen.getByText('9.5')).toBeInTheDocument();
-        expect(screen.getByText('/10')).toBeInTheDocument();
+        expect(screen.getByText('9.5')).toBeTruthy();
+        expect(screen.getByText('/10')).toBeTruthy();
     });
   });
 });
