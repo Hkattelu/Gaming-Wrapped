@@ -46,7 +46,7 @@ export class NextResponse {
 
   static json<T>(data: T, init?: ResponseInit) {
     // Return a new instance so it behaves exactly like a constructed response
-    // but with the body stringified and proper content-type
+    // but with the body stringified and a default JSON content-type
     const jsonBody = JSON.stringify(data);
     const response = new NextResponse(jsonBody, init);
     if (!response.headers.has('content-type')) {
