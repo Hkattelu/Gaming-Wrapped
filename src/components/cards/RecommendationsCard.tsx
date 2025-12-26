@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface RecommendationsCardProps {
   card: RecommendationsCard;
@@ -120,11 +121,14 @@ export function RecommendationsCardComponent({ card }: RecommendationsCardProps)
                       accent.shadow
                     )}>
                       {rec.imageUrl ? (
-                        <img
+                        <Image
                           src={rec.imageUrl}
                           alt={rec.game}
+                          width={64}
+                          height={96}
                           className="w-full h-full object-cover"
                           style={{ imageRendering: 'pixelated' }}
+                          unoptimized
                         />
                       ) : (
                         <div className={cn("w-full h-full flex items-center justify-center", accent.bg)}>

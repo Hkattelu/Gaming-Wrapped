@@ -12,6 +12,7 @@ import {
 import { Logo } from "./logo";
 import { Gift, Share2, Sparkles, Gamepad2, ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
+import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import { PlatformStatsCard } from './cards/PlatformStatsCard';
 import { TopGameCard } from './cards/TopGameCard';
@@ -196,11 +197,14 @@ export function WrappedSlideshow({ data, id }: { data: WrappedData, id: string |
                       <div className="absolute inset-0 bg-primary opacity-20 blur-xl rounded-full"></div>
                       <div className="relative w-full h-full bg-background border-4 border-foreground shadow-[4px_4px_0px_oklch(var(--primary))] pixel-corners overflow-hidden group-hover:scale-105 transition-transform duration-500 flex items-center justify-center">
                         {heroImage ? (
-                          <img
+                          <Image
                             src={heroImage}
                             alt="Top Game"
+                            width={192}
+                            height={256}
                             className="w-full h-full object-cover"
                             style={{ imageRendering: 'pixelated' }}
+                            unoptimized
                           />
                         ) : (
                           <>

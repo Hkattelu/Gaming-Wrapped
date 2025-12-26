@@ -2,6 +2,7 @@
 
 import { TopGameCard as TopGameCardType } from '@/types';
 import { Gamepad2, Monitor, ArrowLeft, ArrowRight } from 'lucide-react';
+import Image from 'next/image';
 
 import { useEffect, useState } from 'react';
 
@@ -70,11 +71,14 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
               {/* Image frame */}
               <div className="relative w-full h-full bg-background border-4 border-foreground overflow-hidden shadow-[4px_4px_0px_oklch(var(--primary))] pixel-corners">
                 {imageUrl ? (
-                  <img
+                  <Image
                     src={imageUrl}
                     alt={card.game.title}
+                    width={192}
+                    height={256}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     style={{ imageRendering: 'pixelated' }}
+                    unoptimized
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center hover:scale-110 transition-transform duration-500">
