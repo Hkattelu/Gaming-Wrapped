@@ -58,15 +58,16 @@ export class NextResponse {
   }
 
   async json() {
-    if (typeof this.body === 'string') {
-      try {
-        return JSON.parse(this.body);
-      } catch {
-        // Fallback or throw based on expected behavior; strict JSON parsing throws
-        throw new Error('Invalid JSON body');
-      }
+    if (typeof this.body !== 'string') {
+      throw new Error('Cannot parse non-string body as JSON');
     }
-    return null;
+
+    try {
+      return JSON.parse(this.body);
+    } catch {
+      // Fallback or throw based on expected behavior; strict JSON parsing throws
+      throw new Error('Invalid JSON body');
+    }
   }
 
   async text() {
