@@ -1,9 +1,16 @@
-import { jest, describe, it, expect } from '@jest/globals';
+import { jest, describe, it, expect, afterEach } from '@jest/globals';
 import { NextRequest } from 'next/server';
 
 const createMockRequest = (url: string): NextRequest => {
     return new NextRequest(url);
 };
+
+type MockFetch = jest.MockedFunction<typeof fetch>;
+const originalFetch = global.fetch;
+
+afterEach(() => {
+  global.fetch = originalFetch;
+});
 
 describe('GET /api/backloggd', () => {
   it('returns 400 when username is missing', async () => {
@@ -31,14 +38,14 @@ describe('GET /api/backloggd', () => {
     });
 
   it('proceeds to fetch when username is valid (alphanumeric with dash/underscore/dot)', async () => {
-    const mockFetch = jest.fn(() =>
-        Promise.resolve({
-            ok: true,
-            status: 200,
-            text: async () => '<html><body></body></html>',
-            json: async () => ({}),
-        })
-    ) as jest.Mock;
+    const mockFetch = jest.fn() as unknown as MockFetch;
+    mockFetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: async () => '<html><body></body></html>',
+      json: async () => ({}),
+    } as unknown as Response);
+
     global.fetch = mockFetch;
 
     const { GET } = await import('./route');
@@ -49,7 +56,8 @@ describe('GET /api/backloggd', () => {
 
     // Assert fetch was called with the correct URL, proving validation passed
     expect(mockFetch).toHaveBeenCalled();
-    const calledUrl = mockFetch.mock.calls[0][0] as string;
+    const calledUrl = String(mockFetch.mock.calls[0][0]);
     expect(calledUrl).toContain(`backloggd.com/u/${validUsername}`);
+    expect(calledUrl).toContain('?page=1');
   });
 });

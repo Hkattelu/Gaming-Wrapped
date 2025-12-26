@@ -1,13 +1,27 @@
 export class NextRequest {
   url: string;
-  constructor(input: string | Request | URL, init?: any) {
-    if (typeof input === 'string') {
-      this.url = input;
-    } else if (input instanceof URL) {
-      this.url = input.toString();
-    } else {
-      this.url = (input as any).url || '';
+  method: string;
+  headers: Headers;
+
+  constructor(input: string | Request | URL, init?: RequestInit) {
+    const url =
+      typeof input === 'string'
+        ? input
+        : input instanceof URL
+          ? input.toString()
+          : typeof (input as { url?: unknown }).url === 'string'
+            ? (input as { url: string }).url
+            : '';
+
+    if (!url) {
+      throw new Error('NextRequest requires a valid url');
     }
+
+    this.url = url;
+
+    const requestLike = typeof input === 'string' || input instanceof URL ? undefined : (input as any);
+    this.method = init?.method ?? requestLike?.method ?? 'GET';
+    this.headers = new Headers(init?.headers ?? requestLike?.headers);
   }
 }
 
@@ -29,7 +43,11 @@ export class NextResponse {
     // but with the body stringified and proper content-type
     const jsonBody = JSON.stringify(data);
     const response = new NextResponse(jsonBody, init);
-    response.headers.set('Content-Type', 'application/json');
+
+    if (!response.headers.has('content-type')) {
+      response.headers.set('Content-Type', 'application/json');
+    }
+
     return response;
   }
 

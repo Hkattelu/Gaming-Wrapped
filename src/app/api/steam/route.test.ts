@@ -1,4 +1,4 @@
-import { jest, describe, it, expect } from '@jest/globals';
+import { jest, describe, it, expect, afterEach } from '@jest/globals';
 import { NextRequest } from 'next/server';
 
 const createMockRequest = (url: string): NextRequest => {
@@ -8,6 +8,13 @@ const createMockRequest = (url: string): NextRequest => {
 
 // Mock environment variables
 process.env.STEAM_API_KEY = 'mock_key';
+
+type MockFetch = jest.MockedFunction<typeof fetch>;
+const originalFetch = global.fetch;
+
+afterEach(() => {
+  global.fetch = originalFetch;
+});
 
 describe('GET /api/steam', () => {
   it('returns 400 when steamId is missing', async () => {
@@ -27,13 +34,13 @@ describe('GET /api/steam', () => {
   });
 
   it('proceeds to fetch when steamId is valid 17-digit number', async () => {
-    const mockFetch = jest.fn(() =>
-        Promise.resolve({
-            ok: true,
-            status: 200,
-            json: async () => ({ response: { games: [] } }),
-        })
-    ) as jest.Mock;
+    const mockFetch = jest.fn() as unknown as MockFetch;
+    mockFetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ response: { games: [] } }),
+    } as unknown as Response);
+
     global.fetch = mockFetch;
 
     const { GET } = await import('./route');
@@ -44,7 +51,7 @@ describe('GET /api/steam', () => {
 
     // Assert fetch was called with the correct ID, proving validation passed
     expect(mockFetch).toHaveBeenCalled();
-    const calledUrl = mockFetch.mock.calls[0][0] as string;
+    const calledUrl = String(mockFetch.mock.calls[0][0]);
     expect(calledUrl).toContain(validSteamId);
     expect(calledUrl).toContain('api.steampowered.com');
   });
