@@ -385,9 +385,9 @@ export default function Home() {
           <div className="mt-24 w-full text-left max-w-4xl">
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-privacy-terms">
-                <AccordionTrigger className="font-headline text-xl">Privacy & Terms</AccordionTrigger>
+                <AccordionTrigger className="font-headline text-xl">What we store</AccordionTrigger>
                 <AccordionContent className="text-base text-xl font-body text-muted-foreground space-y-4 pt-4">
-                  <p>Your privacy matters. We only use your uploaded data to generate your Wrapped experience. It is processed in memory, not stored long-term, and never sold or shared. This tool is for entertainment only and provided &quot;as-is&quot;.</p>
+                  <p>We only use your uploaded data to generate your Wrapped experience. It is processed in memory, not stored long-term. We do store the wrapped itself, so that it can be shared.</p>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
