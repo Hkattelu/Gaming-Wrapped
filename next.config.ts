@@ -1,12 +1,7 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['@resvg/resvg-js'],
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  turbopack: {
-  },
+  serverExternalPackages: [],
   images: {
     remotePatterns: [
       {
