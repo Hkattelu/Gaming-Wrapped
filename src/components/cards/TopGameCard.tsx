@@ -111,19 +111,30 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
 
             {/* Stats Grid */}
             <div className="w-full grid grid-cols-1 gap-4 border-t-2 border-dashed border-border pt-6 mt-2">
-              {/* Score */}
-              {card.game.score && (
+              {/* Score or Playtime */}
+              {(card.game.score || card.game.playtime) && (
                 <div className="flex flex-col items-center">
-                  <span className="text-muted-foreground text-xs uppercase font-headline tracking-widest">Score</span>
+                  <span className="text-muted-foreground text-xs uppercase font-headline tracking-widest">
+                    {card.game.score ? "Score" : "Playtime"}
+                  </span>
                   <div className="text-primary font-headline text-2xl md:text-3xl mt-1 drop-shadow-[2px_2px_0px_rgba(255,255,255,0.1)]">
-                    {card.game.formattedScore ? (
-                      card.game.formattedScore
+                    {card.game.score ? (
+                      card.game.formattedScore ? (
+                        card.game.formattedScore
+                      ) : (
+                        <>
+                          {Number(card.game.score) > 10
+                            ? (Number(card.game.score) / 10).toFixed(1)
+                            : card.game.score}
+                          <span className="text-sm align-top opacity-70">/10</span>
+                        </>
+                      )
                     ) : (
                       <>
-                        {Number(card.game.score) > 10
-                          ? (Number(card.game.score) / 10).toFixed(1)
-                          : card.game.score}
-                        <span className="text-sm align-top opacity-70">/10</span>
+                        {typeof card.game.playtime === 'number' 
+                          ? Math.round(card.game.playtime / 60) 
+                          : card.game.playtime}
+                        <span className="text-sm align-top opacity-70 ml-1">HRS</span>
                       </>
                     )}
                   </div>

@@ -5,10 +5,14 @@ import { Gamepad2, Trophy, BarChart3 } from 'lucide-react';
 
 export function SummaryCard({ card }: { card: SummaryCardType }) {
   // Calculate completion rate (assuming 8+ is "completed")
-  const completionRate = card.averageScore >= 7 ? 75 : 60;
+  const completionRate = card.completionPercentage ?? (card.averageScore >= 7 ? 75 : 60);
 
-  // Estimate total playtime (placeholder calculation)
-  const estimatedHours = Math.round(card.totalGames * 25);
+  // Use real total playtime if available, otherwise estimate
+  const totalHours = card.totalPlaytime 
+    ? Math.round(card.totalPlaytime / 60) 
+    : Math.round(card.totalGames * 25);
+
+  const showAverageScore = card.averageScore > 0;
 
   return (
     <div className="relative min-h-[600px] flex flex-col items-center justify-center p-4">
@@ -57,15 +61,28 @@ export function SummaryCard({ card }: { card: SummaryCardType }) {
                 </span>
               </div>
 
-              {/* Average Score */}
+              {/* Average Score OR Total Hours */}
               <div className="flex flex-col items-center justify-center p-4 bg-background/80 border-2 border-dashed border-border backdrop-blur-sm pixel-corners">
                 <Trophy className="w-10 h-10 text-muted-foreground mb-2" />
-                <h3 className="font-headline text-4xl md:text-5xl text-accent mb-1 drop-shadow-[2px_2px_0px_rgba(255,255,255,0.1)]">
-                  {card.averageScore.toFixed(1)}
-                </h3>
-                <span className="text-muted-foreground text-sm uppercase tracking-wider font-bold">
-                  Avg Score
-                </span>
+                {showAverageScore ? (
+                  <>
+                    <h3 className="font-headline text-4xl md:text-5xl text-accent mb-1 drop-shadow-[2px_2px_0px_rgba(255,255,255,0.1)]">
+                      {card.averageScore.toFixed(1)}
+                    </h3>
+                    <span className="text-muted-foreground text-sm uppercase tracking-wider font-bold">
+                      Avg Score
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="font-headline text-3xl md:text-4xl text-accent mb-1 drop-shadow-[2px_2px_0px_rgba(255,255,255,0.1)]">
+                      {totalHours.toLocaleString()}
+                    </h3>
+                    <span className="text-muted-foreground text-sm uppercase tracking-wider font-bold">
+                      Total Hours
+                    </span>
+                  </>
+                )}
               </div>
             </div>
 
@@ -74,10 +91,10 @@ export function SummaryCard({ card }: { card: SummaryCardType }) {
               <div className="flex justify-between items-center text-left">
                 <div>
                   <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">
-                    Estimated Playtime
+                    {showAverageScore ? "Estimated Playtime" : "Total Playtime"}
                   </p>
                   <p className="font-headline text-xl text-cyan-600 dark:text-cyan-400">
-                    {estimatedHours.toLocaleString()} <span className="text-sm text-muted-foreground font-body">HRS</span>
+                    {totalHours.toLocaleString()} <span className="text-sm text-muted-foreground font-body">HRS</span>
                   </p>
                 </div>
                 <div className="text-right">

@@ -39,6 +39,7 @@ const hltbHeaderToKeyMap = {
   "Review Notes": "reviewNotes",
   "Added": "added",
   "Updated": "updated",
+  "PlaytimeMinutes": "playtime",
 } as Record<string, string>;
 
 /**

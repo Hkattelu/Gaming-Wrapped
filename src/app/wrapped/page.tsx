@@ -3,6 +3,7 @@ import Loading from './loading';
 import WrappedPageClient from './wrapped-page-client';
 import { Metadata } from 'next';
 import { getWrapped } from '@/lib/db';
+import { WrappedData } from '@/types';
 
 interface Props {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -39,29 +40,38 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
   const ogImageUrl = `${host}/api/wrapped/${id}/og`;
   const pageUrl = `${host}/wrapped?id=${id}`;
-  const title = 'My Gaming Wrapped 2025';
-
-  // Find playtime if available
+  
+  // Extract stats for richer metadata
   const summaryCard = wrapped.cards.find((c: any) => c.type === 'summary');
+  const personaCard = wrapped.cards.find((c: any) => c.type === 'player_persona');
+  const topGameCard = wrapped.cards.find((c: any) => c.type === 'top_game');
+
+  const persona = personaCard?.persona || 'Gamer';
+  const topGame = topGameCard?.game?.title || 'Unknown Game';
   const totalGames = summaryCard?.totalGames ?? 0;
-  const playtime = totalGames * 20; 
-  const description = `I played ${totalGames} games for over ${playtime} hours this year! Check out my Gaming Wrapped.`;
+  const playtime = (totalGames * 20).toLocaleString();
+
+  const title = `Gaming Wrapped 2025: ${persona}`;
+  const description = `I played ${totalGames} games (mostly ${topGame}) for over ${playtime} hours this year! Check out my Gaming Wrapped.`;
+  const imageAlt = `Gaming Wrapped 2025 Summary for a ${persona}. Featured Game: ${topGame}. Total Games: ${totalGames}.`;
 
   return {
     metadataBase: safeHost,
     title,
     description,
+    keywords: ['Gaming Wrapped', 'Year in Review', '2025', 'Video Games', persona, topGame],
     openGraph: {
       title,
       description,
       url: pageUrl,
       siteName: 'Gaming Wrapped',
+      locale: 'en_US',
       images: [
         {
           url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: 'Gaming Wrapped Summary',
+          alt: imageAlt,
         },
       ],
       type: 'website',
@@ -78,10 +88,10 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 export default async function WrappedPage({ searchParams }: Props) {
   const params = await searchParams;
   const id = params.id as string;
-  let initialData = null;
+  let initialData: WrappedData | null = null;
 
   if (id) {
-    initialData = await getWrapped(id);
+    initialData = (await getWrapped(id)) as WrappedData | null;
   }
 
   return (

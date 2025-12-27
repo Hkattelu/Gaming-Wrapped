@@ -1,6 +1,5 @@
+import { ImageResponse } from 'next/og';
 import { NextRequest, NextResponse } from 'next/server';
-import satori from 'satori';
-import { Resvg } from '@resvg/resvg-js';
 import { getWrapped } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
@@ -54,7 +53,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const avatarBuffer = await fetch(avatarUrl).then(res => res.arrayBuffer());
     const avatarBase64 = `data:image/png;base64,${Buffer.from(avatarBuffer).toString('base64')}`;
 
-    const svg = await satori(
+    return new ImageResponse(
       (
         <div
           style={{
@@ -270,24 +269,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         ],
       }
     );
-
-    const resvg = new Resvg(svg);
-    const pngData = resvg.render();
-    const pngBuffer = pngData.asPng();
-
-    const headers: Record<string, string> = {
-      'Content-Type': 'image/png',
-      'Cache-Control': 'public, max-age=31536000, immutable',
-    };
-
-    const { searchParams } = new URL(req.url);
-    if (searchParams.get('download') === 'true') {
-      headers['Content-Disposition'] = `attachment; filename="gaming-wrapped-${id}.png"`;
-    }
-
-    return new NextResponse(new Blob([new Uint8Array(pngBuffer)]), {
-      headers,
-    });
   } catch (error) {
     console.error('Error generating OG image:', error);
     return new NextResponse('Error generating image', { status: 500 });

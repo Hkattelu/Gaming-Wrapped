@@ -21,7 +21,7 @@ import { SummaryCard } from './cards/SummaryCard';
 import { GenreBreakdownCard } from './cards/GenreBreakdownCard';
 
 import { ScoreDistributionCard } from './cards/ScoreDistributionCard';
-import { PlayerPersonaCardComponent } from "./cards/PlayerPersonaCard";
+import PlayerPersonaCardComponent from "./cards/PlayerPersonaCard";
 
 import { RoastCardComponent } from "./cards/RoastCard";
 import { RecommendationsCardComponent } from "./cards/RecommendationsCard";

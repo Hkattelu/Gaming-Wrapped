@@ -4,6 +4,7 @@ export interface Game {
   score: number | string; // Can be number or string like 'N/A'
   formattedScore?: string;
   notes: string;
+  playtime?: number | string;
 }
 
 export interface ManualGame {
@@ -37,6 +38,7 @@ export interface SummaryCard {
   totalGames: number;
   averageScore: number;
   completionPercentage?: number;
+  totalPlaytime?: number;
 }
 
 

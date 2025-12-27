@@ -39,6 +39,7 @@ const GenerateGamingWrappedInputSchema = z.object({
     reviewNotes: z.string().optional().describe("Review Notes"),
     added: z.string().optional().describe("The date this game was added"),
     updated: z.string().optional().describe("The date this entry was updaeted"),
+    playtime: z.union([z.string(), z.number()]).optional().describe("Playtime in minutes"),
   })).describe('Array of game objects'),
 });
 
@@ -175,15 +176,15 @@ IMPORTANT: Adhere strictly to the "Context" instructions above regarding which c
 
 1.  summary: A card with the total number of games and the average score. Always include this.
 2.  platform_stats: A card with the distribution of games by platform.
-3.  top_game: A card with the user's top-rated game. If many entries are unrated, infer a likely top pick using notes, completion status, or platform frequency.
+3.  top_game: A card with the user's top-rated game. If many entries are unrated, infer a likely top pick using 'playtime' (highest is best), notes, completion status, or platform frequency.
 4.  genre_breakdown: A card that analyzes the game titles and notes to show the user's most played genres.
 5.  score_distribution: A chart that shows how many games fall into different score ranges (e.g., 9-10, 7-8, etc.).
-6.  player_persona: Assigns a persona based on a holistic view of their gaming habits. See the Player Persona Taxonomy below and choose EXACTLY ONE persona.
+6.  player_persona: Assigns a persona based on a holistic view of their gaming habits (including playtime and genres). See the Player Persona Taxonomy below and choose EXACTLY ONE persona.
 7.  roast: Provide a light-hearted, specific, PG-13 roast (1–2 sentences) based on patterns (backlog size, platform bias, abandoned games, sequel marathons, etc.).
 8.  recommendations: The AI recommends you new games based on your history.
 
 Additional guidance:
-- Be lenient with missing ratings: do not fixate on "nothing is rated". Use notes, completion, platform frequency, and common sense signals to draw conclusions.
+- Be lenient with missing ratings: do not fixate on "nothing is rated". Use 'playtime', notes, completion, platform frequency, and common sense signals to draw conclusions.
 - When computing averages or distributions, ignore missing scores.
 - Prefer concise, vivid language with concrete details.
 - When unsure, make a sensible assumption and move on rather than dwelling on missing data.
@@ -283,6 +284,17 @@ const generateGamingWrappedFlow = ai.defineFlow(
         if (completedGames > 0 && totalGames > 0) {
           // @ts-ignore
           summaryCard.completionPercentage = Math.round((completedGames / totalGames) * 100);
+        }
+
+        // Calculate total playtime
+        const totalPlaytimeMinutes = games.reduce((acc, game) => {
+          const minutes = typeof game.playtime === 'number' ? game.playtime : parseFloat(game.playtime || '0');
+          return acc + (isNaN(minutes) ? 0 : minutes);
+        }, 0);
+
+        if (totalPlaytimeMinutes > 0) {
+           // @ts-ignore
+           summaryCard.totalPlaytime = totalPlaytimeMinutes;
         }
       }
     }
