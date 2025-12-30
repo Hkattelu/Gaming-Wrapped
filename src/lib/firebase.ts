@@ -6,7 +6,9 @@ const projectId =
     (process.env.NODE_ENV === 'development' ? 'game-rewind-fpatu' : undefined);
 
 if (!projectId) {
-    throw new Error('Missing NEXT_PUBLIC_FIREBASE_PROJECT_ID');
+    throw new Error(
+        'Firebase configuration error: NEXT_PUBLIC_FIREBASE_PROJECT_ID is required when NODE_ENV is not development.'
+    );
 }
 
 const firebaseConfig = { projectId };
