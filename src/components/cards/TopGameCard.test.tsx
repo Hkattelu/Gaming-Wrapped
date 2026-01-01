@@ -64,13 +64,13 @@ describe('TopGameCard', () => {
 
     render(<TopGameCard card={card} />);
 
-    // Check for the formatted score text
+    // Check for the formatted score text (95/100 is one complete string, not 95 and /10 separately)
     await waitFor(() => {
-        expect(screen.getByText('95/100')).toBeTruthy();
+        const scoreElement = screen.getByText(/95\/100/);
+        expect(scoreElement).toBeTruthy();
+        // Verify it's showing the formattedScore, not the fallback
+        expect(scoreElement.textContent).toBe('95/100');
     });
-    // Ensure the fallback /10 is NOT present (it might be present in other DOM elements if not careful, but here we check it's not part of the score display logic we touched)
-    // Actually /10 is in a span, so we can check it's not there.
-    expect(screen.queryByText('/10')).toBeNull();
   });
 
   it('renders standard score with /10 fallback when formattedScore is missing', async () => {
@@ -89,8 +89,8 @@ describe('TopGameCard', () => {
     render(<TopGameCard card={card} />);
 
     await waitFor(() => {
-        expect(screen.getByText('9')).toBeTruthy();
-        expect(screen.getByText('/10')).toBeTruthy();
+        expect(screen.getByText(/9/)).toBeTruthy();
+        expect(screen.getByText(/\/10/)).toBeTruthy();
     });
   });
   
@@ -111,8 +111,8 @@ describe('TopGameCard', () => {
 
     await waitFor(() => {
         // 95 > 10 -> 95/10 = 9.5
-        expect(screen.getByText('9.5')).toBeTruthy();
-        expect(screen.getByText('/10')).toBeTruthy();
+        expect(screen.getByText(/9.5/)).toBeTruthy();
+        expect(screen.getByText(/\/10/)).toBeTruthy();
     });
   });
 });

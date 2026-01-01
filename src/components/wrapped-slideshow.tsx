@@ -56,7 +56,7 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
   }, []);
 
   // Sound effects logic
-  const playSound = (type: 'nav' | 'success' | 'startup' | 'glitch' | 'achievement' | 'coin' | 'rankup') => {
+  const playSound = (type: 'nav' | 'startup' | 'coin') => {
     if (isMuted) return;
     try {
       const sounds = {

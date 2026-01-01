@@ -1,5 +1,3 @@
-import type { NextRequest } from 'next/server';
-
 // Simple, in-memory cache and a lock to prevent concurrent token refreshes
 let cachedToken: { value: string; expiresAt: number } | null = null;
 let tokenRefreshPromise: Promise<string | null> | null = null;

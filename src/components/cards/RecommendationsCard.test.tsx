@@ -78,9 +78,9 @@ describe('RecommendationsCardComponent', () => {
     });
 
     expect(screen.getByText('HOLLOW KNIGHT')).toBeTruthy();
-    expect(screen.getByText('A challenging metroidvania')).toBeTruthy();
+    expect(screen.getByText(/A challenging metroidvania/)).toBeTruthy();
     expect(screen.getByText('THE WITCHER 3')).toBeTruthy();
-    expect(screen.getByText('Epic open-world RPG')).toBeTruthy();
+    expect(screen.getByText(/Epic open-world RPG/)).toBeTruthy();
   });
 
   it('renders links when IGDB URLs are returned', async () => {
@@ -122,7 +122,7 @@ describe('RecommendationsCardComponent', () => {
     });
 
     expect(screen.getByText('UNKNOWN GAME')).toBeTruthy();
-    expect(screen.getByText('You might like it')).toBeTruthy();
+    expect(screen.getByText(/You might like it/)).toBeTruthy();
     expect(screen.queryByRole('link')).toBeNull();
   });
 

@@ -19,9 +19,9 @@ export class NextRequest {
 
     this.url = url;
 
-    const requestLike = typeof input === 'string' || input instanceof URL ? undefined : (input as any);
-    this.method = init?.method ?? requestLike?.method ?? 'GET';
-    this.headers = new Headers(init?.headers ?? requestLike?.headers);
+    const requestLike = typeof input === 'string' || input instanceof URL ? undefined : (input as Record<string, unknown>);
+    this.method = init?.method ?? (requestLike?.method as string | undefined) ?? 'GET';
+    this.headers = new Headers(init?.headers ?? (requestLike?.headers as HeadersInit | undefined));
   }
 }
 
@@ -38,7 +38,7 @@ export class NextResponse {
     this.ok = this.status >= 200 && this.status < 300;
   }
 
-  static json(data: any, init?: ResponseInit) {
+  static json(data: Record<string, unknown>, init?: ResponseInit) {
     // Return a new instance so it behaves exactly like a constructed response
     // but with the body stringified and proper content-type
     const jsonBody = JSON.stringify(data);

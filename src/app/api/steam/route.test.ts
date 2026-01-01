@@ -2,8 +2,8 @@ import { jest, describe, it, expect, afterEach } from '@jest/globals';
 import { NextRequest } from 'next/server';
 
 const createMockRequest = (url: string): NextRequest => {
-    // In our mock, NextRequest constructor takes the url
-    return new NextRequest(url);
+  // In our mock, NextRequest constructor takes the url
+  return new NextRequest(url);
 };
 
 // Mock environment variables
@@ -47,7 +47,7 @@ describe('GET /api/steam', () => {
     const validSteamId = '76561198006409530';
     const req = createMockRequest(`http://localhost/api/steam?steamId=${validSteamId}`);
 
-    const res = await GET(req);
+    await GET(req);
 
     // Assert fetch was called with the correct ID, proving validation passed
     expect(mockFetch).toHaveBeenCalled();

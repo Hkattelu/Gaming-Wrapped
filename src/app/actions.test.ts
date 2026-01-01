@@ -2,7 +2,7 @@ import { jest, describe, expect, it, beforeAll, beforeEach } from '@jest/globals
 import type { ManualGame } from '@/types';
 
 // Mock the fetch function
-global.fetch = jest.fn() as any;
+global.fetch = jest.fn() as unknown as typeof fetch;
 
 // Declare mockParseCsv with 'mock' prefix
 let mockParseCsv: jest.Mock;
@@ -17,7 +17,7 @@ jest.mock('@/lib/csv', () => ({
 // implementation no longer uses those modules.
 
 describe('generateWrappedData', () => {
-  let generateWrappedData: any; // Declare generateWrappedData here
+  let generateWrappedData: unknown;
 
   beforeAll(() => {
     // Mock process.env before importing actions.ts
@@ -29,11 +29,12 @@ describe('generateWrappedData', () => {
     jest.clearAllMocks();
     jest.resetModules(); // Reset module registry to clear cached imports
 
-    mockParseCsv = (jest.requireMock('@/lib/csv') as any).parseCsv as jest.Mock;
+    mockParseCsv = (jest.requireMock('@/lib/csv') as { parseCsv: jest.Mock }).parseCsv;
     // Dynamically import generateWrappedData and parseCsv after mocking
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     generateWrappedData = require('./actions').generateWrappedData;
 
-    global.fetch = jest.fn() as any; // Re-assign fetch to a new mock for each test
+    global.fetch = jest.fn() as unknown as typeof fetch; // Re-assign fetch to a new mock for each test
   });
 
   it('should generate wrapped data successfully', async () => {
@@ -45,7 +46,7 @@ describe('generateWrappedData', () => {
     const mockId = 'test-id';
 
     mockParseCsv.mockReturnValue(mockGames);
-    (global.fetch as any).mockResolvedValue({
+    (global.fetch as unknown as jest.Mock).mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ id: mockId }),
     });
@@ -72,7 +73,7 @@ describe('generateWrappedData', () => {
     const mockCsvText = '';
     mockParseCsv.mockReturnValue([]);
 
-    await expect(generateWrappedData(mockCsvText)).rejects.toThrow(
+    await expect((generateWrappedData as (csvText: string) => Promise<{ id: string }>)(mockCsvText)).rejects.toThrow(
       'No valid game data found in the CSV. Please check the file format.'
     );
     expect(mockParseCsv).toHaveBeenCalledWith(mockCsvText);
@@ -87,12 +88,12 @@ describe('generateWrappedData', () => {
     const mockErrorData = { error: 'API error message' };
 
     mockParseCsv.mockReturnValue(mockGames);
-    (global.fetch as any).mockResolvedValue({
+    (global.fetch as unknown as jest.Mock).mockResolvedValue({
       ok: false,
       json: () => Promise.resolve(mockErrorData),
     });
 
-    await expect(generateWrappedData(mockCsvText)).rejects.toThrow(
+    await expect((generateWrappedData as (csvText: string) => Promise<{ id: string }>)(mockCsvText)).rejects.toThrow(
       'Failed to generate your Rewind. API error message'
     );
     expect(mockParseCsv).toHaveBeenCalledWith(mockCsvText);
@@ -101,12 +102,13 @@ describe('generateWrappedData', () => {
 });
 
 describe('generateWrappedDataFromManual', () => {
-  let generateWrappedDataFromManual: any;
+  let generateWrappedDataFromManual: unknown;
 
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetModules();
 
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     generateWrappedDataFromManual = require('./actions').generateWrappedDataFromManual;
   });
 
@@ -122,10 +124,10 @@ describe('generateWrappedDataFromManual', () => {
     const mockId = 'abc-123';
 
     // parseCsv is called inside generateWrappedData with the CSV derived from manual games
-    mockParseCsv.mockReturnValue(parsedGames as any);
-    (global.fetch as any).mockResolvedValue({ ok: true, json: async () => ({ id: mockId }) });
+    mockParseCsv.mockReturnValue(parsedGames as unknown as typeof parsedGames);
+    (global.fetch as unknown as jest.Mock).mockResolvedValue({ ok: true, json: async () => ({ id: mockId }) });
 
-    const result = await generateWrappedDataFromManual(mockManualGames);
+    const result = await (generateWrappedDataFromManual as (games: ManualGame[]) => Promise<{ id: string }>)(mockManualGames);
 
     // Ensure we attempted to parse a CSV string with the expected header
     expect(mockParseCsv).toHaveBeenCalledTimes(1);
@@ -146,7 +148,7 @@ describe('generateWrappedDataFromManual', () => {
   });
 
   it('should throw an error if no games are provided', async () => {
-    await expect(generateWrappedDataFromManual([])).rejects.toThrow(
+    await expect((generateWrappedDataFromManual as (games: ManualGame[]) => Promise<{ id: string }>)([])).rejects.toThrow(
       'No games provided. Please add some games to your list.'
     );
     // No calls made when validation fails

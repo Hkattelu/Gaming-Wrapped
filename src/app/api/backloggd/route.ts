@@ -203,7 +203,7 @@ export async function GET(req: NextRequest) {
             encoder.encode(`data: ${JSON.stringify({ type: 'complete', csv: csvString, total: allGameData.length })}\n\n`)
           );
           controller.close();
-        } catch (error) {
+        } catch {
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify({ type: 'error', error: 'An error occurred' })}\n\n`)
           );

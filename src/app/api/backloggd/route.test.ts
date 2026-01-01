@@ -2,7 +2,7 @@ import { jest, describe, it, expect, afterEach } from '@jest/globals';
 import { NextRequest } from 'next/server';
 
 const createMockRequest = (url: string): NextRequest => {
-    return new NextRequest(url);
+  return new NextRequest(url);
 };
 
 type MockFetch = jest.MockedFunction<typeof fetch>;
@@ -30,12 +30,12 @@ describe('GET /api/backloggd', () => {
   });
 
   it('returns 400 when username contains spaces', async () => {
-      const { GET } = await import('./route');
-      const req = createMockRequest('http://localhost/api/backloggd?username=user name');
-      const res = await GET(req);
-      expect(res.status).toBe(400);
-      expect(await res.text()).toContain('Invalid username format');
-    });
+    const { GET } = await import('./route');
+    const req = createMockRequest('http://localhost/api/backloggd?username=user name');
+    const res = await GET(req);
+    expect(res.status).toBe(400);
+    expect(await res.text()).toContain('Invalid username format');
+  });
 
   it('proceeds to fetch when username is valid (alphanumeric with dash/underscore/dot)', async () => {
     const mockFetch = jest.fn() as unknown as MockFetch;

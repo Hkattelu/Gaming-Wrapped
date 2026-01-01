@@ -31,6 +31,7 @@ export function TopGameCard({ card, isActive }: { card: TopGameCardType, isActiv
 
   const score = Number(card.game.score) || 0;
   const normalizedScore = score > 10 ? score : score * 10;
+  const displayScore = card.game.formattedScore || (score > 10 ? (score / 10).toFixed(1) : score.toString());
 
   return (
     <div className="relative min-h-[600px] flex flex-col items-center justify-center p-4 overflow-hidden">
@@ -132,7 +133,7 @@ export function TopGameCard({ card, isActive }: { card: TopGameCardType, isActiv
           >
             <div className="flex justify-between items-end font-headline text-[10px] uppercase">
               <span className="text-primary">Engagement Level</span>
-              <span className="text-foreground">{score}/10</span>
+              <span className="text-foreground">{displayScore}{card.game.formattedScore ? '' : '/10'}</span>
             </div>
             <div className="h-8 w-full bg-zinc-900 border-4 border-foreground p-1 pixel-corners relative overflow-hidden">
               <motion.div 

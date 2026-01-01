@@ -56,8 +56,6 @@ const CARD_TYPES = [
   'recommendations',
 ] as const;
 
-type CardType = (typeof CARD_TYPES)[number];
-
 const PlatformStatsCardSchema = z.object({
   type: z.enum(CARD_TYPES),
   title: z.string().describe('Title for the platform stats card'),
@@ -292,7 +290,7 @@ const generateGamingWrappedFlow = ai.defineFlow(
     contextInstructions += "- If a specific card type's required data is completely missing, SKIP that card type rather than hallucinating data.\n";
 
     // Rule 5: Score Scale Detection
-     if (rawScores.length > 0) {
+    if (rawScores.length > 0) {
       const maxScore = Math.max(...rawScores);
       if (maxScore <= 5) {
         contextInstructions += "- The ratings appear to be on a 5-point scale. PLEASE NORMALIZE THESE TO A 10-POINT SCALE (multiply by 2) for the 'averageScore' and 'score_distribution' ranges.\n";
@@ -321,12 +319,12 @@ const generateGamingWrappedFlow = ai.defineFlow(
         else if (total > 10) rank = "GOLD";
         else if (total > 5) rank = "SILVER";
         
-        // @ts-ignore
+        // @ts-expect-error Property 'rank' does not exist on type
         summaryCard.rank = rank;
 
         // Determine completion percentage if data exists
         if (completedGames > 0 && totalGames > 0) {
-          // @ts-ignore
+          // @ts-expect-error Property 'completionPercentage' does not exist on type
           summaryCard.completionPercentage = Math.round((completedGames / totalGames) * 100);
         }
 
@@ -337,8 +335,8 @@ const generateGamingWrappedFlow = ai.defineFlow(
         }, 0);
 
         if (totalPlaytimeMinutes > 0) {
-           // @ts-ignore
-           summaryCard.totalPlaytime = totalPlaytimeMinutes;
+          // @ts-expect-error Property 'totalPlaytime' does not exist on type
+          summaryCard.totalPlaytime = totalPlaytimeMinutes;
         }
       }
     }

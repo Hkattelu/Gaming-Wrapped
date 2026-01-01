@@ -5,9 +5,13 @@ const IGDB_MODULE_PATH = '@/lib/igdb';
 
 const ORIGINAL_ENV = process.env;
 
-function mockFetchSequence(impls: Array<(input: RequestInfo, init?: RequestInit) => any>) {
+function mockFetchSequence(
+  impls: Array<(input: RequestInfo, init?: RequestInit) => Promise<unknown>>
+): typeof fetch {
   const fn = jest.fn();
-  impls.forEach((impl) => fn.mockImplementationOnce(impl as any));
+  impls.forEach((impl) => {
+    fn.mockImplementationOnce(impl);
+  });
   return fn as unknown as typeof fetch;
 }
 
@@ -23,11 +27,11 @@ describe('lib/igdb integration', () => {
   });
 
   it('fetchTwitchAppToken: returns null when required env vars are missing (covered via exported APIs)', async () => {
-    process.env.TWITCH_CLIENT_ID = '' as any;
-    process.env.TWITCH_CLIENT_SECRET = '' as any;
+    process.env.TWITCH_CLIENT_ID = '';
+    process.env.TWITCH_CLIENT_SECRET = '';
 
     // No network calls should be attempted
-    global.fetch = jest.fn() as any;
+    global.fetch = jest.fn() as unknown as typeof fetch;
 
     const { searchCoverByTitle } = await import(IGDB_MODULE_PATH);
     const res = await searchCoverByTitle('Halo');
@@ -50,27 +54,27 @@ describe('lib/igdb integration', () => {
     const gameRows = [{ name: 'Halo', cover: { image_id: 'abc123' } }];
     const fetchMock = mockFetchSequence([
       // Token endpoint
-      async (input) => {
+      async (input: RequestInfo) => {
         expect(String(input)).toContain('https://id.twitch.tv/oauth2/token');
-        return { ok: true, json: async () => tokenResp } as any;
+        return { ok: true, json: async () => tokenResp } as unknown as Response;
       },
       // First IGDB request
-      async (input, init) => {
+      async (input: RequestInfo, init?: RequestInit) => {
         expect(String(input)).toContain('https://api.igdb.com/v4/games');
         // Assert headers present on first call
-        const headers = (init as any)?.headers ?? {};
+        const headers = (init as unknown as { headers?: Record<string, string> })?.headers ?? {};
         expect(headers['Client-ID']).toBe('abc');
         expect(headers['Authorization']).toBe('Bearer t1');
         expect(headers['Accept']).toBe('application/json');
-        return { ok: true, json: async () => gameRows } as any;
+        return { ok: true, json: async () => gameRows } as unknown as Response;
       },
       // Second IGDB request (no new token request expected)
-      async (input) => {
+      async (input: RequestInfo) => {
         expect(String(input)).toContain('https://api.igdb.com/v4/games');
-        return { ok: true, json: async () => gameRows } as any;
+        return { ok: true, json: async () => gameRows } as unknown as Response;
       },
     ]);
-    // @ts-ignore
+    // @ts-expect-error - Mock global fetch for testing
     global.fetch = fetchMock;
 
     const { searchCoverByTitle } = await import(IGDB_MODULE_PATH);
@@ -83,29 +87,29 @@ describe('lib/igdb integration', () => {
     // Advance time close to expiry: expires_at = 300s; safety window is 60s → token becomes invalid when now >= 240s
     nowSpy.mockReturnValue(250_000);
     // Next call should trigger a new token fetch before hitting IGDB
-    (global.fetch as jest.Mock).mockImplementationOnce(async (input) => {
+    (global.fetch as unknown as jest.Mock).mockImplementationOnce(async (input: RequestInfo) => {
       expect(String(input)).toContain('https://id.twitch.tv/oauth2/token');
-      return { ok: true, json: async () => ({ access_token: 't2', expires_in: 300 }) } as any;
+      return { ok: true, json: async () => ({ access_token: 't2', expires_in: 300 }) } as unknown as Response;
     });
-    (global.fetch as jest.Mock).mockImplementationOnce(async () => ({ ok: true, json: async () => gameRows }) as any);
+    (global.fetch as unknown as jest.Mock).mockImplementationOnce(async () => ({ ok: true, json: async () => gameRows }) as unknown as Response);
 
     const url3 = await (await import(IGDB_MODULE_PATH)).searchCoverByTitle('Halo Infinite');
     expect(url3).toMatch(/^https:\/\/images\.igdb\.com\/igdb\/image\/upload\/t_cover_big\//);
     // Now total calls: 3 previous + 2 more (new token + IGDB)
-    expect((global.fetch as jest.Mock).mock.calls.length).toBe(5);
+    expect((global.fetch as unknown as jest.Mock).mock.calls.length).toBe(5);
   });
 
   it('fetchTwitchAppToken: returns null on non-OK Twitch token response (covered via getTopGamesOfYear)', async () => {
     process.env.TWITCH_CLIENT_ID = 'abc';
     process.env.TWITCH_CLIENT_SECRET = 'shh';
 
-    global.fetch = jest.fn(async (input) => {
+    global.fetch = jest.fn(async (input: unknown) => {
       // Token endpoint fails
       if (String(input).includes('https://id.twitch.tv/oauth2/token')) {
-        return { ok: false, text: async () => 'bad' } as any;
+        return { ok: false, text: async () => 'bad' } as unknown as Response;
       }
       throw new Error('Unexpected fetch: ' + input);
-    }) as any;
+    }) as unknown as typeof fetch;
 
     const { getTopGamesOfYear } = await import(IGDB_MODULE_PATH);
     const res = await getTopGamesOfYear(2025, 8);
@@ -121,11 +125,11 @@ describe('lib/igdb integration', () => {
     const rows = [{ name: 'A', cover: { image_id: 'img' } }];
 
     const calls: Array<{ url: string; init?: RequestInit }> = [];
-    global.fetch = jest.fn(async (input: any, init?: any) => {
-      calls.push({ url: String(input), init });
-      if (String(input).includes('oauth2/token')) return { ok: true, json: async () => tokenResp } as any;
-      return { ok: true, json: async () => rows } as any;
-    }) as any;
+    global.fetch = jest.fn(async (input: unknown, init?: unknown) => {
+      calls.push({ url: String(input), init: init as RequestInit | undefined });
+      if (String(input).includes('oauth2/token')) return { ok: true, json: async () => tokenResp } as unknown as Response;
+      return { ok: true, json: async () => rows } as unknown as Response;
+    }) as unknown as typeof fetch;
 
     const { searchCoverByTitle } = await import(IGDB_MODULE_PATH);
     await searchCoverByTitle('My Game\nWith Newline');
@@ -133,7 +137,7 @@ describe('lib/igdb integration', () => {
     expect(calls.length).toBe(2);
     const igdb = calls[1];
     expect(igdb.url).toBe('https://api.igdb.com/v4/games');
-    const headers = (igdb.init?.headers ?? {}) as Record<string, string>;
+    const headers = (igdb.init?.headers ?? {}) as unknown as Record<string, string>;
     expect(headers['Client-ID']).toBe('client-x');
     expect(headers['Authorization']).toBe('Bearer tok');
     expect(headers['Accept']).toBe('application/json');
@@ -156,9 +160,9 @@ describe('lib/igdb integration', () => {
     process.env.TWITCH_CLIENT_ID = 'abc';
     process.env.TWITCH_CLIENT_SECRET = 'shh';
     global.fetch = mockFetchSequence([
-      async () => ({ ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) }) as any,
-      async () => ({ ok: true, json: async () => [{ name: 'Halo', slug: 'halo', url: 'https://www.igdb.com/games/halo' }] }) as any,
-    ]) as any;
+      async () => ({ ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) }) as unknown as Response,
+      async () => ({ ok: true, json: async () => [{ name: 'Halo', slug: 'halo', url: 'https://www.igdb.com/games/halo' }] }) as unknown as Response,
+    ]) as unknown as typeof fetch;
     const { searchGameByTitle } = await import(IGDB_MODULE_PATH);
     const res = await searchGameByTitle('Halo');
     expect(res).toEqual({ url: 'https://www.igdb.com/games/halo', slug: 'halo' });
@@ -168,9 +172,9 @@ describe('lib/igdb integration', () => {
     process.env.TWITCH_CLIENT_ID = 'abc';
     process.env.TWITCH_CLIENT_SECRET = 'shh';
     global.fetch = mockFetchSequence([
-      async () => ({ ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) }) as any,
-      async () => ({ ok: true, json: async () => [] }) as any,
-    ]) as any;
+      async () => ({ ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) }) as unknown as Response,
+      async () => ({ ok: true, json: async () => [] }) as unknown as Response,
+    ]) as unknown as typeof fetch;
     const { searchGameByTitle } = await import(IGDB_MODULE_PATH);
     const res = await searchGameByTitle('NonExistent');
     expect(res).toBeNull();
@@ -180,9 +184,9 @@ describe('lib/igdb integration', () => {
     process.env.TWITCH_CLIENT_ID = 'abc';
     process.env.TWITCH_CLIENT_SECRET = 'shh';
     global.fetch = mockFetchSequence([
-      async () => ({ ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) }) as any,
-      async () => ({ ok: true, json: async () => [{ name: 'Foo', slug: 'foo' }] }) as any,
-    ]) as any;
+      async () => ({ ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) }) as unknown as Response,
+      async () => ({ ok: true, json: async () => [{ name: 'Foo', slug: 'foo' }] }) as unknown as Response,
+    ]) as unknown as typeof fetch;
     const { searchGameByTitle } = await import(IGDB_MODULE_PATH);
     const res = await searchGameByTitle('Foo');
     expect(res).toBeNull();
@@ -193,13 +197,13 @@ describe('lib/igdb integration', () => {
     process.env.TWITCH_CLIENT_SECRET = 'secret-y';
 
     const calls: Array<{ url: string; init?: RequestInit }> = [];
-    global.fetch = jest.fn(async (input: any, init?: any) => {
-      calls.push({ url: String(input), init });
+    global.fetch = jest.fn(async (input: unknown, init?: unknown) => {
+      calls.push({ url: String(input), init: init as RequestInit | undefined });
       if (String(input).includes('oauth2/token')) {
-        return { ok: true, json: async () => ({ access_token: 'tok', expires_in: 300 }) } as any;
+        return { ok: true, json: async () => ({ access_token: 'tok', expires_in: 300 }) } as unknown as Response;
       }
-      return { ok: true, json: async () => [{ name: 'X', slug: 'x', url: 'https://www.igdb.com/games/x' }] } as any;
-    }) as any;
+      return { ok: true, json: async () => [{ name: 'X', slug: 'x', url: 'https://www.igdb.com/games/x' }] } as unknown as Response;
+    }) as unknown as typeof fetch;
 
     const { searchGameByTitle } = await import(IGDB_MODULE_PATH);
     await searchGameByTitle('My "IV" Game');
@@ -216,9 +220,9 @@ describe('lib/igdb integration', () => {
     process.env.TWITCH_CLIENT_ID = 'abc';
     process.env.TWITCH_CLIENT_SECRET = 'shh';
     global.fetch = mockFetchSequence([
-      async () => ({ ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) }) as any,
-      async () => ({ ok: true, json: async () => [] }) as any,
-    ]) as any;
+      async () => ({ ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) }) as unknown as Response,
+      async () => ({ ok: true, json: async () => [] }) as unknown as Response,
+    ]) as unknown as typeof fetch;
     const { searchCoverByTitle } = await import(IGDB_MODULE_PATH);
     const res = await searchCoverByTitle('Foo');
     expect(res).toBeNull();
@@ -232,11 +236,11 @@ describe('lib/igdb integration', () => {
       { name: 'G1', cover: { image_id: 'i1' } },
       { name: 'G2' }, // no cover → mapped imageUrl null
     ];
-    global.fetch = jest.fn(async (input: any, init?: any) => {
-      calls.push({ url: String(input), init });
-      if (String(input).includes('oauth2/token')) return { ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) } as any;
-      return { ok: true, json: async () => rows } as any;
-    }) as any;
+    global.fetch = jest.fn(async (input: unknown, init?: unknown) => {
+      calls.push({ url: String(input), init: init as RequestInit | undefined });
+      if (String(input).includes('oauth2/token')) return { ok: true, json: async () => ({ access_token: 't', expires_in: 300 }) } as unknown as Response;
+      return { ok: true, json: async () => rows } as unknown as Response;
+    }) as unknown as typeof fetch;
 
     const { getTopGamesOfYear } = await import(IGDB_MODULE_PATH);
     const data = await getTopGamesOfYear(2025, 50); // ask for more than max
@@ -268,29 +272,29 @@ describe('lib/igdb integration', () => {
     // Spy to observe Authorization header on the second IGDB call
     const auths: string[] = [];
     const mf = mockFetchSequence([
-      async (input) => {
+      async (input: RequestInfo) => {
         expect(String(input)).toContain('oauth2/token');
-        return { ok: true, json: async () => ({ access_token: 't1', expires_in: 300 }) } as any;
+        return { ok: true, json: async () => ({ access_token: 't1', expires_in: 300 }) } as unknown as Response;
       },
-      async (input, init) => {
+      async (input: RequestInfo, init?: RequestInit) => {
         expect(String(input)).toContain('/v4/games');
-        const h = (init as any)?.headers ?? {};
+        const h = (init as unknown as { headers?: Record<string, string> })?.headers ?? {};
         auths.push(h['Authorization']);
-        return { ok: false, status: 401, text: async () => 'unauthorized' } as any;
+        return { ok: false, status: 401, text: async () => 'unauthorized' } as unknown as Response;
       },
-      async (input) => {
+      async (input: RequestInfo) => {
         expect(String(input)).toContain('oauth2/token');
-        return { ok: true, json: async () => ({ access_token: 't2', expires_in: 300 }) } as any;
+        return { ok: true, json: async () => ({ access_token: 't2', expires_in: 300 }) } as unknown as Response;
       },
-      async (input, init) => {
+      async (input: RequestInfo, init?: RequestInit) => {
         expect(String(input)).toContain('/v4/games');
-        const h = (init as any)?.headers ?? {};
+        const h = (init as unknown as { headers?: Record<string, string> })?.headers ?? {};
         auths.push(h['Authorization']);
-        return { ok: true, json: async () => rows } as any;
+        return { ok: true, json: async () => rows } as unknown as Response;
       },
     ]);
-    // @ts-ignore
-    global.fetch = mf as any;
+    // @ts-expect-error - Mock global fetch for testing
+    global.fetch = mf as unknown as typeof fetch;
 
     const { getTopGamesOfYear } = await import(IGDB_MODULE_PATH);
     const res = await getTopGamesOfYear(2025, 8);
@@ -306,13 +310,13 @@ describe('lib/igdb integration', () => {
 
     const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     const mf = mockFetchSequence([
-      async (input) => ({ ok: true, json: async () => ({ access_token: 't1', expires_in: 300 }) }) as any,
-      async () => ({ ok: false, status: 401, text: async () => 'unauthorized' }) as any,
-      async (input) => ({ ok: true, json: async () => ({ access_token: 't2', expires_in: 300 }) }) as any,
-      async () => ({ ok: false, status: 500, text: async () => 'nope' }) as any,
+      async () => ({ ok: true, json: async () => ({ access_token: 't1', expires_in: 300 }) }) as unknown as Response,
+      async () => ({ ok: false, status: 401, text: async () => 'unauthorized' }) as unknown as Response,
+      async () => ({ ok: true, json: async () => ({ access_token: 't2', expires_in: 300 }) }) as unknown as Response,
+      async () => ({ ok: false, status: 500, text: async () => 'nope' }) as unknown as Response,
     ]);
-    // @ts-ignore
-    global.fetch = mf as any;
+    // @ts-expect-error - Mock global fetch for testing
+    global.fetch = mf as unknown as typeof fetch;
 
     const { searchCoverByTitle } = await import(IGDB_MODULE_PATH);
     const res = await searchCoverByTitle('Halo');

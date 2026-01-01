@@ -13,7 +13,7 @@ export const CARD_TYPES = [
 
 export type CardType = (typeof CARD_TYPES)[number];
 
-const GenerateGamingWrappedInputSchema = z.object({
+export const GenerateGamingWrappedInputSchema = z.object({
   games: z.array(z.object({
     title: z.string().optional().describe("Title"),
     platform: z.string().optional().describe("Platform"),
@@ -131,7 +131,7 @@ const RecommendationsCardSchema = z.object({
   })).describe('A list of game recommendations with personalized explanations'),
 });
 
-const GenerateGamingWrappedOutputSchema = z.object({
+export const GenerateGamingWrappedOutputSchema = z.object({
   cards: z.array(z.union([
     PlatformStatsCardSchema,
     TopGameCardSchema,
