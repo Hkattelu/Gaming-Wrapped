@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, Volume2, VolumeX } from "lucide-react";
 
 interface RetroFrameProps {
   children: React.ReactNode;
@@ -93,7 +93,9 @@ export function RetroFrame({
                  : 'bg-blue-500 border-blue-700 shadow-[0_6px_12px_rgba(0,0,0,0.6)]'
              }`}
              title="Toggle Audio"
-           />
+           >
+             {isMuted ? <VolumeX className="w-5 h-5 text-white" /> : <Volume2 className="w-5 h-5 text-white" />}
+           </button>
             <span className="text-sm text-muted-foreground uppercase">Mute</span>
           </div>
           <div className="flex flex-col items-center gap-1">

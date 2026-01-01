@@ -3,6 +3,7 @@
 import { Gamepad2, Trophy, BarChart3, Share2, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from "@/lib/utils";
+import { SummaryCard as SummaryCardType } from "@/types";
 import { useState } from 'react';
 
 export function SummaryCard({ card, isActive, id }: { card: SummaryCardType, isActive?: boolean, id?: string | null }) {
@@ -75,7 +76,7 @@ export function SummaryCard({ card, isActive, id }: { card: SummaryCardType, isA
       </div>
 
       {/* Main Card Grid Layout for Desktop */}
-      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-1 gap-12 items-center relative z-10">
         
         {/* Main Card (Existing) */}
         <div className="group relative">
@@ -162,88 +163,6 @@ export function SummaryCard({ card, isActive, id }: { card: SummaryCardType, isA
             </div>
           </div>
           <div className="absolute -bottom-4 left-4 right-[-10px] h-full w-full bg-foreground/10 dark:bg-black/50 -z-10 transform translate-y-2 pixel-corners" />
-        </div>
-
-        {/* Story Preview (Desktop Only) */}
-        <div className="hidden lg:flex flex-col gap-4">
-          {/* Tier Selector */}
-          <div className="flex bg-muted/30 p-1 pixel-corners border-2 border-border w-fit mx-auto">
-            <button 
-              onClick={() => setIsPreviewPro(false)}
-              className={cn(
-                "px-4 py-1.5 font-headline text-[8px] transition-all pixel-corners",
-                !isPreviewPro ? "bg-primary text-white shadow-md" : "text-muted-foreground hover:bg-muted"
-              )}
-            >
-              STANDARD
-            </button>
-            <button 
-              onClick={() => setIsPreviewPro(true)}
-              className={cn(
-                "px-4 py-1.5 font-headline text-[8px] transition-all pixel-corners flex items-center gap-1",
-                isPreviewPro ? "bg-[#fbbf24] text-black shadow-md" : "text-muted-foreground hover:bg-muted"
-              )}
-            >
-              <Sparkles className="w-3 h-3" /> GOLD EDITION
-            </button>
-          </div>
-
-          <motion.div 
-            initial={{ opacity: 0, x: 50, rotate: 5 }}
-            animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : 50, rotate: isActive ? (isPreviewPro ? 0 : 3) : 5 }}
-            whileHover={{ scale: 1.05, rotate: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            onClick={() => id && window.open(`/api/wrapped/${id}/og?pro=${isPreviewPro}&aspect=vertical`, '_blank')}
-            className={cn(
-              "flex flex-col items-center justify-center p-8 aspect-[9/16] h-[500px] pixel-corners shadow-2xl relative overflow-hidden group cursor-pointer border-4 transition-colors duration-500",
-              isPreviewPro ? "bg-[#09090b] border-[#fbbf24]" : "bg-zinc-900 border-accent",
-              !id && "cursor-not-allowed opacity-50"
-            )}
-          >
-            <div className="absolute inset-0 bg-retro-grid-40 opacity-20" />
-            
-            {/* Hover Overlay */}
-            <div className="absolute inset-0 bg-accent/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-20">
-               <div className="bg-black/80 px-4 py-2 border-2 border-accent pixel-corners text-center">
-                  <p className="font-headline text-[10px] text-accent">CLICK TO DOWNLOAD</p>
-                  <p className="font-headline text-[8px] text-white mt-1">{isPreviewPro ? "PRO VERSION" : "FREE VERSION"}</p>
-               </div>
-            </div>
-
-            <div className="relative z-10 text-center space-y-6">
-               <div className={cn(
-                 "w-20 h-20 mx-auto pixel-corners flex items-center justify-center shadow-[4px_4px_0px_oklch(var(--foreground))] transition-colors",
-                 isPreviewPro ? "bg-[#fbbf24]" : "bg-accent"
-               )}>
-                  <Share2 className={cn("w-10 h-10", isPreviewPro ? "text-black" : "text-zinc-950")} />
-               </div>
-               <div className="space-y-2">
-                  <p className={cn("font-headline text-xs tracking-widest transition-colors", isPreviewPro ? "text-[#fbbf24]" : "text-accent")}>
-                    {isPreviewPro ? "PRO EDITION" : "FREE EDITION"}
-                  </p>
-                  <h3 className="font-headline text-lg text-white uppercase">YOUR YEAR<br/>IN GAMING</h3>
-               </div>
-               <div className="bg-white/5 border-2 border-white/10 p-4 pixel-corners">
-                  <p className={cn("font-headline text-3xl transition-colors", isPreviewPro ? "text-[#fbbf24]" : "text-primary")}>
-                    {card.totalGames}
-                  </p>
-                  <p className="font-headline text-[10px] text-muted-foreground">GAMES PLAYED</p>
-               </div>
-               
-               {isPreviewPro && (
-                 <div className="bg-[#fbbf24] text-black px-3 py-1 font-headline text-[8px] rotate-[-5deg] border-2 border-black animate-bounce shadow-lg">
-                    SUPPORTER EDITION
-                 </div>
-               )}
-
-               <p className="font-headline text-[8px] text-accent animate-pulse tracking-tighter">
-                 {isPreviewPro ? "REMOVE WATERMARKS" : "CONTAINS WATERMARK"}
-               </p>
-            </div>
-            <div className={cn("absolute bottom-4 font-headline text-[8px] transition-colors", isPreviewPro ? "text-[#fbbf24]" : "text-zinc-700")}>
-              GAMINGWRAPPED.COM
-            </div>
-          </motion.div>
         </div>
 
       </div>

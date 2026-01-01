@@ -142,8 +142,6 @@ export function TopGameCard({ card, isActive }: { card: TopGameCardType, isActiv
                 className="h-full bg-gradient-to-r from-red-600 to-primary relative"
               >
                 <div className="absolute inset-0 bar-pattern opacity-30" />
-                {/* Glitch Pulse */}
-                <div className="absolute top-0 right-0 bottom-0 w-4 bg-white/30 animate-pulse" />
               </motion.div>
             </div>
           </motion.div>
