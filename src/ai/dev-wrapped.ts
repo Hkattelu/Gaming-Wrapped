@@ -8,6 +8,7 @@ export const MOCK_WRAPPED_OUTPUT: GenerateGamingWrappedOutput = {
       description: 'A life of epic adventures',
       totalGames: 10,
       averageScore: 8.8,
+      rank: 'SILVER',
     },
     {
       type: 'platform_stats',
@@ -68,6 +69,7 @@ export const MOCK_WRAPPED_OUTPUT: GenerateGamingWrappedOutput = {
       type: 'roast',
       title: 'The Roast',
       roast: 'You gave Factorio a 10/10 and only marked it as "Played It"? The factory consumed your soul so completely you forgot what "finishing" a game even means. Also, dropping Starfield after calling it empty? Bold words from someone who spent 200 hours building digital conveyor belts.',
+      trigger: 'Trigger: 200 hours in Factorio / 0 completions',
     },
     {
       type: 'recommendations',

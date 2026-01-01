@@ -88,6 +88,7 @@ const SummaryCardSchema = z.object({
   totalGames: z.number(),
   averageScore: z.number(),
   completionPercentage: z.number().optional().describe('Percentage of games completed'),
+  rank: z.string().optional().describe('The player rank based on volume (e.g., Bronze, Gold, Diamond)'),
 });
 
 const GenreBreakdownCardSchema = z.object({
@@ -121,6 +122,7 @@ const RoastCardSchema = z.object({
   type: z.enum(CARD_TYPES),
   title: z.string().describe('Title for the roast card'),
   roast: z.string().describe("A roast of the user's gaming habits"),
+  trigger: z.string().describe("The specific data point that triggered this roast (e.g., 'Trigger: 4000 hours in Stardew Valley', 'Trigger: 0% completion rate')"),
 });
 
 const RecommendationsCardSchema = z.object({
@@ -180,8 +182,8 @@ IMPORTANT: Adhere strictly to the "Context" instructions above regarding which c
 4.  genre_breakdown: A card that analyzes the game titles and notes to show the user's most played genres.
 5.  score_distribution: A chart that shows how many games fall into different score ranges (e.g., 9-10, 7-8, etc.).
 6.  player_persona: Assigns a persona based on a holistic view of their gaming habits (including playtime and genres). See the Player Persona Taxonomy below and choose EXACTLY ONE persona.
-7.  roast: Provide a light-hearted, specific, PG-13 roast (1–2 sentences) based on patterns (backlog size, platform bias, abandoned games, sequel marathons, etc.).
-8.  recommendations: The AI recommends you new games based on your history.
+7.  roast: Provide a sharp, witty, and slightly mean roast (1–2 sentences). Focus on specific habits like backlog hoarding (many games, 0 playtime), playing only one game forever, having terrible taste (high scores for bad games), or never finishing anything. Be a "tough love" critic. Do not hold back.
+8.  recommendations: Provide "Unexpected Picks" that align with their "Hidden Tastes." For example, if they love high-score RPGs, suggest an obscure indie visual novel with great writing. Avoid obvious blockbusters. The goal is to introduce them to something new they'd actually love.
 
 Additional guidance:
 - Be lenient with missing ratings: do not fixate on "nothing is rated". Use 'playtime', notes, completion, platform frequency, and common sense signals to draw conclusions.
@@ -198,16 +200,24 @@ Choose exactly one persona below. Set the card fields as:
 - description: Use the provided description verbatim or lightly adapt to fit the user's data without changing its meaning.
 
 Personas:
-- The Loyal Legend — For the player who dedicates hundreds of hours to a single game. You are the pillar of a community, a master of your chosen domain. While others may jump from trend to trend, you find beauty in dedication and perfection in practice. You know every map, every character, every optimal strategy, and your name is whispered with respect in the lobbies you frequent. You're not just playing a game; you're living in its world, and it's a world you've truly made your own.
-- The Platinum Plunderer — For the player who is a dedicated achievement hunter and completionist. For you, the credits rolling is just the beginning. Your quest isn't over until every achievement is unlocked, every collectible is found, and every secret is unearthed. This meticulous dedication shows a player who appreciates the entire craft of a game, from the main story to the smallest details. Your game library isn't a list; it's a gallery of 100% trophies.
-- The Squadron Leader — For the player who primarily plays co-op and multiplayer games with friends. You are the heart of the fireteam, the one who rallies the troops for one more match. For you, gaming is a team sport. The greatest victories aren't just about winning, but about the shared moments of triumph, the perfectly executed strategies, and the laughter over voice chat. You build communities and forge friendships, proving that the best adventures are the ones we share.
-- The Narrative Navigator — For the player who loves deep, story-driven, single-player experiences. You seek more than just gameplay; you seek worlds to inhabit and stories that resonate long after the game is over. You're drawn to rich lore, complex characters, and emotional journeys. You'll gladly spend hours immersed in dialogue, reading every lore entry, and watching every cutscene. You are a digital storyteller, piecing together epic sagas one quest at a time.
-- The Apex Predator — For the player who thrives in competitive, high-stakes, ranked gameplay. You are fueled by the thrill of competition. Every match is a test of skill, strategy, and nerve. You study the meta, perfect your mechanics, and live for the clutch play that turns the tide. Climbing the leaderboards isn't just a goal; it's a calling. You thrive under pressure and prove time and again that you have what it takes to stand at the top.
-- The Cozy Cultivator — For the player who enjoys relaxing, low-stakes games like farming sims, life sims, and creative sandboxes. In a world of high-octane action, you've discovered the profound joy of peace. You find satisfaction in building a perfect farm, designing a dream home, or simply watching your virtual world grow. Your gameplay is a form of meditation—a relaxing escape where creativity and patience are the ultimate virtues. You don't just play games; you build serene sanctuaries.
-- The Artisan Adventurer — For the player who predominantly plays and discovers unique indie titles. You are a digital curator with an impeccable taste for the unique and the innovative. You look past the blockbuster hype to find hidden gems with heartfelt stories, groundbreaking mechanics, and bold artistic vision. Your library is a testament to the creativity of passionate developers, and you champion the games that dare to be different. You don't follow the trends; you discover them.
-- The Master Architect — For the player who loves building, management, and strategy games (e.g., Minecraft, Factorio, Cities: Skylines). You see beyond the pixels and envision a grand design. Whether you're constructing a sprawling medieval kingdom, an automated mega-factory, or a bustling metropolis, your mind is always working. You are a planner, an engineer, and a visionary. Your satisfaction comes not from a final boss, but from watching a complex system of your own creation run like a well-oiled machine.
-- The High-Octane Hero — For the player who loves fast-paced, non-stop action games (e.g., Shooters, Hack-n-Slash). Subtlety is optional. You crave speed, spectacle, and the roar of a perfectly executed combo. Your gameplay is a symphony of controlled chaos, defined by lightning-fast reflexes and an aggressive, forward-moving style. You are the unstoppable force, the one-person army who faces down impossible odds and walks away from the explosion without looking back.
-- The Vanguard Gamer — For the player who is always playing the newest, hottest releases. You have your finger on the pulse of the industry. You're the first to dive into the most anticipated titles, exploring new worlds the moment they launch. Your friends look to you for recommendations because you've already seen what's next. You are a pioneer, experiencing the evolution of gaming in real-time and always ready for the next big thing.
+- The Loyal Legend — For the player who dedicates hundreds of hours to a single game. You are the pillar of a community, a master of your chosen domain. While others may jump from trend to trend, you find beauty in dedication and perfection in practice. You know every map, every character, every optimal strategy, and your name is whispered with respect in the lobbies you frequent. You're not just playing a game; you're living in its world.
+- The Platinum Plunderer — For the player who is a dedicated achievement hunter and completionist. For you, the credits rolling is just the beginning. Your quest isn't over until every achievement is unlocked, every collectible is found, and every secret is unearthed. This meticulous dedication shows a player who appreciates the entire craft of a game. Your game library isn't a list; it's a gallery of 100% trophies.
+- The Squadron Leader — For the player who primarily plays co-op and multiplayer games with friends. You are the heart of the fireteam, the one who rallies the troops for one more match. For you, gaming is a team sport. The greatest victories aren't just about winning, but about the shared moments of triumph, the perfectly executed strategies, and the laughter over voice chat. You build communities and forge friendships.
+- The Narrative Navigator — For the player who loves deep, story-driven, single-player experiences. You seek more than just gameplay; you seek worlds to inhabit and stories that resonate long after the game is over. You're drawn to rich lore, complex characters, and emotional journeys. You'll gladly spend hours immersed in dialogue, reading every lore entry, and watching every cutscene. You are a digital storyteller.
+- The Apex Predator — For the player who thrives in competitive, high-stakes, ranked gameplay. You are fueled by the thrill of competition. Every match is a test of skill, strategy, and nerve. You study the meta, perfect your mechanics, and live for the clutch play that turns the tide. Climbing the leaderboards isn't just a goal; it's a calling. You thrive under pressure.
+- The Cozy Cultivator — For the player who enjoys relaxing, low-stakes games like farming sims, life sims, and creative sandboxes. In a world of high-octane action, you've discovered the profound joy of peace. You find satisfaction in building a perfect farm, designing a dream home, or simply watching your virtual world grow. Your gameplay is a form of meditation—a relaxing escape where creativity and patience are the ultimate virtues.
+- The Artisan Adventurer — For the player who predominantly plays and discovers unique indie titles. You are a digital curator with an impeccable taste for the unique and the innovative. You look past the blockbuster hype to find hidden gems with heartfelt stories, groundbreaking mechanics, and bold artistic vision. Your library is a testament to the creativity of passionate developers. You don't follow the trends; you discover them.
+- The Master Architect — For the player who loves building, management, and strategy games (e.g., Minecraft, Factorio, Cities: Skylines). You see beyond the pixels and envision a grand design. Whether you're constructing a sprawling medieval kingdom, an automated mega-factory, or a bustling metropolis, your mind is always working. You are a planner, an engineer, and a visionary. Your satisfaction comes from watching a complex system run like a well-oiled machine.
+- The High-Octane Hero — For the player who loves fast-paced, non-stop action games (e.g., Shooters, Hack-n-Slash). Subtlety is optional. You crave speed, spectacle, and the roar of a perfectly executed combo. Your gameplay is a symphony of controlled chaos, defined by lightning-fast reflexes and an aggressive, forward-moving style. You are the unstoppable force.
+- The Vanguard Gamer — For the player who is always playing the newest, hottest releases. You have your finger on the pulse of the industry. You're the first to dive into the most anticipated titles, exploring new worlds the moment they launch. Your friends look to you for recommendations because you've already seen what's next. You are a pioneer, experiencing the evolution of gaming in real-time.
+- The Backlog Baron — For the player with hundreds of games but only a handful played. You are a collector of potential experiences. You see a sale, you buy the game, you promise yourself you'll play it "someday." Your library is a library of Alexandria, full of knowledge and stories waiting to be opened. You are the patron saint of game developers, supporting the industry one unplayed purchase at a time.
+- The Digital Hoarder — For the player who plays a little bit of everything but finishes nothing. You are a sampler of worlds, a tourist of genres. You dip your toes into every new release, play for a few hours, and then get distracted by the next shiny object. Your save files are a graveyard of abandoned protagonists waiting for your return. You don't have a main game; you have a main menu.
+- The Completionist Cultist — For the player who doesn't just play games, they colonize them. 100% completion isn't a goal; it's a religion. You'll spend 40 hours hunting a single collectible just to see a number change from 99 to 100. Your patience is legendary, your dedication is terrifying, and your backlog is crying for help.
+- The Early Access Enthusiast — For the player who lives on the bleeding edge of bugs and unfinished features. You prefer your games like your steaks: raw and potentially dangerous. You've seen more "Work in Progress" screens than finished credits. You don't just play games; you beta test the future, one crash at a time.
+- The Diamond in the Rough Digger — For the player who finds beauty in the underrated. You spent most of your time in games others might have overlooked or dismissed. You don't care about Metacritic scores; you care about soul. You are a treasure hunter in a world of blockbusters.
+- The Speedrun Sorcerer — For the player who views games as obstacle courses. Why enjoy the scenery when you can glitch through a wall at Mach 2? You know every frame of animation and every skip, and you've probably forgotten what the actual plot was.
+- The Modded Maestro — For the player who doesn't play the game; they play the 400 mods they installed. Half your "playtime" is actually just troubleshooting load orders and making sure the grass textures don't crash your PC. You've improved the developers' work beyond recognition.
+- The Digital Monogamist — For the player who marries one game and treats all others like side-flings. You have 4,000 hours in one title and 1 hour in 100 others. You don't need a library; you need a life sentence in your chosen world. Commitment issues? Not here.
   `,
 });
 
@@ -232,9 +242,32 @@ const generateGamingWrappedFlow = ai.defineFlow(
     // Count completions
     const completedGames = games.filter(g => g.completed === 'true' || g.completed === 'check' || g.mainStory === 'check').length;
 
+    // Calculate Backlog Hoarding
+    const backlogCount = games.filter(g => g.backlog === 'true' || g.backlog === 'check').length;
+    const hoardingRatio = totalGames > 0 ? (backlogCount / totalGames) : 0;
+
+    // Platform analysis
+    const platformCounts: Record<string, number> = {};
+    games.forEach(g => {
+      if (g.platform) platformCounts[g.platform] = (platformCounts[g.platform] || 0) + 1;
+    });
+    const topPlatform = Object.entries(platformCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'None';
+
+    // Average Score
+    const rawScores = games.map(g => parseFloat(g.review || '')).filter(s => !isNaN(s));
+    const averageRating = rawScores.length > 0 ? rawScores.reduce((a, b) => a + b, 0) / rawScores.length : 0;
+
     // Build Context Instructions
     let contextInstructions = "### DATA QUALITY & INCLUSION RULES\n";
+    contextInstructions += `USER METRICS: Total Games: ${totalGames}, Completed: ${completedGames}, Backlog: ${backlogCount}, Top Platform: ${topPlatform}, Avg Rating: ${averageRating.toFixed(1)}\n`;
 
+    if (hoardingRatio > 0.7) {
+      contextInstructions += "- HIGH HOARDING RATIO DETECTED. Lean towards 'The Backlog Baron' persona.\n";
+    }
+    if (averageRating < 6 && rawScores.length > 3) {
+      contextInstructions += "- LOW AVERAGE RATING DETECTED. Lean towards 'The Diamond in the Rough Digger' or a roast about having bad taste.\n";
+    }
+    
     // Rule 1: Platform Stats
     if (uniquePlatforms <= 1) {
       contextInstructions += "- Only one platform detected. DO NOT generate the 'platform_stats' card.\n";
@@ -259,8 +292,7 @@ const generateGamingWrappedFlow = ai.defineFlow(
     contextInstructions += "- If a specific card type's required data is completely missing, SKIP that card type rather than hallucinating data.\n";
 
     // Rule 5: Score Scale Detection
-    const rawScores = games.map(g => parseFloat(g.review || '')).filter(s => !isNaN(s));
-    if (rawScores.length > 0) {
+     if (rawScores.length > 0) {
       const maxScore = Math.max(...rawScores);
       if (maxScore <= 5) {
         contextInstructions += "- The ratings appear to be on a 5-point scale. PLEASE NORMALIZE THESE TO A 10-POINT SCALE (multiply by 2) for the 'averageScore' and 'score_distribution' ranges.\n";
@@ -280,6 +312,18 @@ const generateGamingWrappedFlow = ai.defineFlow(
     if (output && output.cards) {
       const summaryCard = output.cards.find(c => c.type === 'summary');
       if (summaryCard) {
+        // Determine rank based on total games
+        const total = totalGames;
+        let rank = "BRONZE";
+        if (total > 100) rank = "MASTER";
+        else if (total > 50) rank = "DIAMOND";
+        else if (total > 25) rank = "PLATINUM";
+        else if (total > 10) rank = "GOLD";
+        else if (total > 5) rank = "SILVER";
+        
+        // @ts-ignore
+        summaryCard.rank = rank;
+
         // Determine completion percentage if data exists
         if (completedGames > 0 && totalGames > 0) {
           // @ts-ignore
