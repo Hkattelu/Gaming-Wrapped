@@ -2,45 +2,149 @@
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, cleanup, within } from '@testing-library/react';
-import { act } from 'react';
-// Keep a local alias for use inside jest.mock factory functions without requiring a second copy
-const mockReact = React;
+
+interface MockPassthroughProps {
+  href?: string;
+  children?: React.ReactNode;
+  [key: string]: unknown;
+}
+
+// Helper function to create passthrough components (must be called from within mock factories)
+// Note: Mock factories run in a separate scope and can't reference outer variables,
+// so we pass React as an argument in each mock factory
+function mockCreatePassthrough(React: typeof import('react'), tag: string) {
+  return (props: MockPassthroughProps) => React.createElement(tag, { ...props }, props.children);
+}
 
 // Stubs for Next.js and UI components used by the page
+// Note: jest.mock() requires dynamic require() to access fresh React instances
 jest.mock('next/navigation', () => ({ useRouter: () => ({ replace: jest.fn() }) }));
-jest.mock('next/link', () => ({ __esModule: true, default: (props: any) => mockReact.createElement('a', { href: props.href }, props.children) }));
-jest.mock('next/image', () => ({ __esModule: true, default: (props: any) => mockReact.createElement('img', { ...props }) }));
+jest.mock('next/link', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  return { 
+    __esModule: true, 
+    default: (props: MockPassthroughProps) => React.createElement('a', { href: props.href }, props.children) 
+  };
+});
+jest.mock('next/image', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  return { 
+    __esModule: true, 
+    default: (props: MockPassthroughProps) => React.createElement('img', { ...props }) 
+  };
+});
 
 // Minimal UI shims
-// Use a mock-prefixed helper so Jest allows referencing it inside factory functions
-const mockPassthrough = (tag: string) => (props: any) => mockReact.createElement(tag, { ...props }, props.children);
-jest.mock('@/components/ui/button', () => ({ Button: mockPassthrough('button') }));
-jest.mock('@/components/ui/input', () => ({ Input: mockPassthrough('input') }));
-jest.mock('@/components/ui/card', () => ({ Card: mockPassthrough('div'), CardContent: mockPassthrough('div'), CardHeader: mockPassthrough('div'), CardTitle: mockPassthrough('div') }));
-jest.mock('@/components/ui/dialog', () => ({ Dialog: mockPassthrough('div'), DialogContent: mockPassthrough('div'), DialogHeader: mockPassthrough('div'), DialogTitle: mockPassthrough('div'), DialogFooter: mockPassthrough('div'), DialogClose: mockPassthrough('button') }));
-jest.mock('@/components/ui/toggle-group', () => ({ ToggleGroup: mockPassthrough('div'), ToggleGroupItem: mockPassthrough('button') }));
-jest.mock('@/components/ui/label', () => ({ Label: mockPassthrough('label') }));
-jest.mock('@/components/ui/slider', () => ({ Slider: (props: any) => mockReact.createElement('input', { type: 'range', ...props }) }));
-jest.mock('@/components/logo', () => ({ Logo: mockPassthrough('div') }));
-jest.mock('@/components/ui/badge', () => ({ Badge: mockPassthrough('span') }));
-jest.mock('@/components/ui/alert', () => ({ Alert: mockPassthrough('div'), AlertDescription: mockPassthrough('div'), AlertTitle: mockPassthrough('div') }));
-jest.mock('lucide-react', () => ({ AlertTriangle: mockPassthrough('span'), ArrowLeft: mockPassthrough('span'), Dices: mockPassthrough('span'), Download: mockPassthrough('span'), Gamepad: mockPassthrough('span'), Gamepad2: mockPassthrough('span'), Joystick: mockPassthrough('span'), Loader2: mockPassthrough('span'), PcCase: mockPassthrough('span'), Plus: mockPassthrough('span'), Trash2: mockPassthrough('span') }));
+jest.mock('@/components/ui/button', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  return { Button: mockCreatePassthrough(React, 'button') };
+});
+jest.mock('@/components/ui/input', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  return { Input: mockCreatePassthrough(React, 'input') };
+});
+jest.mock('@/components/ui/card', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  return { 
+    Card: mockCreatePassthrough(React, 'div'), 
+    CardContent: mockCreatePassthrough(React, 'div'), 
+    CardHeader: mockCreatePassthrough(React, 'div'), 
+    CardTitle: mockCreatePassthrough(React, 'div') 
+  };
+});
+jest.mock('@/components/ui/dialog', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  return { 
+    Dialog: mockCreatePassthrough(React, 'div'), 
+    DialogContent: mockCreatePassthrough(React, 'div'), 
+    DialogHeader: mockCreatePassthrough(React, 'div'), 
+    DialogTitle: mockCreatePassthrough(React, 'div'), 
+    DialogFooter: mockCreatePassthrough(React, 'div'), 
+    DialogClose: mockCreatePassthrough(React, 'button') 
+  };
+});
+jest.mock('@/components/ui/toggle-group', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  return { 
+    ToggleGroup: mockCreatePassthrough(React, 'div'), 
+    ToggleGroupItem: mockCreatePassthrough(React, 'button') 
+  };
+});
+jest.mock('@/components/ui/label', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  return { Label: mockCreatePassthrough(React, 'label') };
+});
+jest.mock('@/components/ui/slider', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  return { 
+    Slider: (props: MockPassthroughProps) => React.createElement('input', { type: 'range', ...props }) 
+  };
+});
+jest.mock('@/components/logo', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  return { Logo: mockCreatePassthrough(React, 'div') };
+});
+jest.mock('@/components/ui/badge', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  return { Badge: mockCreatePassthrough(React, 'span') };
+});
+jest.mock('@/components/ui/alert', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  return { 
+    Alert: mockCreatePassthrough(React, 'div'), 
+    AlertDescription: mockCreatePassthrough(React, 'div'), 
+    AlertTitle: mockCreatePassthrough(React, 'div') 
+  };
+});
+jest.mock('lucide-react', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  const mockComponent = mockCreatePassthrough(React, 'span');
+  return { 
+    AlertTriangle: mockComponent, 
+    ArrowLeft: mockComponent, 
+    Dices: mockComponent, 
+    Download: mockComponent, 
+    Gamepad: mockComponent, 
+    Gamepad2: mockComponent, 
+    Joystick: mockComponent, 
+    Loader2: mockComponent, 
+    PcCase: mockComponent, 
+    Plus: mockComponent, 
+    Trash2: mockComponent 
+  };
+});
 jest.mock('@/hooks/use-toast', () => ({ useToast: () => ({ toast: jest.fn() }) }));
 
 const originalFetch = global.fetch;
 const originalSession = global.sessionStorage;
 
-// Skipping temporarily due to a React hook dispatcher mismatch in this environment.
-// The suite compiles under JSX/TSX and jsdom, but rendering the Next.js client page
-// with local mocks triggers an Invalid hook call in this dev environment only.
-// This does not affect server/APIs or lib tests and can be re-enabled once the
-// environment issue is resolved.
-describe.skip('Manual page: banner and quick-picks', () => {
+describe('Manual page: banner and quick-picks', () => {
   beforeEach(() => {
-    jest.resetModules();
-    // Fresh sessionStorage mock per test
+    // Clear the previous sessionStorage first to ensure clean state between tests
+    if (global.sessionStorage && global.sessionStorage.clear) {
+      global.sessionStorage.clear();
+    }
+    
+    // Clear the page module cache to get fresh component state for each test.
+    // This ensures that useEffect closures capture the new sessionStorage instance.
+    delete require.cache[require.resolve('./page')];
+    
+    // Fresh sessionStorage mock per test with isolated storage Map
     const store = new Map<string, string>();
-    // @ts-ignore
+    // @ts-expect-error - Mock sessionStorage for testing
     global.sessionStorage = {
       getItem: (k: string) => (store.has(k) ? store.get(k)! : null),
       setItem: (k: string, v: string) => void store.set(k, String(v)),
@@ -48,24 +152,24 @@ describe.skip('Manual page: banner and quick-picks', () => {
       clear: () => void store.clear(),
       key: (i: number) => Array.from(store.keys())[i] ?? null,
       get length() { return store.size; },
-    } as any;
+    } as unknown as Storage;
   });
 
   afterEach(() => {
-    global.fetch = originalFetch as any;
-    // @ts-ignore
+    global.fetch = originalFetch as unknown as typeof fetch;
+    // @ts-expect-error - Restore original sessionStorage
     global.sessionStorage = originalSession;
   });
 
   it('renders the unsaved list banner with the exact copy', async () => {
     // Mock fetch for games.json and quick-picks
-    global.fetch = jest.fn(async (input: any) => {
-      if (String(input).includes('/games.json')) return { ok: true, json: async () => [] } as any;
-      if (String(input).includes('/api/igdb/top-this-year')) return { ok: true, json: async () => ({ suggestions: [] }) } as any;
+    global.fetch = jest.fn(async (input: unknown) => {
+      if (String(input).includes('/games.json')) return { ok: true, json: async () => [] } as unknown as Response;
+      if (String(input).includes('/api/igdb/top-this-year')) return { ok: true, json: async () => ({ suggestions: [] }) } as unknown as Response;
       throw new Error('unexpected fetch ' + input);
-    }) as any;
+    }) as unknown as typeof fetch;
 
-    const Page = (await import('./page')).default;
+    const Page = (await import('./page')).default as React.ComponentType;
     render(React.createElement(Page));
 
     // Title and body copy
@@ -84,15 +188,15 @@ describe.skip('Manual page: banner and quick-picks', () => {
       { title: 'Another', imageUrl: 'https://images.igdb.com/igdb/image/upload/t_thumb/ok.jpg' },
     ];
 
-    const fetchMock = jest.fn(async (input: any) => {
-      if (String(input).includes('/games.json')) return { ok: true, json: async () => [] } as any;
-      if (String(input).includes('/api/igdb/top-this-year')) return { ok: true, json: async () => ({ suggestions }) } as any;
+    const fetchMock = jest.fn(async (input: unknown) => {
+      if (String(input).includes('/games.json')) return { ok: true, json: async () => [] } as unknown as Response;
+      if (String(input).includes('/api/igdb/top-this-year')) return { ok: true, json: async () => ({ suggestions }) } as unknown as Response;
       throw new Error('unexpected fetch ' + input);
     });
-    // @ts-ignore
+    // @ts-expect-error - Mock fetch for testing
     global.fetch = fetchMock;
 
-    const Page = (await import('./page')).default;
+    const Page = (await import('./page')).default as React.ComponentType;
     render(React.createElement(Page));
 
     // Quick-picks header present
@@ -107,7 +211,7 @@ describe.skip('Manual page: banner and quick-picks', () => {
     expect(img.getAttribute('src')).toBe('https://placehold.co/40x40.png');
 
     // Fetch to API should have been called exactly once
-    expect(fetchMock.mock.calls.filter((c: any[]) => String(c[0]).includes('/api/igdb/top-this-year')).length).toBe(1);
+    expect(fetchMock.mock.calls.filter((c: unknown[]) => String((c as unknown[])[0]).includes('/api/igdb/top-this-year')).length).toBe(1);
 
     // Should have cached the normalized list for the current UTC year
     const cacheKey = `gw:top-this-year:${year}`;
@@ -130,22 +234,22 @@ describe.skip('Manual page: banner and quick-picks', () => {
       { title: 'Cached 8', imageUrl: 'https://images.igdb.com/igdb/image/upload/t_thumb/i.jpg' },
     ]));
 
-    const fetchMock = jest.fn(async (input: any) => {
-      if (String(input).includes('/games.json')) return { ok: true, json: async () => [] } as any;
-      if (String(input).includes('/api/igdb/top-this-year')) return { ok: true, json: async () => ({ suggestions: [] }) } as any;
+    const fetchMock = jest.fn(async (input: unknown) => {
+      if (String(input).includes('/games.json')) return { ok: true, json: async () => [] } as unknown as Response;
+      if (String(input).includes('/api/igdb/top-this-year')) return { ok: true, json: async () => ({ suggestions: [] }) } as unknown as Response;
       throw new Error('unexpected fetch ' + input);
     });
-    // @ts-ignore
+    // @ts-expect-error - Mock fetch for testing
     global.fetch = fetchMock;
 
-    const Page = (await import('./page')).default;
+    const Page = (await import('./page')).default as React.ComponentType;
     render(React.createElement(Page));
 
     // 8 cached buttons should be rendered
     const buttons = await screen.findAllByRole('button', { name: /Quick add / });
     expect(buttons.length).toBe(8);
     // API not called because cache was present
-    expect(fetchMock.mock.calls.filter((c: any[]) => String(c[0]).includes('/api/igdb/top-this-year')).length).toBe(0);
+    expect(fetchMock.mock.calls.filter((c: unknown[]) => String((c as unknown[])[0]).includes('/api/igdb/top-this-year')).length).toBe(0);
 
     cleanup();
   });
@@ -153,29 +257,32 @@ describe.skip('Manual page: banner and quick-picks', () => {
   it('gracefully hides quick-picks when API responds non-OK or throws', async () => {
     // Non-OK
     let mode: 'nonok' | 'throw' = 'nonok';
-    const fetchMock = jest.fn(async (input: any) => {
-      if (String(input).includes('/games.json')) return { ok: true, json: async () => [] } as any;
+    const fetchMock = jest.fn(async (input: unknown) => {
+      if (String(input).includes('/games.json')) return { ok: true, json: async () => [] } as unknown as Response;
       if (String(input).includes('/api/igdb/top-this-year')) {
-        if (mode === 'nonok') return { ok: false, status: 500 } as any;
+        if (mode === 'nonok') return { ok: false, status: 500 } as unknown as Response;
         throw new Error('boom');
       }
       throw new Error('unexpected fetch ' + input);
     });
-    // @ts-ignore
+    // @ts-expect-error - Mock fetch for testing
     global.fetch = fetchMock;
 
-    const Page = (await import('./page')).default;
+    const Page = (await import('./page')).default as React.ComponentType;
     render(React.createElement(Page));
-    // Header should not appear; fallback message visible
+    
+    // Wait for async fetch to complete and error message to appear
+    expect(await screen.findByText('Top picks unavailable right now.')).toBeTruthy();
+    // Header should not appear
     expect(screen.queryByText('Top games this year')).toBeNull();
-    expect(screen.getByText('Top picks unavailable right now.')).toBeTruthy();
 
     // Now throwing mode
     cleanup();
     mode = 'throw';
     render(React.createElement(Page));
+    // Wait for async fetch to complete
+    expect(await screen.findByText('Top picks unavailable right now.')).toBeTruthy();
     expect(screen.queryByText('Top games this year')).toBeNull();
-    expect(screen.getByText('Top picks unavailable right now.')).toBeTruthy();
 
     cleanup();
   });
