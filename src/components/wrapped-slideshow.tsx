@@ -9,7 +9,6 @@ import {
   CarouselNext,
   CarouselPrevious
 } from "@/components/ui/carousel";
-import { Logo } from "./logo";
 import { Gift, Share2, Sparkles, Gamepad2, ArrowRight, Heart, Volume2, VolumeX, Monitor, Music, Music2, Loader2, Trophy, Twitter, Play, Pause } from "lucide-react";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
@@ -26,10 +25,9 @@ import PlayerPersonaCardComponent from "./cards/PlayerPersonaCard";
 
 import { RoastCardComponent } from "./cards/RoastCard";
 import { RecommendationsCardComponent } from "./cards/RecommendationsCard";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { RetroFrame } from "./retro-frame";
 import { useRef, useCallback } from "react";
-import { ParticleBurst } from "./particle-burst";
 import { TiltCard } from "./tilt-card";
 
 export function WrappedSlideshow({ data, id, isGenerating = false }: { data: WrappedData, id: string | null, isGenerating?: boolean }) {
@@ -313,7 +311,7 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
   };
 
   return (
-    <div className={`w-full min-h-screen flex flex-col items-center justify-center p-4 relative font-body overflow-hidden ${isGenerating ? 'cursor-waiting' : ''}`}>
+    <div className="wrapped-slideshow-root w-full min-h-screen flex flex-col items-center justify-center p-4 relative font-body overflow-hidden">
       {/* Dynamic Background Elements (Desktop Only) */}
       <div className="hidden lg:block absolute inset-0 z-0">
         <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-primary/5 rounded-full blur-[100px] animate-pulse" />
@@ -404,6 +402,8 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
         onCoin={handleCoin}
         onToggleMute={() => setIsMuted(!isMuted)}
         onToggleAutoPlay={() => setIsAutoPlaying(!isAutoPlaying)}
+        isMuted={isMuted}
+        isAutoPlaying={isAutoPlaying}
       >
         <div className="relative">
           <Carousel className="w-full" setApi={setApi}>

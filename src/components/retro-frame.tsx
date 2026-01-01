@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { applyAniCursor } from "@/lib/ani-cursor-utils";
 
 interface RetroFrameProps {
   children: React.ReactNode;
@@ -14,6 +16,8 @@ interface RetroFrameProps {
   onToggleMute?: () => void;
   onToggleAutoPlay?: () => void;
   statusText?: string;
+  isMuted?: boolean;
+  isAutoPlaying?: boolean;
 }
 
 export function RetroFrame({ 
@@ -26,7 +30,9 @@ export function RetroFrame({
   onCoin,
   onToggleMute,
   onToggleAutoPlay,
-  statusText = "SYSTEM STABLE // OPTIMIZING PIXELS // LOADING STORY" 
+  statusText = "SYSTEM STABLE // OPTIMIZING PIXELS // LOADING STORY",
+  isMuted = false,
+  isAutoPlaying = false
 }: RetroFrameProps) {
   return (
     <div className={cn("relative group", className)}>
@@ -68,7 +74,11 @@ export function RetroFrame({
           <div className="flex flex-col items-center gap-1">
             <button 
               onClick={onToggleMute}
-              className="w-10 h-10 bg-blue-600 rounded-full border-b-4 border-black active:border-b-0 active:translate-y-1 transition-all hover:bg-blue-500 shadow-lg" 
+              className={`w-10 h-10 bg-blue-600 rounded-full transition-all hover:bg-blue-500 ${
+                isMuted 
+                  ? 'border-b-0 translate-y-1 shadow-inner' 
+                  : 'border-b-4 border-black shadow-lg'
+              }`}
               title="Toggle Audio"
             />
             <span className="text-sm text-muted-foreground uppercase">Mute</span>
@@ -76,7 +86,11 @@ export function RetroFrame({
           <div className="flex flex-col items-center gap-1">
             <button 
               onClick={onToggleAutoPlay}
-              className="w-10 h-10 bg-yellow-600 rounded-full border-b-4 border-black active:border-b-0 active:translate-y-1 transition-all hover:bg-yellow-500 shadow-lg" 
+              className={`w-10 h-10 bg-yellow-600 rounded-full transition-all hover:bg-yellow-500 ${
+                isAutoPlaying 
+                  ? 'border-b-0 translate-y-1 shadow-inner' 
+                  : 'border-b-4 border-black shadow-lg'
+              }`}
               title="Toggle Auto-Play"
             />
             <span className="text-sm text-muted-foreground uppercase">Auto</span>
@@ -117,7 +131,7 @@ export function RetroFrame({
         {/* Coin Slot */}
         <div 
           onClick={onCoin}
-          className="flex items-center justify-center gap-2 px-4 border-x border-[#3f3f46] cursor-coin group/coin hover:bg-yellow-500/5 transition-colors"
+          className="retro-frame-coin-slot flex items-center justify-center gap-2 px-4 border-x border-[#3f3f46] group/coin hover:bg-yellow-500/5 transition-colors"
         >
            <div className="w-4 h-6 bg-black rounded-sm border-2 border-[#3f3f46] flex flex-col items-center justify-center gap-1 group-hover/coin:border-yellow-600 transition-colors">
               <div className="w-0.5 h-3 bg-yellow-600/50 rounded-full group-hover/coin:bg-yellow-500" />
