@@ -69,11 +69,15 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border cursor-[url('/cursors/Normal%20Gaming%20cursor.ani'),_auto];
   }
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  button, a {
+    @apply cursor-[url('/cursors/Normal%20Gaming%20cursor.ani'),_pointer];
   }
 
   /* Custom Scrollbar Styles */
@@ -104,6 +108,18 @@
 }
 
 @layer utilities {
+  .cursor-waiting {
+    cursor: url('/cursors/Working%20In%20background%20Gaming%20Cursor.ani'), auto;
+  }
+
+  .cursor-coin {
+    cursor: url('/cursors/coin.ani'), auto;
+  }
+
+  .cursor-normal {
+    cursor: url('/cursors/Normal%20Gaming%20cursor.ani'), auto;
+  }
+
   .bg-retro-grid-40 {
     background-image:
       linear-gradient(to right, oklch(var(--primary) / 30%) 1px, transparent 1px),
@@ -120,6 +136,15 @@
 
   .animate-pulse-slow {
     animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 8s linear infinite;
   }
 
   .pixel-corners {
@@ -185,6 +210,11 @@
     100% {
       bottom: -100%;
     }
+  }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-33.33%); }
   }
 
   .font-mono {
