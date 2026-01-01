@@ -1,9 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { applyAniCursor } from "@/lib/ani-cursor-utils";
 
 interface RetroFrameProps {
   children: React.ReactNode;
@@ -30,7 +27,7 @@ export function RetroFrame({
   onCoin,
   onToggleMute,
   onToggleAutoPlay,
-  statusText = "SYSTEM STABLE // OPTIMIZING PIXELS // LOADING STORY",
+  statusText = '',
   isMuted = false,
   isAutoPlaying = false
 }: RetroFrameProps) {
@@ -72,27 +69,27 @@ export function RetroFrame({
             <span className="text-sm text-muted-foreground uppercase">Back</span>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <button 
-              onClick={onToggleMute}
-              className={`w-10 h-10 bg-blue-600 rounded-full transition-all hover:bg-blue-500 ${
-                isMuted 
-                  ? 'border-b-0 translate-y-1 shadow-inner' 
-                  : 'border-b-4 border-black shadow-lg'
-              }`}
-              title="Toggle Audio"
-            />
+           <button 
+             onClick={onToggleMute}
+             className={`w-10 h-10 rounded-full border-b-4 transition-all flex items-center justify-center ${
+               isMuted 
+                 ? 'bg-blue-600 border-blue-700 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] translate-y-0.5' 
+                 : 'bg-blue-500 border-black shadow-[0_4px_0_rgba(0,0,0,0.5)]'
+             }`}
+             title="Toggle Audio"
+           />
             <span className="text-sm text-muted-foreground uppercase">Mute</span>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <button 
-              onClick={onToggleAutoPlay}
-              className={`w-10 h-10 bg-yellow-600 rounded-full transition-all hover:bg-yellow-500 ${
-                isAutoPlaying 
-                  ? 'border-b-0 translate-y-1 shadow-inner' 
-                  : 'border-b-4 border-black shadow-lg'
-              }`}
-              title="Toggle Auto-Play"
-            />
+           <button 
+             onClick={onToggleAutoPlay}
+             className={`w-10 h-10 rounded-full border-b-4 transition-all flex items-center justify-center ${
+               isAutoPlaying 
+                 ? 'bg-yellow-600 border-yellow-700 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] translate-y-0.5' 
+                 : 'bg-yellow-500 border-black shadow-[0_4px_0_rgba(0,0,0,0.5)]'
+             }`}
+             title="Toggle Auto-Play"
+           />
             <span className="text-sm text-muted-foreground uppercase">Auto</span>
           </div>
         </div>

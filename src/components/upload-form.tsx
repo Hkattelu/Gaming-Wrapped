@@ -94,6 +94,15 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
 
   useEffect(() => {
     if (isLoading) {
+      document.body.classList.add('is-generating');
+    } else {
+      document.body.classList.remove('is-generating');
+    }
+    return () => document.body.classList.remove('is-generating');
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (isLoading) {
       setFakeProgress(0);
       setLoadingStep(0);
 
