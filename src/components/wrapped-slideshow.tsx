@@ -1,7 +1,7 @@
 'use client';
 
 import { WrappedData, WrappedCard } from "@/types";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import {
   Carousel,
   CarouselContent,
@@ -27,7 +27,6 @@ import { RoastCardComponent } from "./cards/RoastCard";
 import { RecommendationsCardComponent } from "./cards/RecommendationsCard";
 import { motion } from "framer-motion";
 import { RetroFrame } from "./retro-frame";
-import { useRef, useCallback } from "react";
 import { TiltCard } from "./tilt-card";
 
 export function WrappedSlideshow({ data, id, isGenerating = false }: { data: WrappedData, id: string | null, isGenerating?: boolean }) {
@@ -40,7 +39,6 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
   const [isMuted, setIsMuted] = useState(true);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [isPoweringUp, setIsPoweringUp] = useState(false);
-  const [isFlickering, setIsFlickering] = useState(false);
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [slideProgress, setSlideProgress] = useState(0);
   const [showCrt, setShowCrt] = useState(true);
@@ -84,6 +82,14 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
     playSound('coin');
   };
 
+  const handleToggleMute = useCallback(() => {
+    setIsMuted(prev => !prev);
+  }, []);
+
+  const handleToggleAutoPlay = useCallback(() => {
+    setIsAutoPlaying(prev => !prev);
+  }, []);
+
   // Auto-play logic
   const handleNext = useCallback(() => {
     if (api?.canScrollNext()) {
@@ -94,9 +100,6 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
   }, [api]);
 
   // Status message for RetroFrame ticker
-  const summaryCard = cards.find(c => c.type === 'summary') as any;
-  const platformCard = cards.find(c => c.type === 'platform_stats') as any;
-  const topGameCard = cards.find(c => c.type === 'top_game') as any;
   const personaCard = cards.find(c => c.type === 'player_persona') as any;
 
   useEffect(() => {
@@ -166,9 +169,6 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
   useEffect(() => {
     if (current > 0) {
       playSound('nav');
-      setIsFlickering(true);
-      const timer = setTimeout(() => setIsFlickering(false), 150);
-      return () => clearTimeout(timer);
     }
     if (current === count && count > 0) playSound('success');
   }, [current, count]);
@@ -246,39 +246,6 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [api]);
-
-  const handleShare = async () => {
-    if (id) {
-      const shareUrl = `${window.location.origin}/wrapped?id=${id}`;
-      const summaryCard = cards.find(c => c.type === 'summary') as any;
-      const totalGames = summaryCard?.totalGames ?? 0;
-      const playtime = totalGames * 20;
-      
-      const shareData = {
-        title: 'My Gaming Wrapped 2025',
-        text: `I played ${totalGames} games for over ${playtime} hours this year! Check out my Gaming Wrapped.`,
-        url: shareUrl,
-      };
-
-      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-        try {
-          await navigator.share(shareData);
-          return;
-        } catch (err) {
-          if ((err as Error).name !== 'AbortError') {
-            console.error('Error sharing:', err);
-          }
-        }
-      }
-
-      // Fallback to clipboard
-      navigator.clipboard.writeText(shareUrl);
-      toast({
-        title: "LINK COPIED!",
-        description: "Your Game Rewind URL is ready to be shared.",
-      });
-    }
-  };
 
   const renderCard = (card: WrappedCard, index: number, currentSlide: number) => {
     const slideIndex = index + 2; // Slide 1 is Intro
@@ -400,8 +367,8 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
         onStart={() => setIsAutoPlaying(!isAutoPlaying)}
         onSelect={() => setShowCrt(!showCrt)}
         onCoin={handleCoin}
-        onToggleMute={() => setIsMuted(!isMuted)}
-        onToggleAutoPlay={() => setIsAutoPlaying(!isAutoPlaying)}
+        onToggleMute={handleToggleMute}
+        onToggleAutoPlay={handleToggleAutoPlay}
         isMuted={isMuted}
         isAutoPlaying={isAutoPlaying}
       >
@@ -612,38 +579,13 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
 
                     {/* Action Buttons */}
                     <div className="mt-8 flex flex-col gap-3 w-full relative z-10">
-                      <div className="grid grid-cols-2 gap-2 w-full">
-                        <Button className="font-headline text-[8px] tracking-wider pixel-corners h-12 bg-black hover:bg-zinc-900 text-white border-2 border-white/10" onClick={handleTwitterShare}>
-                          <Twitter className="mr-1.5 h-3 w-3 fill-current" /> SHARE TO X
-                        </Button>
+                      <div className="grid gap-2 w-full">
                         <Button className="font-headline text-[8px] tracking-wider pixel-corners h-12 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 hover:brightness-110 text-white border-2 border-white/10" onClick={handleInstagramShare}>
                           <Share2 className="mr-1.5 h-3 w-3" /> SHARE STORY
                         </Button>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 w-full">
-                        <Button
-                          variant="outline"
-                          asChild
-                          className="font-headline text-[8px] tracking-wider pixel-corners h-10 border-2"
-                        >
-                          <a href={`/api/wrapped/${id}/og?download=true&pro=false`} download={`gaming-wrapped-${id}.png`}>
-                            DL FREE (X)
-                          </a>
-                        </Button>
-
-                        <Button
-                          variant="outline"
-                          asChild
-                          className="font-headline text-[8px] tracking-wider pixel-corners h-10 border-2"
-                        >
-                          <a href={`/api/wrapped/${id}/og?download=true&pro=false&aspect=vertical`} download={`gaming-story-${id}.png`}>
-                            DL FREE (STORY)
-                          </a>
-                        </Button>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2 w-full">
+                      <div className="grid gap-2 w-full">
                         <Button
                           asChild
                           className="font-headline text-[8px] tracking-wider pixel-corners h-10 bg-emerald-600 hover:bg-emerald-700 text-white border-2 border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.3)]"
@@ -654,38 +596,12 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
                             rel="noopener noreferrer"
                             className="flex items-center justify-center gap-1"
                           >
-                            GET PRO CARD
+                          <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.005-1.086 4.363.407 0 0 1.565-1.782 3.468-.963 1.904.82 1.832 3.011.723 4.311zm6.173.478c-.928.116-1.682.028-1.682.028V7.284h1.77s1.971.551 1.971 2.638c0 1.913-.985 2.667-2.059 3.015z" />
+                          </svg>
+                            <span>DONATE IF YOU ENJOYED</span>
                           </a>
                         </Button>
-
-                        <Button
-                          asChild
-                          className="font-headline text-[8px] tracking-wider pixel-corners h-10 bg-purple-600 hover:bg-purple-700 text-white border-2 border-purple-500/50 shadow-[0_0_10px_rgba(147,51,234,0.3)]"
-                        >
-                          <a 
-                            href="https://ko-fi.com/glowstringman" 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-1"
-                          >
-                            GET PRO STORY
-                          </a>
-                        </Button>
-                      </div>
-
-                      <div 
-                        className="w-full mt-1 p-3 border-2 border-accent/30 bg-accent/5 pixel-corners relative overflow-hidden group cursor-pointer hover:bg-accent/10 transition-colors" 
-                        onClick={() => window.open('https://ko-fi.com/glowstringman', '_blank')}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="text-left flex flex-col">
-                             <span className="font-headline text-accent text-[10px] tracking-widest uppercase">Loving the app?</span>
-                             <span className="text-[9px] text-muted-foreground font-body">Support development & remove watermarks.</span>
-                          </div>
-                          <div className="h-8 w-8 bg-accent text-white flex items-center justify-center pixel-corners shadow-[2px_2px_0px_rgba(0,0,0,1)] group-hover:scale-110 transition-transform">
-                             <Heart className="w-4 h-4 fill-current animate-pulse" />
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </div>

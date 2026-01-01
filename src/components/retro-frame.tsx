@@ -1,6 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
+import { Sun, Moon } from "lucide-react";
 
 interface RetroFrameProps {
   children: React.ReactNode;
@@ -31,6 +34,19 @@ export function RetroFrame({
   isMuted = false,
   isAutoPlaying = false
 }: RetroFrameProps) {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted && theme === "dark";
+
+  const handleThemeToggle = () => {
+    setTheme(isDark ? "light" : "dark");
+  };
+
   return (
     <div className={cn("relative group", className)}>
       {/* Outer Case */}
@@ -84,7 +100,7 @@ export function RetroFrame({
            <button 
              onClick={onToggleAutoPlay}
              className={`w-10 h-10 rounded-full border-b-4 transition-all flex items-center justify-center ${
-               isAutoPlaying 
+               !isAutoPlaying 
                  ? 'bg-yellow-600 border-yellow-700 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] translate-y-0.5' 
                  : 'bg-yellow-500 border-black shadow-[0_4px_0_rgba(0,0,0,0.5)]'
              }`}
@@ -92,6 +108,7 @@ export function RetroFrame({
            />
             <span className="text-sm text-muted-foreground uppercase">Auto</span>
           </div>
+
         </div>
       </div>
       <div className="hidden xl:block absolute top-1/2 -right-16 -translate-y-1/2 w-16 h-64 bg-[#18181b] border-2 border-[#3f3f46] rounded-r-2xl shadow-xl overflow-hidden">
@@ -105,13 +122,25 @@ export function RetroFrame({
           </button>
           
           <div>
-            <span className="text-sm">NEXT</span>
-          </div>
+             <span className="text-sm">NEXT</span>
+           </div>
 
-          <div className="mt-auto flex flex-col gap-2 pb-4">
+           <div className="flex flex-col items-center gap-1">
+            <button 
+              onClick={handleThemeToggle}
+              className={`w-10 h-10 rounded-full border-b-4 transition-all flex items-center justify-center ${
+                isDark 
+                  ? 'bg-purple-600 border-purple-700 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] translate-y-0.5' 
+                  : 'bg-purple-500 border-black shadow-[0_4px_0_rgba(0,0,0,0.5)]'
+              }`}
+              title="Toggle Light/Dark Mode"
+            >
+              {mounted && (isDark ? <Sun className="w-5 h-5 text-white" /> : <Moon className="w-5 h-5 text-white" />)}
+            </button>
+            <span className="text-xs text-muted-foreground uppercase">Theme</span>
+            <div className="mt-4 w-8 h-1 bg-[#3f3f46] rounded-full" />
             <div className="w-8 h-1 bg-[#3f3f46] rounded-full" />
-            <div className="w-8 h-1 bg-[#3f3f46] rounded-full" />
-          </div>
+           </div>
         </div>
       </div>
 
