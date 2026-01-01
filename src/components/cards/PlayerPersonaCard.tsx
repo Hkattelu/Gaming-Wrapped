@@ -12,24 +12,24 @@ interface PlayerPersonaCardProps {
 }
 
 const PERSONA_CONFIG: Record<string, { seed: string; tag: string }> = {
-  "The Loyal Legend": { seed: "legend", tag: "LEGEND" },
-  "The Platinum Plunderer": { seed: "trophy", tag: "PLUNDERER" },
-  "The Squadron Leader": { seed: "commander", tag: "LEADER" },
-  "The Narrative Navigator": { seed: "book", tag: "NARRATOR" },
-  "The Apex Predator": { seed: "skull", tag: "PREDATOR" },
-  "The Cozy Cultivator": { seed: "plant", tag: "CULTIVATOR" },
-  "The Artisan Adventurer": { seed: "palette", tag: "ARTISAN" },
-  "The Master Architect": { seed: "building", tag: "ARCHITECT" },
-  "The High-Octane Hero": { seed: "power", tag: "HERO" },
-  "The Vanguard Gamer": { seed: "future", tag: "VANGUARD" },
-  "The Backlog Baron": { seed: "library", tag: "HOARDER" },
-  "The Digital Hoarder": { seed: "ghost", tag: "TOURIST" },
-  "The Completionist Cultist": { seed: "crown", tag: "ZEALOT" },
-  "The Early Access Enthusiast": { seed: "construction", tag: "PIONEER" },
-  "The Diamond in the Rough Digger": { seed: "diamond", tag: "TREASURE" },
-  "The Speedrun Sorcerer": { seed: "clock", tag: "OPTIMIZER" },
-  "The Modded Maestro": { seed: "gear", tag: "MECHANIC" },
-  "The Digital Monogamist": { seed: "heart", tag: "FAITHFUL" },
+  "The Loyal Legend": { seed: "Loyal Legend", tag: "LEGEND" },
+  "The Platinum Plunderer": { seed: "Platinum Plunderer", tag: "PLUNDERER" },
+  "The Squadron Leader": { seed: "Squadron Leader", tag: "LEADER" },
+  "The Narrative Navigator": { seed: "Narrative Navigator", tag: "NARRATOR" },
+  "The Apex Predator": { seed: "Apex Predator", tag: "PREDATOR" },
+  "The Cozy Cultivator": { seed: "Cozy Cultivator", tag: "CULTIVATOR" },
+  "The Artisan Adventurer": { seed: "lsjda", tag: "ARTISAN" },
+  "The Master Architect": { seed: "jhsakdhjasduheu", tag: "ARCHITECT" },
+  "The High-Octane Hero": { seed: "High-Octane Hero", tag: "HERO" },
+  "The Vanguard Gamer": { seed: "Vanguard Gamer", tag: "VANGUARD" },
+  "The Backlog Baron": { seed: "Backlog Baron", tag: "HOARDER" },
+  "The Digital Hoarder": { seed: "Digital Hoarder", tag: "TOURIST" },
+  "The Completionist Cultist": { seed: "Completionist Cultist", tag: "ZEALOT" },
+  "The Early Access Enthusiast": { seed: "Early Access Enthusiast", tag: "PIONEER" },
+  "The Diamond in the Rough Digger": { seed: "diamondint", tag: "TREASURE" },
+  "The Speedrun Sorcerer": { seed: "Speedrun Specialist", tag: "OPTIMIZER" },
+  "The Modded Maestro": { seed: "Community Coordinator", tag: "MECHANIC" },
+  "The Digital Monogamist": { seed: "Master Architect", tag: "FAITHFUL" },
 };
 
 export default function PlayerPersonaCard({ card, isActive }: PlayerPersonaCardProps) {
@@ -107,7 +107,7 @@ export default function PlayerPersonaCard({ card, isActive }: PlayerPersonaCardP
 
                 <div className="w-32 h-32 md:w-40 md:h-40 relative pixel-corners bg-background flex items-center justify-center overflow-hidden border-4 border-border shadow-lg group-hover:scale-105 transition-transform duration-300">
                   <Image
-                    src={`https://api.dicebear.com/7.x/pixel-art/svg?seed=${config.seed}&backgroundColor=1a1a1a`}
+                    src={`https://api.dicebear.com/9.x/bottts/svg?seed=${config.seed}&backgroundColor=1a1a1a`}
                     alt={card.persona}
                     width={160}
                     height={160}
