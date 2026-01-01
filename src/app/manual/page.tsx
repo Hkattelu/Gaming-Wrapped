@@ -305,7 +305,7 @@ export default function ManualEntryPage() {
 
           {/* Unsaved list warning */}
           <div className="w-full max-w-lg mt-4 text-left">
-            <Alert className="bg-amber-500/10 border-amber-500/30">
+            <Alert className="bg-amber-500/10 border-amber-500/30 pixel-corners">
               <AlertTriangle className="h-5 w-5" />
               <AlertTitle className="font-headline tracking-wider">Heads up</AlertTitle>
               <AlertDescription>
@@ -319,13 +319,13 @@ export default function ManualEntryPage() {
             <div className="w-full max-w-4xl mt-8">
               {topThisYear.length > 0 && (
                 <div className="text-left">
-                  <p className="text-sm text-muted-foreground mb-2">Top games this year</p>
+                  <p className="text-sm font-headline tracking-widest text-muted-foreground uppercase mb-4">Top games this year</p>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {topThisYear.map((g, idx) => (
                       <button
                         key={`${g.title}-${idx}`}
                         type="button"
-                        className="flex items-center gap-3 p-3 rounded-lg bg-muted/40 hover:bg-muted transition"
+                        className="flex items-center gap-3 p-3 bg-muted/40 hover:bg-accent/10 border-2 border-transparent hover:border-accent transition-all pixel-corners group"
                         onClick={() => {
                           setSearchQuery(g.title);
                           setSelectedGame({ title: g.title });
@@ -333,25 +333,28 @@ export default function ManualEntryPage() {
                         }}
                         aria-label={`Quick add ${g.title}`}
                       >
-                        <Image
-                          src={g.imageUrl || 'https://placehold.co/40x40.png'}
-                          alt={g.title}
-                          width={64}
-                          height={64}
-                          className="rounded"
-                        />
-                        <span className="text-base font-medium line-clamp-2 text-left">{g.title}</span>
+                        <div className="relative flex-shrink-0">
+                          <Image
+                            src={g.imageUrl || 'https://placehold.co/40x40.png'}
+                            alt={g.title}
+                            width={64}
+                            height={64}
+                            className="pixel-corners group-hover:scale-105 transition-transform"
+                          />
+                          <div className="absolute inset-0 crt-overlay opacity-20 pointer-events-none" />
+                        </div>
+                        <span className="text-sm font-headline uppercase line-clamp-2 text-left leading-tight">{g.title}</span>
                       </button>
                     ))}
                   </div>
                 </div>
               )}
               {picksError && topThisYear.length === 0 && (
-                <p className="text-sm text-muted-foreground text-left">{picksError}</p>
+                <p className="text-sm text-muted-foreground text-left font-body">{picksError}</p>
               )}
             </div>
 
-            <form onSubmit={handleSearchSubmit} className="w-full max-w-lg mt-6 relative">
+            <form onSubmit={handleSearchSubmit} className="w-full max-w-lg mt-10 relative">
               <Input
                 ref={inputRef}
                 type="search"
@@ -377,19 +380,19 @@ export default function ManualEntryPage() {
                     }
                   }
                 }}
-                placeholder="What was the first game you played this year?"
-                className="h-14 text-center text-xl font-body tracking-wider"
+                placeholder="What did you play this year?"
+                className="h-14 text-center text-xl font-body tracking-wider border-2 border-primary/20 focus:border-primary pixel-corners"
                 aria-autocomplete="list"
                 aria-expanded={suggestions.length > 0}
                 aria-controls="game-suggestions"
               />
               {suggestions.length > 0 && (
-                <ul id="game-suggestions" className="absolute left-0 right-0 mt-1 bg-popover border rounded-md shadow z-20 max-h-60 overflow-auto">
+                <ul id="game-suggestions" className="absolute left-0 right-0 mt-1 bg-popover border-2 border-border pixel-corners shadow-xl z-20 max-h-60 overflow-auto">
                   {suggestions.map((s, idx) => (
                     <li key={s}>
                       <button
                         type="button"
-                        className={`w-full text-left px-3 py-2 hover:bg-muted ${idx === highlightedIndex ? 'bg-muted' : ''}`}
+                        className={`w-full text-left px-4 py-3 font-headline text-xs hover:bg-primary hover:text-white transition-colors ${idx === highlightedIndex ? 'bg-primary text-white' : ''}`}
                         onMouseEnter={() => setHighlightedIndex(idx)}
                         onClick={() => {
                           setSearchQuery(s);
@@ -397,14 +400,14 @@ export default function ManualEntryPage() {
                           setIsDialogOpen(true);
                         }}
                       >
-                        {s}
+                        {s.toUpperCase()}
                       </button>
                     </li>
                   ))}
                 </ul>
               )}
-               <Button type="submit" size="lg" className="mt-4 w-full font-headline tracking-widest text-lg">
-                <Plus className="mr-2"/> Add Game
+               <Button type="submit" size="lg" className="mt-4 w-full font-headline tracking-widest text-lg py-6 pixel-corners shadow-[0_4px_0_rgba(0,0,0,0.2)] active:shadow-none active:translate-y-1 transition-all">
+                <Plus className="mr-2"/> ADD TO LIST
                </Button>
             </form>
             
@@ -412,44 +415,55 @@ export default function ManualEntryPage() {
 
           </Dialog>
 
-          <div className="w-full max-w-2xl mt-12">
+          <div className="w-full max-w-2xl mt-16">
             {gamesList.length > 0 ? (
-              <Card className="bg-card/80 backdrop-blur-sm">
-                <CardHeader className="flex-row items-center justify-between">
-                  <CardTitle className="font-headline tracking-widest">YOUR YEAR IN GAMING</CardTitle>
-                  <Button variant="outline" onClick={handleDownloadCsv}>
-                    <Download className="mr-2" />
-                    Download as CSV
+              <Card className="bg-card/80 backdrop-blur-sm border-2 border-border shadow-lg pixel-corners">
+                <CardHeader className="flex-row items-center justify-between border-b-2 border-dashed border-border pb-4">
+                  <CardTitle className="font-headline tracking-widest text-lg">COLLECTION ({gamesList.length})</CardTitle>
+                  <Button variant="outline" onClick={handleDownloadCsv} className="pixel-corners font-headline text-[10px] h-8">
+                    <Download className="mr-2 h-3 w-3" />
+                    EXPORT CSV
                   </Button>
                 </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
+                <CardContent className="pt-6">
+                  <ul className="space-y-4">
                     {gamesList.map(game => (
-                      <li key={game.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                      <li key={game.id} className="flex items-center justify-between p-4 bg-muted/30 border border-border pixel-corners hover:bg-muted/50 transition-colors group">
                         <div className="flex items-center gap-4">
-                           <Image src={coverUrlsById[game.id] || `https://placehold.co/40x40.png`} data-ai-hint="game boxart" alt={game.title} width={40} height={40} className="rounded-md" onError={() => setCoverUrlsById(prev => ({ ...prev, [game.id]: null }))} />
+                           <div className="relative">
+                             <Image 
+                                src={coverUrlsById[game.id] || `https://placehold.co/40x40.png`} 
+                                data-ai-hint="game boxart" 
+                                alt={game.title} 
+                                width={48} 
+                                height={48} 
+                                className="pixel-corners border border-foreground/10" 
+                                onError={() => setCoverUrlsById(prev => ({ ...prev, [game.id]: null }))} 
+                             />
+                             <div className="absolute inset-0 crt-overlay opacity-10 pointer-events-none" />
+                           </div>
                            <div className="flex flex-col items-start">
-                            <div className="flex items-center gap-2">
-                              <p className="font-bold font-body text-lg">{game.title}</p>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="font-headline text-sm uppercase text-foreground">{game.title}</p>
                               {/* Platform badge */}
                               {game.platform === 'PC' && (
-                                <Badge className="bg-sky-600 text-white border-transparent">PC</Badge>
+                                <Badge className="bg-cyan-600 text-white border-transparent text-[8px] h-4 pixel-corners">PC</Badge>
                               )}
                               {game.platform === 'PlayStation' && (
-                                <Badge className="bg-blue-600 text-white border-transparent">PS</Badge>
+                                <Badge className="bg-blue-600 text-white border-transparent text-[8px] h-4 pixel-corners">PS</Badge>
                               )}
                               {game.platform === 'Xbox' && (
-                                <Badge className="bg-green-600 text-white border-transparent">Xbox</Badge>
+                                <Badge className="bg-green-600 text-white border-transparent text-[8px] h-4 pixel-corners">XBOX</Badge>
                               )}
                               {game.platform === 'Switch' && (
-                                <Badge className="bg-red-600 text-white border-transparent">Switch</Badge>
+                                <Badge className="bg-red-600 text-white border-transparent text-[8px] h-4 pixel-corners">NSW</Badge>
                               )}
                             </div>
-                            <p className="text-sm text-muted-foreground">{game.platform} - {game.status}</p>
+                            <p className="text-[10px] font-headline text-muted-foreground uppercase mt-1">Grade: {game.score}/10 — {game.status}</p>
                            </div>
                         </div>
-                        <Button variant="ghost" size="icon" onClick={() => handleRemoveGame(game.id)}>
-                          <Trash2 className="h-4 w-4 text-destructive"/>
+                        <Button variant="ghost" size="icon" onClick={() => handleRemoveGame(game.id)} className="hover:bg-destructive/10 hover:text-destructive transition-colors">
+                          <Trash2 className="h-4 w-4"/>
                         </Button>
                       </li>
                     ))}
@@ -457,23 +471,23 @@ export default function ManualEntryPage() {
                 </CardContent>
               </Card>
             ) : (
-                <div className="text-center text-muted-foreground font-body text-lg p-8 border-2 border-dashed border-primary/20 rounded-lg">
-                    <p>Your added games will appear here.</p>
-                    <p>Start by searching for a game above!</p>
+                <div className="text-center text-muted-foreground font-headline text-sm p-12 border-4 border-dashed border-primary/10 pixel-corners bg-muted/5">
+                    <p className="tracking-widest">YOUR COLLECTION IS EMPTY</p>
+                    <p className="text-[10px] mt-2 opacity-50">SEARCH FOR A GAME ABOVE TO START YOUR STORY</p>
                 </div>
             )}
           </div>
           
            {gamesList.length >= 3 && (
-              <div className="mt-8 w-full max-w-lg z-20">
+              <div className="mt-10 w-full max-w-lg z-20 pb-20">
                 <Button
                   size="lg"
-                  className="w-full font-headline tracking-widest text-xl h-auto min-h-[3.5rem] whitespace-normal break-words text-center"
+                  className="w-full font-headline tracking-widest text-lg h-auto py-6 pixel-corners bg-accent hover:bg-accent/90 shadow-[0_0_20px_rgba(255,46,80,0.4)] transition-all hover:-translate-y-1"
                   onClick={handleGenerate}
                   disabled={isLoading}
                 >
                     {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Dices className="mr-2 h-5 w-5"/>}
-                    {"That's enough! Generate my Wrapped!"}
+                    {"GENERATE MY WRAPPED STORY"}
                 </Button>
               </div>
            )}
@@ -495,34 +509,49 @@ function AddGameDialog({ game, onAddGame }: { game: SelectedGame, onAddGame: (de
     }
 
     return (
-        <DialogContent className="font-body">
+        <DialogContent className="font-body border-4 border-border pixel-corners max-w-lg">
             <DialogHeader>
-                 <DialogTitle className="font-headline tracking-wider text-2xl">{game.title}</DialogTitle>
+                 <DialogTitle className="font-headline tracking-wider text-2xl text-primary">{game.title.toUpperCase()}</DialogTitle>
             </DialogHeader>
 
             <div className="space-y-6 py-4">
                 <div>
-                    <Label className="text-lg font-headline tracking-wider">Status</Label>
+                    <Label className="text-xs font-headline tracking-widest text-muted-foreground uppercase">Status</Label>
                     <ToggleGroup type="single" value={status} onValueChange={(v) => v && setStatus(v)} className="grid grid-cols-2 gap-2 mt-2">
-                        <ToggleGroupItem value="Played It" className="text-base h-12">Played It</ToggleGroupItem>
-                        <ToggleGroupItem value="Finished" className="text-base h-12">Finished It</ToggleGroupItem>
-                        <ToggleGroupItem value="Completed" className="text-base h-12">100% Completed</ToggleGroupItem>
-                        <ToggleGroupItem value="Dropped" className="text-base h-12">Dropped It</ToggleGroupItem>
+                        <ToggleGroupItem value="Played It" className="text-xs font-headline h-12 pixel-corners border-2 data-[state=on]:bg-primary data-[state=on]:text-white">PLAYED IT</ToggleGroupItem>
+                        <ToggleGroupItem value="Finished" className="text-xs font-headline h-12 pixel-corners border-2 data-[state=on]:bg-primary data-[state=on]:text-white">FINISHED IT</ToggleGroupItem>
+                        <ToggleGroupItem value="Completed" className="text-xs font-headline h-12 pixel-corners border-2 data-[state=on]:bg-primary data-[state=on]:text-white">COMPLETED</ToggleGroupItem>
+                        <ToggleGroupItem value="Dropped" className="text-xs font-headline h-12 pixel-corners border-2 data-[state=on]:bg-primary data-[state=on]:text-white">DROPPED IT</ToggleGroupItem>
                     </ToggleGroup>
                 </div>
 
                  <div>
-                    <Label className="text-lg font-headline tracking-wider">Platform</Label>
+                    <Label className="text-xs font-headline tracking-widest text-muted-foreground uppercase">Platform</Label>
                      <ToggleGroup type="single" value={platform} onValueChange={(v) => v && setPlatform(v)} className="grid grid-cols-4 gap-2 mt-2">
-                        <ToggleGroupItem value="PC" className="text-base h-12 flex items-center gap-2 justify-center"><PcCase className="h-5 w-5"/><span>PC</span></ToggleGroupItem>
-                        <ToggleGroupItem value="PlayStation" className="text-base h-12 flex items-center gap-2 justify-center"><Joystick className="h-5 w-5"/><span>PlayStation</span></ToggleGroupItem>
-                        <ToggleGroupItem value="Xbox" className="text-base h-12 flex items-center gap-2 justify-center"><Gamepad className="h-5 w-5"/><span>Xbox</span></ToggleGroupItem>
-                        <ToggleGroupItem value="Switch" className="text-base h-12 flex items-center gap-2 justify-center"><Gamepad2 className="h-5 w-5"/><span>Switch</span></ToggleGroupItem>
+                        <ToggleGroupItem value="PC" className="h-14 pixel-corners border-2 data-[state=on]:bg-cyan-600 data-[state=on]:text-white flex flex-col gap-1">
+                          <PcCase className="h-4 w-4"/>
+                          <span className="text-[8px] font-headline">PC</span>
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="PlayStation" className="h-14 pixel-corners border-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white flex flex-col gap-1">
+                          <Joystick className="h-4 w-4"/>
+                          <span className="text-[8px] font-headline">PS</span>
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="Xbox" className="h-14 pixel-corners border-2 data-[state=on]:bg-green-600 data-[state=on]:text-white flex flex-col gap-1">
+                          <Gamepad className="h-4 w-4"/>
+                          <span className="text-[8px] font-headline">XBOX</span>
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="Switch" className="h-14 pixel-corners border-2 data-[state=on]:bg-red-600 data-[state=on]:text-white flex flex-col gap-1">
+                          <Gamepad2 className="h-4 w-4"/>
+                          <span className="text-[8px] font-headline">NSW</span>
+                        </ToggleGroupItem>
                     </ToggleGroup>
                 </div>
                 
                  <div>
-                    <Label htmlFor="score-slider" className="text-lg font-headline tracking-wider">Your Score: <span className="text-primary font-bold">{score}/10</span></Label>
+                    <Label htmlFor="score-slider" className="text-xs font-headline tracking-widest text-muted-foreground uppercase flex justify-between">
+                      <span>Rating</span>
+                      <span className="text-primary font-bold">{score}/10</span>
+                    </Label>
                     <Slider
                         id="score-slider"
                         min={1} max={10} step={1}
@@ -533,23 +562,23 @@ function AddGameDialog({ game, onAddGame }: { game: SelectedGame, onAddGame: (de
                  </div>
 
                 <div>
-                    <Label htmlFor="review-notes" className="text-lg font-headline tracking-wider">Review Notes (optional)</Label>
+                    <Label htmlFor="review-notes" className="text-xs font-headline tracking-widest text-muted-foreground uppercase">Notes (Optional)</Label>
                     <textarea
                         id="review-notes"
-                        className="mt-2 w-full rounded-md border bg-background p-3 text-base"
+                        className="mt-2 w-full bg-muted/20 border-2 border-border p-3 text-sm pixel-corners focus:border-primary outline-none transition-colors"
                         rows={3}
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
-                        placeholder="What did you think about it?"
+                        placeholder="Masterpiece? Garbage? You decide."
                     />
                 </div>
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="gap-2 sm:gap-0">
                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
+                    <Button variant="outline" className="pixel-corners font-headline text-xs">CANCEL</Button>
                 </DialogClose>
-                <Button onClick={handleSave} className="font-headline tracking-wider">Add Game</Button>
+                <Button onClick={handleSave} className="pixel-corners font-headline text-xs px-8">ADD TO QUEST LOG</Button>
             </DialogFooter>
         </DialogContent>
     )

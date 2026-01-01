@@ -3,7 +3,7 @@
 import { Logo } from '@/components/logo';
 import { UploadForm } from '@/components/upload-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, GanttChartSquare, Share2 } from 'lucide-react';
+import { FileText, GanttChartSquare, Share2, Play, Import, Upload, Heart } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { ModeToggle } from '@/components/ui/mode-toggle';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [backloggdUsername, setBackloggdUsername] = useState('');
@@ -203,165 +204,171 @@ export default function Home() {
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
       <div className="absolute inset-0 bg-grid-white-0-05 z-0" />
-      <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 relative z-10 min-h-screen">
-        <div className="absolute top-4 right-4 z-50">
+      <main className="flex-1 flex flex-col items-center justify-start p-4 sm:p-8 pt-16 sm:pt-20 relative z-10 min-h-screen overflow-y-auto">
+        <div className="absolute top-16 right-4 z-50 md:top-20">
           <ModeToggle />
         </div>
         <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
         <div className="container max-w-4xl flex flex-col items-center text-center z-10">
-          <Logo className="text-5xl" />
-          <p className="mt-4 text-xl text-muted-foreground max-w-2xl font-body tracking-wider">
-            Got your game data? Upload your playthrough history from sites like HowLongToBeat and get a personalized, shareable &quot;Gaming Wrapped&quot; story.
+          <Logo className="text-5xl md:text-6xl mb-2" />
+          <p className="mt-4 mb-4 text-xl text-muted-foreground max-w-2xl font-body tracking-wider">
+            Your gaming year, wrapped. Connect your accounts or upload your history to get a personalized story.
           </p>
 
-          <Card className={`mt-10 w-full max-w-lg bg-card/80 backdrop-blur-sm shadow-lg border-2 transition-all duration-500 ${file ? 'shadow-accent/40 border-accent' : 'shadow-primary/20 border-primary/20'}`}>
-            <CardHeader className="text-center">
-              <CardTitle className={`font-headline text-2xl tracking-widest transition-colors duration-500 ${file ? 'text-accent' : 'text-foreground'}`}>
-                {file ? 'DATA RECEIVED!' : 'UPLOAD YOUR DATA'}
-              </CardTitle>
-              <CardDescription className="font-body text-base">
-                {file
-                  ? 'Your gaming history is ready for the magic. Click below to generate your rewind.'
-                  : 'Drop your .csv file here to start the magic.'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <UploadForm file={file} onFileChange={setFile} />
-            </CardContent>
-          </Card>
-
-          <div className="mt-6 flex flex-wrap justify-center gap-4">
-            <Dialog open={steamDialogOpen} onOpenChange={setSteamDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="lg" className="text-base font-semibold">From Steam</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Exporting from Steam</DialogTitle>
-                  <DialogDescription className="text-base">
-                    Enter your public Steam ID (64-bit) or profile URL to download your played games CSV.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <Input
-                    placeholder="Steam ID or Profile URL"
-                    value={steamId}
-                    onChange={(e) => setSteamId(e.target.value)}
-                    disabled={steamLoading}
-                    className="text-base"
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Your Steam profile and game details must be set to public. Find your Steam ID at <a href="https://steamid.io" target="_blank" rel="noopener noreferrer" className="text-accent underline">steamid.io</a>.
-                  </p>
-                  <Button onClick={handleSteamExport} disabled={steamLoading} className="w-full text-base py-6">
-                    {steamLoading ? 'Exporting...' : 'Export CSV'}
-                  </Button>
-                  {steamProgress && (
-                    <div className="space-y-2">
-                      <p className="text-base text-muted-foreground">{steamProgress}</p>
-                      <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
-                        <div className="w-full h-full bg-primary animate-pulse" />
-                      </div>
-                    </div>
-                  )}
-                  {steamError && <p className="text-base text-red-500">{steamError}</p>}
-                </div>
-              </DialogContent>
-            </Dialog>
-
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="lg" className="text-base font-semibold">From Backloggd</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Exporting from Backloggd</DialogTitle>
-                  <DialogDescription className="text-base">
-                    Enter your Backloggd username or profile URL to download your games CSV.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <Input
-                    placeholder="Backloggd username or Profile URL"
-                    value={backloggdUsername}
-                    onChange={(e) => setBackloggdUsername(e.target.value)}
-                    disabled={isLoading}
-                    className="text-base"
-                  />
-                  <Button onClick={handleBackloggdExport} disabled={isLoading} className="w-full text-base py-6">
-                    {isLoading ? 'Exporting...' : 'Export CSV'}
-                  </Button>
-                  {progress && (
-                    <div className="space-y-2">
-                      <p className="text-base text-muted-foreground">
-                        {progress.page > 0
-                          ? `Fetching page ${progress.page}... (${progress.total} games found)`
-                          : `Complete! Downloaded ${progress.total} games.`
-                        }
+          <div className="w-full max-w-lg space-y-8">
+            {/* Auto Import Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-4 w-full">
+                <div className="h-px bg-border flex-1" />
+                <span className="text-sm font-headline tracking-widest text-muted-foreground uppercase">Connect Your Profile</span>
+                <div className="h-px bg-border flex-1" />
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Dialog open={steamDialogOpen} onOpenChange={setSteamDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="lg" className="h-auto py-4 flex flex-col gap-1 border-2 hover:border-accent hover:bg-accent/5">
+                      <Import className="text-primary-foreground h-6 w-6 mb-1" />
+                      <span className="text-primary-foreground font-headline tracking-wider">Steam</span>
+                      <span className="text-xs text-muted-foreground font-normal">Public Profile</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Connect Steam Profile</DialogTitle>
+                      <DialogDescription className="text-base">
+                        Enter your public Steam ID (64-bit) or profile URL to import your games.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <Input
+                        placeholder="Steam ID or Profile URL"
+                        value={steamId}
+                        onChange={(e) => setSteamId(e.target.value)}
+                        disabled={steamLoading}
+                        className="text-base"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Your Steam profile and game details must be set to public. Find your Steam ID at <a href="https://steamid.io" target="_blank" rel="noopener noreferrer" className="text-accent underline">steamid.io</a>.
                       </p>
-                      <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
-                        <div
-                          className="bg-primary h-full transition-all duration-300 ease-out"
-                          style={{ width: progress.page > 0 ? '100%' : '100%' }}
-                        >
-                          <div className="w-full h-full bg-primary animate-pulse" />
+                      <Button onClick={handleSteamExport} disabled={steamLoading} className="w-full text-base py-6">
+                        {steamLoading ? 'Importing...' : 'Import Games'}
+                      </Button>
+                      {steamProgress && (
+                        <div className="space-y-2">
+                          <p className="text-sm text-muted-foreground">{steamProgress}</p>
+                          <div className="w-full bg-secondary rounded-full h-1.5 overflow-hidden">
+                            <div className="w-full h-full bg-primary animate-pulse" />
+                          </div>
                         </div>
-                      </div>
+                      )}
+                      {steamError && <p className="text-sm text-red-500">{steamError}</p>}
                     </div>
-                  )}
-                  {error && <p className="text-base text-red-500">{error}</p>}
-                </div>
-              </DialogContent>
-            </Dialog>
+                  </DialogContent>
+                </Dialog>
 
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="lg" className="text-base font-semibold">From HowLongToBeat</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Exporting from HowLongToBeat</DialogTitle>
-                  <DialogDescription className="text-base">
-                    You can export your game list directly from the HowLongToBeat website.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 text-base">
-                  <p>
-                    1. Log in to your account on <a href="https://howlongtobeat.com" target="_blank" rel="noopener noreferrer" className="text-accent underline">howlongtobeat.com</a>.
-                  </p>
-                  <p>
-                    2. Go to your Profile page.
-                  </p>
-                  <p>
-                    3. Click on &apos;Options&apos; and select &apos;Export Game List&apos;.
-                  </p>
-                  <p>
-                    4. This will download a CSV file of your game library.
-                  </p>
-                </div>
-              </DialogContent>
-            </Dialog>
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="lg" className="h-auto py-4 flex flex-col gap-1 border-2 hover:border-accent hover:bg-accent/5">
+                      <Import className="text-primary-foreground h-6 w-6 mb-1" />
+                      <span className="text-primary-foreground font-headline tracking-wider">Backloggd</span>
+                      <span className="text-xs text-muted-foreground font-normal">Username</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Connect Backloggd Profile</DialogTitle>
+                      <DialogDescription className="text-base">
+                        Enter your Backloggd username to import your played games.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <Input
+                        placeholder="Backloggd Username"
+                        value={backloggdUsername}
+                        onChange={(e) => setBackloggdUsername(e.target.value)}
+                        disabled={isLoading}
+                        className="text-base"
+                      />
+                      <Button onClick={handleBackloggdExport} disabled={isLoading} className="w-full text-base py-6">
+                        {isLoading ? 'Importing...' : 'Import Games'}
+                      </Button>
+                      {progress && (
+                        <div className="space-y-2">
+                          <p className="text-sm text-muted-foreground">
+                            {progress.page > 0
+                              ? `Fetching page ${progress.page}... (${progress.total} games found)`
+                              : `Complete! Downloaded ${progress.total} games.`
+                            }
+                          </p>
+                          <div className="w-full bg-secondary rounded-full h-1.5 overflow-hidden">
+                            <div className="w-full h-full bg-primary animate-pulse" />
+                          </div>
+                        </div>
+                      )}
+                      {error && <p className="text-sm text-red-500">{error}</p>}
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
 
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="lg" className="text-base font-semibold">Other</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Other Platforms</DialogTitle>
-                  <DialogDescription className="text-base">
-                    Importing from other platforms like Steam, PlayStation, or Xbox is not directly supported yet.
-                  </DialogDescription>
-                </DialogHeader>
-                <p className="text-base">
-                  You may need to use third-party tools to export your data and format it into a CSV with a &quot;Title&quot; column.
-                </p>
-              </DialogContent>
-            </Dialog>
+            {/* Manual Upload Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-4 w-full">
+                <div className="h-px bg-border flex-1" />
+                <span className="text-sm font-headline tracking-widest text-muted-foreground uppercase">Or Upload File</span>
+                <div className="h-px bg-border flex-1" />
+              </div>
 
-            <Link href="/manual">
-              <Button variant="outline" size="lg" className="text-base font-semibold">Manual</Button>
-            </Link>
+              <Card className={`w-full bg-card/80 backdrop-blur-sm shadow-lg border-2 transition-all duration-500 ${file ? 'shadow-accent/40 border-accent' : 'shadow-primary/20 border-primary/20'}`}>
+                <CardHeader className="text-center pb-2">
+                  <CardTitle className={`font-headline text-xl tracking-widest transition-colors duration-500 ${file ? 'text-accent' : 'text-foreground'}`}>
+                    {file ? 'DATA RECEIVED!' : 'UPLOAD CSV'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <UploadForm file={file} onFileChange={setFile} />
+                </CardContent>
+              </Card>
+
+              <div className="flex flex-wrap justify-center gap-4 text-sm">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="text-muted-foreground hover:text-foreground border-2 pixel-corners hover:border-accent hover:bg-accent/5">HOWLONGTOBEAT?</Button>
+                  </DialogTrigger>
+                  <DialogContent className="pixel-corners border-4 border-border">
+                    <DialogHeader>
+                      <DialogTitle className="font-headline text-lg">EXPORT FROM HLTB</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 text-base font-body">
+                      <p>1. Log in to <a href="https://howlongtobeat.com" target="_blank" rel="noopener noreferrer" className="text-accent underline">howlongtobeat.com</a>.</p>
+                      <p>2. Go to your Profile page.</p>
+                      <p>3. Click &apos;Options&apos; -&gt; &apos;Export Game List&apos;.</p>
+                      <p>4. Upload the downloaded CSV here.</p>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+                
+                <Link href="/manual">
+                  <Button variant="outline" size="sm" className="text-muted-foreground hover:text-foreground border-2 pixel-corners hover:border-accent hover:bg-accent/5 uppercase">Create Manually</Button>
+                </Link>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="text-muted-foreground hover:text-foreground border-2 pixel-corners hover:border-accent hover:bg-accent/5 uppercase">Other Platforms</Button>
+                  </DialogTrigger>
+                  <DialogContent className="pixel-corners border-4 border-border">
+                    <DialogHeader>
+                      <DialogTitle className="font-headline text-lg uppercase">Other Platforms</DialogTitle>
+                    </DialogHeader>
+                    <p className="text-base font-body">
+                      To import from other sources, create a CSV file with at least a &quot;Title&quot; column. Optional columns: &quot;Rating&quot; (number), &quot;Platform&quot; (text), &quot;PlaytimeMinutes&quot; (number).
+                    </p>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
           </div>
 
           {successMessage && (
@@ -369,39 +376,51 @@ export default function Home() {
               {successMessage}
             </div>
           )}
-          <div className="mt-10 w-full">
-            <h2 className="text-3xl font-headline font-semibold tracking-widest">HOW IT WORKS</h2>
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-              <Card className="bg-card/50 backdrop-blur-sm p-6 flex flex-col items-center text-center gap-4 hover:border-accent transition-all border-transparent border-2">
-                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 text-primary">
-                  <FileText className="h-8 w-8" />
+
+          <div className="mt-20 w-full">
+            <h2 className="text-2xl font-headline font-semibold tracking-widest mb-12 uppercase drop-shadow-[2px_2px_0px_rgba(255,46,80,0.3)]">HOW IT WORKS</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+              <div className="relative group">
+                <div className="relative bg-card border-4 border-border p-6 flex flex-col items-center text-center gap-4 hover:border-accent transition-all pixel-corners shadow-xl hover:-translate-y-1">
+                  <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 text-primary border-2 border-primary/20 group-hover:scale-110 transition-transform">
+                    <Import className="h-8 w-8" />
+                  </div>
+                  <h3 className="font-semibold font-headline text-lg tracking-wider uppercase">1. CONNECT</h3>
+                  <p className="text-sm font-body text-muted-foreground leading-relaxed">Securely link your Steam or Backloggd profile to auto-import your library.</p>
                 </div>
-                <h3 className="font-semibold mt-2 font-headline text-xl tracking-wider">1. UPLOAD</h3>
-                <p className="text-base font-body text-muted-foreground">Export your gaming data and upload it. Easy peasy.</p>
-              </Card>
-              <Card className="bg-card/50 backdrop-blur-sm p-6 flex flex-col items-center text-center gap-4 hover:border-accent transition-all border-transparent border-2">
-                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 text-primary">
-                  <GanttChartSquare className="h-8 w-8" />
+                <div className="absolute -bottom-2 left-2 right-[-4px] h-full w-full bg-foreground/5 dark:bg-black/40 -z-10 transform translate-y-1 pixel-corners" />
+              </div>
+
+              <div className="relative group">
+                <div className="relative bg-card border-4 border-border p-6 flex flex-col items-center text-center gap-4 hover:border-accent transition-all pixel-corners shadow-xl hover:-translate-y-1">
+                  <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 text-primary border-2 border-primary/20 group-hover:scale-110 transition-transform">
+                    <GanttChartSquare className="h-8 w-8" />
+                  </div>
+                  <h3 className="font-semibold font-headline text-lg tracking-wider uppercase">2. ANALYZE</h3>
+                  <p className="text-sm font-body text-muted-foreground leading-relaxed">Our AI decodes your playstyle, scores, and habits to craft your unique story.</p>
                 </div>
-                <h3 className="font-semibold mt-2 font-headline text-xl tracking-wider">2. WRAP</h3>
-                <p className="text-base font-body text-muted-foreground">We analyze your data, creating a unique story and stats.</p>
-              </Card>
-              <Card className="bg-card/50 backdrop-blur-sm p-6 flex flex-col items-center text-center gap-4 hover:border-accent transition-all border-transparent border-2">
-                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 text-primary">
-                  <Share2 className="h-8 w-8" />
+                <div className="absolute -bottom-2 left-2 right-[-4px] h-full w-full bg-foreground/5 dark:bg-black/40 -z-10 transform translate-y-1 pixel-corners" />
+              </div>
+
+              <div className="relative group">
+                <div className="relative bg-card border-4 border-border p-6 flex flex-col items-center text-center gap-4 hover:border-accent transition-all pixel-corners shadow-xl hover:-translate-y-1">
+                  <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 text-primary border-2 border-primary/20 group-hover:scale-110 transition-transform">
+                    <Share2 className="h-8 w-8" />
+                  </div>
+                  <h3 className="font-semibold font-headline text-lg tracking-wider uppercase">3. SHARE</h3>
+                  <p className="text-sm font-body text-muted-foreground leading-relaxed">Download your high-res persona cards and show off your year in gaming.</p>
                 </div>
-                <h3 className="font-semibold mt-2 font-headline text-xl tracking-wider">3. SHARE</h3>
-                <p className="text-base font-body text-muted-foreground">Get a shareable link to your personalized slideshow to show off.</p>
-              </Card>
+                <div className="absolute -bottom-2 left-2 right-[-4px] h-full w-full bg-foreground/5 dark:bg-black/40 -z-10 transform translate-y-1 pixel-corners" />
+              </div>
             </div>
           </div>
 
-          <div className="mt-24 w-full text-left max-w-4xl">
+          <div className="mt-24 w-full text-left max-w-4xl pb-20">
             <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="item-privacy-terms">
-                <AccordionTrigger className="font-headline text-xl">What we store</AccordionTrigger>
-                <AccordionContent className="text-base text-xl font-body text-muted-foreground space-y-4 pt-4">
-                  <p>We only use your uploaded data to generate your Wrapped experience. It is processed in memory, not stored long-term. We do store the wrapped itself, so that it can be shared.</p>
+              <AccordionItem value="item-privacy-terms" className="border-b-2 border-border/50">
+                <AccordionTrigger className="font-headline text-lg">What about my data?</AccordionTrigger>
+                <AccordionContent className="text-base font-body text-muted-foreground space-y-4 pt-4">
+                  <p>We only use your uploaded data to generate your Wrapped experience. It is processed in memory. We store the final generated "Wrapped" data (stats, cards) so it can be shared via a link, but we do not store your raw CSV or profile data permanently.</p>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
