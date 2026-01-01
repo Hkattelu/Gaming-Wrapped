@@ -4,6 +4,7 @@ import WrappedPageClient from './wrapped-page-client';
 import { Metadata } from 'next';
 import { getWrapped } from '@/lib/db';
 import { WrappedData } from '@/types';
+import { MOCK_WRAPPED_OUTPUT } from '@/ai/dev-wrapped';
 
 interface Props {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -12,15 +13,16 @@ interface Props {
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const params = await searchParams;
   const id = params.id as string;
+  const isDemo = params.demo === 'true';
 
-  if (!id) {
+  if (!id && !isDemo) {
     return {
       title: 'Gaming Wrapped',
       description: 'Your year in gaming summary.',
     };
   }
 
-  const wrapped = await getWrapped(id);
+  const wrapped = isDemo ? MOCK_WRAPPED_OUTPUT : await getWrapped(id);
   if (!wrapped) {
     return {
       title: 'Gaming Wrapped',
@@ -38,8 +40,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     safeHost = new URL('http://localhost:9002');
   }
 
-  const ogImageUrl = `${host}/api/wrapped/${id}/og`;
-  const pageUrl = `${host}/wrapped?id=${id}`;
+  const ogImageUrl = isDemo ? `${host}/icon.svg` : `${host}/api/wrapped/${id}/og`;
+  const pageUrl = isDemo ? `${host}/wrapped?demo=true` : `${host}/wrapped?id=${id}`;
   
   // Extract stats for richer metadata
   const summaryCard = wrapped.cards.find((c: any) => c.type === 'summary');
@@ -88,15 +90,18 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 export default async function WrappedPage({ searchParams }: Props) {
   const params = await searchParams;
   const id = params.id as string;
+  const isDemo = params.demo === 'true';
   let initialData: WrappedData | null = null;
 
-  if (id) {
+  if (isDemo) {
+    initialData = MOCK_WRAPPED_OUTPUT as WrappedData;
+  } else if (id) {
     initialData = (await getWrapped(id)) as WrappedData | null;
   }
 
   return (
     <Suspense fallback={<Loading />}>
-      <WrappedPageClient initialData={initialData} initialId={id} />
+      <WrappedPageClient initialData={initialData} initialId={id || (isDemo ? 'demo' : null)} />
     </Suspense>
   );
 }
