@@ -147,26 +147,6 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
   };
 
   useEffect(() => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio('https://assets.mixkit.co/active_storage/sfx/123/123-preview.mp3'); // Placeholder retro loop
-      audioRef.current.loop = true;
-      audioRef.current.volume = 0.1;
-    }
-
-    if (isMusicPlaying && !isMuted) {
-      audioRef.current.play().catch(() => setIsMusicPlaying(false));
-    } else {
-      audioRef.current.pause();
-    }
-
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-    };
-  }, [isMusicPlaying, isMuted]);
-
-  useEffect(() => {
     if (current > 0) {
       playSound('nav');
     }
@@ -346,19 +326,6 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
           </div>
         </>
       )}
-
-      {/* Floating Audio Toggles */}
-      <div className="fixed top-20 right-4 z-50 flex flex-col gap-2">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setIsMusicPlaying(!isMusicPlaying)}
-          className="rounded-full bg-background/50 backdrop-blur-sm border-2 border-accent/20 hover:border-accent transition-all"
-          title={isMusicPlaying ? "Stop Music" : "Play Retro Music"}
-        >
-          {isMusicPlaying && !isMuted ? <Music className="h-4 w-4 animate-spin-slow" /> : <Music2 className="h-4 w-4 opacity-50" />}
-        </Button>
-      </div>
 
       <RetroFrame 
         className="w-full max-w-xl lg:max-w-4xl z-10"

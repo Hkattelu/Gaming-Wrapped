@@ -90,7 +90,7 @@ export function RetroFrame({
              className={`w-10 h-10 rounded-full border-b-4 transition-all flex items-center justify-center ${
                isMuted 
                  ? 'bg-blue-600 border-blue-700 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] translate-y-0.5' 
-                 : 'bg-blue-500 border-black shadow-[0_4px_0_rgba(0,0,0,0.5)]'
+                 : 'bg-blue-500 border-blue-700 shadow-[0_6px_12px_rgba(0,0,0,0.6)]'
              }`}
              title="Toggle Audio"
            />
@@ -99,10 +99,10 @@ export function RetroFrame({
           <div className="flex flex-col items-center gap-1">
            <button 
              onClick={onToggleAutoPlay}
-             className={`w-10 h-10 rounded-full border-b-4 transition-all flex items-center justify-center ${
-               !isAutoPlaying 
+             className={`w-10 h-10 rounded-full border-b-4 transition-all ${
+               isAutoPlaying 
                  ? 'bg-yellow-600 border-yellow-700 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] translate-y-0.5' 
-                 : 'bg-yellow-500 border-black shadow-[0_4px_0_rgba(0,0,0,0.5)]'
+                 : 'bg-yellow-500 border-yellow-700 shadow-[0_6px_12px_rgba(0,0,0,0.6)]'
              }`}
              title="Toggle Auto-Play"
            />
