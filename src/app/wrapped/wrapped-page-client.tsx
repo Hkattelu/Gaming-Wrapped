@@ -21,6 +21,11 @@ export default function WrappedPageClient({ initialData, initialId }: { initialD
 
   useEffect(() => {
     const searchId = searchParams.get('id');
+    const isDemo = searchParams.get('demo') === 'true';
+
+    if (isDemo && data) {
+      return;
+    }
 
     if (searchId) {
       if (searchId === id && data) return;
@@ -59,11 +64,13 @@ export default function WrappedPageClient({ initialData, initialId }: { initialD
       } else if (storedId) {
         router.replace(`/wrapped?id=${storedId}`);
       } else {
-        setError('No Gaming Wrapped data found. Please start over.');
+        if (!initialData) {
+          setError('No Gaming Wrapped data found. Please start over.');
+        }
         setIsLoading(false);
       }
     }
-  }, [searchParams, router, id, data]);
+  }, [searchParams, router, id, data, initialData]);
 
   if (isLoading) {
     return <Loading />;

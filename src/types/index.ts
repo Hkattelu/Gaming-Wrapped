@@ -39,6 +39,7 @@ export interface SummaryCard {
   averageScore: number;
   completionPercentage?: number;
   totalPlaytime?: number;
+  rank?: string;
 }
 
 
@@ -72,6 +73,7 @@ export interface RoastCard {
   type: 'roast';
   title: string;
   roast: string;
+  trigger: string;
 }
 
 export interface Recommendation {
