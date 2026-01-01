@@ -13,9 +13,11 @@ import {
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 interface RecommendationsCardProps {
   card: RecommendationsCard;
+  isActive?: boolean;
 }
 
 interface RecommendationWithUrl extends Recommendation {
@@ -31,7 +33,7 @@ const ACCENT_COLORS = [
   { text: "text-emerald-600 dark:text-emerald-400", border: "border-emerald-500/30", shadow: "shadow-emerald-500/10", icon: Sparkles, bg: "bg-emerald-500/10" },
 ];
 
-export function RecommendationsCardComponent({ card }: RecommendationsCardProps) {
+export function RecommendationsCardComponent({ card, isActive }: RecommendationsCardProps) {
   const [recommendations, setRecommendations] = useState<RecommendationWithUrl[]>(
     card.recommendations.map(rec => ({ ...rec }))
   );
@@ -85,14 +87,32 @@ export function RecommendationsCardComponent({ card }: RecommendationsCardProps)
             <div className="absolute inset-0 quest-pattern opacity-10 pointer-events-none" />
 
             {/* Large background icon */}
-            <div className="absolute -top-4 -right-4 opacity-5 pointer-events-none rotate-12">
-              <Compass className="w-48 h-48 text-foreground" />
+            <div className="absolute -top-4 -right-4 opacity-5 pointer-events-none">
+              <motion.div
+                animate={{ rotate: isActive ? [0, 360] : 0 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              >
+                <Compass className="w-48 h-48 text-foreground" />
+              </motion.div>
             </div>
 
-            <div className="relative z-10 mb-6 w-full text-center">
-              <span className="inline-block bg-primary text-primary-foreground font-headline text-[10px] md:text-xs px-3 py-1 uppercase tracking-widest border-2 border-foreground shadow-[2px_2px_0px_rgba(0,0,0,1)]">
-                Recommended Next Games
-              </span>
+            <div className="relative z-10 mb-6 w-full text-center flex flex-col items-center gap-2">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: isActive ? 1 : 0 }}
+                transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
+                className="p-2 bg-primary/20 rounded-full"
+              >
+                <Map className="w-6 h-6 text-primary" />
+              </motion.div>
+              <motion.span 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: isActive ? 1 : 0, y: isActive ? 0 : -10 }}
+                transition={{ delay: 0.2 }}
+                className="inline-block bg-primary text-primary-foreground font-headline text-[10px] md:text-xs px-3 py-1 uppercase tracking-widest border-2 border-foreground shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+              >
+                New Quests Available
+              </motion.span>
             </div>
 
             <div className="w-full flex flex-col gap-3 relative z-10 flex-grow justify-center">
@@ -107,60 +127,71 @@ export function RecommendationsCardComponent({ card }: RecommendationsCardProps)
                 } : {};
 
                 return (
-                  <Wrapper
+                  <motion.div
                     key={index}
-                    {...wrapperProps}
-                    className={cn(
-                      "group/item flex items-center gap-4 p-2 hover:bg-foreground/5 pixel-corners transition-colors border border-transparent hover:border-border/50",
-                      rec.igdbUrl ? "cursor-pointer" : "cursor-default"
-                    )}
+                    initial={{ opacity: 0, x: -30, scale: 0.9 }}
+                    animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : -30, scale: isActive ? 1 : 0.9 }}
+                    transition={{ duration: 0.5, delay: 0.3 + (index * 0.15) }}
+                    whileHover={{ x: 5, backgroundColor: "rgba(255,255,255,0.05)" }}
+                    className="w-full"
                   >
-                    <div className={cn(
-                      "flex-shrink-0 w-16 h-24 bg-card border overflow-hidden pixel-corners shadow-sm transition-transform group-hover/item:scale-105",
-                      accent.border,
-                      accent.shadow
-                    )}>
-                      {rec.imageUrl ? (
-                        <Image
-                          src={rec.imageUrl}
-                          alt={rec.game}
-                          width={64}
-                          height={96}
-                          className="w-full h-full object-cover"
-                          style={{ imageRendering: 'pixelated' }}
-                          unoptimized
-                        />
-                      ) : (
-                        <div className={cn("w-full h-full flex items-center justify-center", accent.bg)}>
-                          <Icon className={cn("w-6 h-6", accent.text)} />
-                        </div>
+                    <Wrapper
+                      {...wrapperProps}
+                      className={cn(
+                        "group/item flex items-center gap-4 p-3 pixel-corners transition-all border-2 border-transparent hover:border-accent/30 w-full relative overflow-hidden bg-card/30",
+                        rec.igdbUrl ? "cursor-pointer" : "cursor-default"
                       )}
-                    </div>
-                    <div className="flex-grow min-w-0">
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <div className="flex items-center gap-2 overflow-hidden">
-                          <h3 className={cn(
-                            "font-headline text-xs md:text-sm leading-relaxed transition-colors flex items-center gap-1 min-w-0",
-                            accent.text,
-                            rec.igdbUrl && "group-hover/item:underline"
-                          )}>
-                            <span className="truncate">{rec.game.toUpperCase()}</span>
-                            {rec.igdbUrl && <ExternalLink className="w-3 h-3 opacity-50 shrink-0" />}
-                          </h3>
-                        </div>
-                        {rec.rating && (
-                          <div className="flex-shrink-0 bg-secondary px-1.5 py-0.5 pixel-corners border border-border">
-                            <span className="font-headline text-[8px] text-foreground">
-                              {Math.round(rec.rating)}%
-                            </span>
+                    >
+                      {/* Background accent glow on hover */}
+                      <div className={cn("absolute inset-0 opacity-0 group-hover/item:opacity-10 transition-opacity", accent.bg)} />
+
+                      <div className={cn(
+                        "flex-shrink-0 w-16 h-24 border-2 overflow-hidden pixel-corners shadow-lg transition-transform group-hover/item:scale-105 z-10",
+                        accent.border,
+                        accent.shadow
+                      )}>
+                        {rec.imageUrl ? (
+                          <Image
+                            src={rec.imageUrl}
+                            alt={rec.game}
+                            width={64}
+                            height={96}
+                            className="w-full h-full object-cover"
+                            style={{ imageRendering: 'pixelated' }}
+                            unoptimized
+                          />
+                        ) : (
+                          <div className={cn("w-full h-full flex items-center justify-center", accent.bg)}>
+                            <Icon className={cn("w-6 h-6", accent.text)} />
                           </div>
                         )}
+                        <div className="absolute inset-0 crt-overlay opacity-20 pointer-events-none" />
                       </div>
-                      <p className="font-body text-sm md:text-base text-muted-foreground leading-tight line-clamp-3">
-                        {rec.blurb}
-                      </p>
-                    </div>
-                  </Wrapper>
+
+                      <div className="flex-grow min-w-0 text-left z-10">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <h3 className={cn(
+                            "font-headline text-xs md:text-sm leading-tight transition-colors flex items-center gap-1 min-w-0",
+                            accent.text
+                          )}>
+                            <span className="truncate">{rec.game.toUpperCase()}</span>
+                            {rec.igdbUrl && <ExternalLink className="w-3 h-3 opacity-50 shrink-0 group-hover/item:opacity-100" />}
+                          </h3>
+                          
+                          {rec.rating && (
+                            <div className={cn("flex-shrink-0 px-2 py-0.5 border-2 border-foreground/20 pixel-corners bg-background", accent.text)}>
+                              <span className="font-headline text-[10px]">
+                                {rec.rating >= 90 ? "S" : rec.rating >= 80 ? "A" : "B"}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <p className="font-body text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-2 italic">
+                          &quot;{rec.blurb}&quot;
+                        </p>
+                      </div>
+                    </Wrapper>
+                  </motion.div>
                 );
               })}
             </div>

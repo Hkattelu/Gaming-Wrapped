@@ -3,10 +3,11 @@
 import { TopGameCard as TopGameCardType } from '@/types';
 import { Gamepad2, Monitor, ArrowLeft, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
-
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 
-export function TopGameCard({ card }: { card: TopGameCardType }) {
+export function TopGameCard({ card, isActive }: { card: TopGameCardType, isActive?: boolean }) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -28,124 +29,146 @@ export function TopGameCard({ card }: { card: TopGameCardType }) {
     fetchImage();
   }, [card.game.title]);
 
+  const score = Number(card.game.score) || 0;
+  const normalizedScore = score > 10 ? score : score * 10;
+
   return (
-    <div className="relative min-h-[600px] flex flex-col items-center justify-center p-4">
+    <div className="relative min-h-[600px] flex flex-col items-center justify-center p-4 overflow-hidden">
       {/* Retro grid background */}
       <div className="absolute inset-0 opacity-10 pointer-events-none bg-retro-grid-40" />
 
-      {/* Header */}
-      <div className="text-center space-y-4 mb-12 relative z-10">
-        <h1 className="font-headline text-2xl md:text-4xl text-foreground uppercase tracking-widest drop-shadow-[2px_2px_0px_rgba(255,46,80,0.3)]">
-          Your Top Pick
-        </h1>
-        <p className="text-muted-foreground text-xl md:text-2xl max-w-2xl mx-auto font-body">
-          {card.description}
-        </p>
+      {/* Victory Banner */}
+      <div className="absolute top-10 left-0 right-0 z-20 flex justify-center pointer-events-none">
+        <motion.div 
+          initial={{ opacity: 0, y: -50, scale: 2 }}
+          animate={{ 
+            opacity: isActive ? 1 : 0, 
+            y: isActive ? 0 : -50,
+            scale: isActive ? 1 : 2
+          }}
+          transition={{ type: "spring", damping: 10, delay: 0.2 }}
+          className="bg-primary text-primary-foreground font-headline text-2xl md:text-4xl px-12 py-4 border-y-8 border-foreground shadow-[0_0_30px_rgba(255,46,80,0.5)] rotate-[-2deg]"
+        >
+          VICTORY!
+        </motion.div>
       </div>
 
-      {/* Main Card Container */}
-      <div className="w-full max-w-md group relative z-10">
-        {/* Card with pixel corners effect */}
-        <div className="relative bg-card border-4 border-border p-1 shadow-2xl transition-transform hover:-translate-y-2 duration-300 pixel-corners">
-
-          {/* Inner card content */}
-          <div className="relative bg-card/50 border-2 border-border/50 p-6 flex flex-col items-center text-center overflow-hidden">
-
-            {/* Background decoration */}
-            <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none text-foreground">
-              <Gamepad2 className="w-32 h-32 text-primary rotate-12" />
-            </div>
-
-            {/* Top badge */}
-            <div className="absolute top-4 left-4">
-              <span className="inline-block bg-accent text-accent-foreground font-headline text-xs px-2 py-1 uppercase tracking-widest border-2 border-foreground shadow-[2px_2px_0px_rgba(0,0,0,1)]">
-                #1 Ranked Game
-              </span>
-            </div>
-
-            {/* Game Image/Icon Container */}
-            <div className="w-48 h-64 mb-6 relative mt-8">
-              {/* Glow effect */}
-              <div className="absolute inset-0 bg-primary opacity-20 blur-xl rounded-full"></div>
-
-              {/* Image frame */}
-              <div className="relative w-full h-full bg-background border-4 border-foreground overflow-hidden shadow-[4px_4px_0px_oklch(var(--primary))] pixel-corners">
-                {imageUrl ? (
-                  <Image
-                    src={imageUrl}
-                    alt={card.game.title}
-                    width={192}
-                    height={256}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    style={{ imageRendering: 'pixelated' }}
-                    unoptimized
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center hover:scale-110 transition-transform duration-500">
-                    <Gamepad2 className="w-24 h-24 text-foreground/40" />
-                  </div>
-                )}
-
-                {/* Scanlines effect */}
-                <div className="absolute inset-0 opacity-20 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
-              </div>
-            </div>
-
-            {/* Game Title */}
-            <h2 className="font-headline text-2xl md:text-3xl text-foreground uppercase leading-tight mb-2 tracking-wide drop-shadow-md">
-              {card.game.title}
-            </h2>
-
-            {/* Platform */}
-            {card.game.platform && card.game.platform !== 'N/A' && card.game.platform !== 'Unknown' && (
-              <div className="flex flex-col items-center gap-1">
-                <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-headline">Platform</span>
-                <div className="flex items-center gap-3 text-base md:text-lg text-muted-foreground font-bold font-body uppercase tracking-tight">
-                  <span className="flex items-center gap-1">
-                    <Monitor className="w-4 h-4" />
-                    {card.game.platform}
-                  </span>
-                </div>
+      {/* Main Content */}
+      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-12 relative z-10">
+        
+        {/* Game Art Side */}
+        <motion.div 
+          initial={{ opacity: 0, x: -50, rotate: -5 }}
+          animate={{ 
+            opacity: isActive ? 1 : 0, 
+            x: isActive ? 0 : -50,
+            rotate: isActive ? -2 : -5
+          }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="relative group justify-self-center md:justify-self-end"
+        >
+          <motion.div 
+            animate={isActive ? {
+              x: [0, -2, 2, 0, 1, -1, 0],
+              filter: [
+                "hue-rotate(0deg)",
+                "hue-rotate(0deg)",
+                "hue-rotate(90deg)",
+                "hue-rotate(0deg)",
+                "hue-rotate(-90deg)",
+                "hue-rotate(0deg)",
+              ]
+            } : {}}
+            transition={{ 
+              duration: 0.4, 
+              repeat: Infinity, 
+              repeatDelay: 4,
+              ease: "linear"
+            }}
+            className="relative w-64 h-80 bg-card border-8 border-foreground p-1 pixel-corners shadow-2xl overflow-hidden"
+          >
+            {imageUrl ? (
+              <Image
+                src={imageUrl}
+                alt={card.game.title}
+                width={256}
+                height={320}
+                className="w-full h-full object-cover rendering-pixelated group-hover:scale-110 transition-transform duration-700"
+                unoptimized
+              />
+            ) : (
+              <div className="w-full h-full bg-muted flex items-center justify-center">
+                <Gamepad2 className="w-20 h-20 text-muted-foreground opacity-20" />
               </div>
             )}
-
-            {/* Stats Grid */}
-            <div className="w-full grid grid-cols-1 gap-4 border-t-2 border-dashed border-border pt-6 mt-2">
-              {/* Score or Playtime */}
-              {(card.game.score || card.game.playtime) && (
-                <div className="flex flex-col items-center">
-                  <span className="text-muted-foreground text-xs uppercase font-headline tracking-widest">
-                    {card.game.score ? "Score" : "Playtime"}
-                  </span>
-                  <div className="text-primary font-headline text-2xl md:text-3xl mt-1 drop-shadow-[2px_2px_0px_rgba(255,255,255,0.1)]">
-                    {card.game.score ? (
-                      card.game.formattedScore ? (
-                        card.game.formattedScore
-                      ) : (
-                        <>
-                          {Number(card.game.score) > 10
-                            ? (Number(card.game.score) / 10).toFixed(1)
-                            : card.game.score}
-                          <span className="text-sm align-top opacity-70">/10</span>
-                        </>
-                      )
-                    ) : (
-                      <>
-                        {typeof card.game.playtime === 'number' 
-                          ? Math.round(card.game.playtime / 60) 
-                          : card.game.playtime}
-                        <span className="text-sm align-top opacity-70 ml-1">HRS</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
+            <div className="absolute inset-0 crt-overlay opacity-30 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 bg-black/80 p-2 border-t-4 border-foreground">
+               <p className="font-headline text-[8px] text-primary animate-pulse text-center">BOSS DEFEATED</p>
             </div>
-          </div>
+          </motion.div>
+          {/* Shadow layer */}
+          <div className="absolute -bottom-4 left-4 right-[-10px] h-full w-full bg-foreground/10 dark:bg-black/50 -z-10 transform translate-y-2 pixel-corners" />
+        </motion.div>
+
+        {/* Stats Side */}
+        <div className="space-y-6 text-center md:text-left">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : 20 }}
+            transition={{ delay: 0.6 }}
+          >
+            <span className="font-headline text-xs text-accent uppercase tracking-[0.2em]">Primary Target</span>
+            <h2 className="font-headline text-3xl md:text-5xl text-foreground uppercase leading-none mt-2 break-words">
+              {card.game.title}
+            </h2>
+          </motion.div>
+
+          {/* BOSS HP BAR (Score) */}
+          <motion.div 
+            initial={{ opacity: 0, scaleX: 0 }}
+            animate={{ opacity: isActive ? 1 : 0, scaleX: isActive ? 1 : 0 }}
+            transition={{ duration: 1, delay: 0.8 }}
+            className="space-y-2 origin-left"
+          >
+            <div className="flex justify-between items-end font-headline text-[10px] uppercase">
+              <span className="text-primary">Engagement Level</span>
+              <span className="text-foreground">{score}/10</span>
+            </div>
+            <div className="h-8 w-full bg-zinc-900 border-4 border-foreground p-1 pixel-corners relative overflow-hidden">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: isActive ? `${normalizedScore}%` : 0 }}
+                transition={{ duration: 1.5, ease: "circOut", delay: 1 }}
+                className="h-full bg-gradient-to-r from-red-600 to-primary relative"
+              >
+                <div className="absolute inset-0 bar-pattern opacity-30" />
+                {/* Glitch Pulse */}
+                <div className="absolute top-0 right-0 bottom-0 w-4 bg-white/30 animate-pulse" />
+              </motion.div>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isActive ? 1 : 0 }}
+            transition={{ delay: 1.2 }}
+            className="flex flex-wrap gap-4 justify-center md:justify-start pt-4"
+          >
+            <div className="bg-foreground/5 border-2 border-border p-3 pixel-corners">
+              <p className="text-[8px] font-headline text-muted-foreground uppercase">System</p>
+              <p className="font-headline text-sm text-foreground flex items-center gap-2 mt-1">
+                <Monitor className="w-4 h-4 text-cyan-500" /> {card.game.platform}
+              </p>
+            </div>
+            <div className="bg-foreground/5 border-2 border-border p-3 pixel-corners flex-1 min-w-[200px]">
+              <p className="text-[8px] font-headline text-muted-foreground uppercase">Verdict</p>
+              <p className="font-body text-sm text-foreground mt-1 line-clamp-3 italic italic-muted">
+                &quot;{card.game.notes || "A journey that defined the year."}&quot;
+              </p>
+            </div>
+          </motion.div>
         </div>
 
-        {/* Shadow layer */}
-        <div className="absolute -bottom-4 left-4 right-[-10px] h-full w-full bg-foreground/10 dark:bg-black/50 -z-10 transform translate-y-2 pixel-corners" />
       </div>
     </div>
   );

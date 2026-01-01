@@ -2,6 +2,8 @@
 
 import { GenreBreakdownCard as GenreBreakdownCardType } from '@/types';
 import { Swords, Target, Sparkles, Gamepad, Trophy, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 // Genre icon and color mapping
 const genreConfig: Record<string, { icon: typeof Swords; colorClass: string; barBg: string }> = {
@@ -34,7 +36,7 @@ function getGenreConfig(genre: string) {
   return { icon: Gamepad, colorClass: 'text-amber-600 dark:text-amber-400', barBg: 'bg-amber-500' };
 }
 
-export function GenreBreakdownCard({ card }: { card: GenreBreakdownCardType }) {
+export function GenreBreakdownCard({ card, isActive }: { card: GenreBreakdownCardType, isActive?: boolean }) {
   // Process data: top 4 genres, rest goes to "Other"
   const sorted = [...card.data].sort((a, b) => b.count - a.count);
   const top = sorted.slice(0, 4);
@@ -43,79 +45,84 @@ export function GenreBreakdownCard({ card }: { card: GenreBreakdownCardType }) {
   const processedData = otherCount > 0 ? [...top, { genre: 'Other', count: otherCount }] : top;
 
   const totalGames = processedData.reduce((sum, item) => sum + item.count, 0);
-  const dominantGenre = processedData[0];
 
   return (
-    <div className="relative min-h-[600px] flex flex-col items-center justify-center p-4">
+    <div className="relative min-h-[600px] flex flex-col items-center justify-center p-4 overflow-hidden">
       {/* Retro grid background */}
       <div className="absolute inset-0 opacity-10 pointer-events-none bg-retro-grid-40" />
 
       {/* Header */}
       <div className="text-center space-y-4 mb-8 relative z-10">
         <h1 className="font-headline text-2xl md:text-3xl lg:text-4xl text-foreground uppercase tracking-widest flex items-center justify-center gap-2 drop-shadow-[2px_2px_0px_rgba(255,46,80,0.3)]">
-          Genre Breakdown
+          Genre Conquest
         </h1>
         <p className="text-muted-foreground text-xl md:text-2xl max-w-2xl mx-auto font-body">
-          {card.description}
+          The territories you dominated this year.
         </p>
       </div>
 
-      {/* Main Card */}
-      <div className="w-full max-w-md group relative z-10">
-        <div className="relative bg-card border-4 border-border p-1 shadow-xl hover:-translate-y-2 transition-transform duration-300 pixel-corners">
+      {/* Main Map Container */}
+      <div className="w-full max-w-4xl relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {processedData.map((item, index) => {
+            const percentage = ((item.count / totalGames) * 100).toFixed(0);
+            const config = getGenreConfig(item.genre);
+            const Icon = config.icon;
 
-          {/* Inner card */}
-          <div className="relative bg-card/50 border-2 border-border/50 p-6 flex flex-col overflow-hidden min-h-[500px]">
-
-            {/* Background decoration */}
-            <div className="absolute -top-6 -right-6 p-4 opacity-10 pointer-events-none text-foreground">
-              <Sparkles className="w-36 h-36 rotate-12" />
-            </div>
-
-            {/* Genre bars */}
-            <div className="flex flex-col gap-6 relative z-10 flex-grow justify-center">
-              {processedData.map((item, index) => {
-                const percentage = ((item.count / totalGames) * 100).toFixed(0);
-                const config = getGenreConfig(item.genre);
-                const Icon = config.icon;
-
-                return (
-                  <div key={item.genre} className="w-full group/item">
-                    {/* Genre label and percentage */}
-                    <div className="flex justify-between items-end mb-2">
-                      <div className={`flex items-center gap-3 ${config.colorClass}`}>
-                        <Icon className="w-5 h-5 transition-transform group-hover/item:scale-110" />
-                        <span className="font-headline text-xs md:text-sm uppercase tracking-tight">
-                          {item.genre}
-                        </span>
-                      </div>
-                      <span className="font-headline text-lg md:text-xl text-foreground">
-                        {percentage}%
-                      </span>
+            return (
+              <motion.div
+                key={item.genre}
+                initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                animate={{ 
+                  opacity: isActive ? 1 : 0, 
+                  scale: isActive ? 1 : 0.8, 
+                  y: isActive ? 0 : 20 
+                }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="relative group"
+              >
+                <div className="relative bg-card border-4 border-border p-4 pixel-corners hover:-translate-y-1 transition-transform shadow-lg group-hover:border-accent">
+                  <div className="flex items-center gap-4">
+                    {/* Territory Icon */}
+                    <div className={cn(
+                      "w-12 h-12 flex-shrink-0 flex items-center justify-center border-2 border-foreground pixel-corners shadow-[2px_2px_0px_rgba(0,0,0,1)]",
+                      config.barBg
+                    )}>
+                      <Icon className="w-6 h-6 text-white dark:text-background" />
                     </div>
 
-                    {/* Progress bar with striped pattern */}
-                    <div className="h-10 w-full bg-secondary border-2 border-border p-1 shadow-inner overflow-hidden pixel-corners">
-                      <div
-                        className={`h-full border-r-2 border-black/10 relative group-hover/item:brightness-110 transition-all duration-700 ${config.barBg}`}
-                        style={{
-                          width: `${percentage}%`,
-                          backgroundImage: 'linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent)',
-                          backgroundSize: '12px 12px'
-                        }}>
-                        {/* Shimmer effect */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/item:animate-[shimmer_2s_infinite] pointer-events-none" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-end mb-1">
+                        <span className={cn("font-headline text-xs uppercase truncate", config.colorClass)}>
+                          {item.genre} Territory
+                        </span>
+                        <span className="font-headline text-lg text-foreground">{percentage}%</span>
+                      </div>
+
+                      {/* Progress bar */}
+                      <div className="h-4 w-full bg-secondary border-2 border-border p-0.5 pixel-corners shadow-inner overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: isActive ? `${percentage}%` : 0 }}
+                          transition={{ duration: 1, ease: "circOut", delay: 0.5 + (index * 0.1) }}
+                          className={cn("h-full bar-pattern", config.barBg)}
+                        />
                       </div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
 
-        {/* Shadow layer */}
-        <div className="absolute -bottom-4 left-4 right-[-10px] h-full w-full bg-foreground/10 dark:bg-black/50 -z-10 transform translate-y-2 pixel-corners" />
+                  {/* Level / Status Text */}
+                  <div className="mt-3 pt-3 border-t-2 border-dashed border-border flex justify-between items-center">
+                    <span className="text-[8px] font-headline text-muted-foreground uppercase">Level: {item.count} Mastery</span>
+                    <span className="text-[8px] font-headline text-accent uppercase animate-pulse">Controlled</span>
+                  </div>
+                </div>
+                {/* Shadow layer */}
+                <div className="absolute -bottom-2 left-2 right-[-4px] h-full w-full bg-foreground/10 dark:bg-black/50 -z-10 transform translate-y-1 pixel-corners" />
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

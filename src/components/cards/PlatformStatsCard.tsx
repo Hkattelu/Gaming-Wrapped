@@ -2,6 +2,8 @@
 
 import { PlatformStatsCard as PlatformStatsCardType } from '@/types';
 import { Monitor, Gamepad2, Smartphone, Cpu } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 // Platform icon mapping
 const platformIcons: Record<string, typeof Monitor> = {
@@ -32,121 +34,113 @@ function getPlatformIcon(platform: string) {
   return Icon;
 }
 
-export function PlatformStatsCard({ card }: { card: PlatformStatsCardType }) {
+export function PlatformStatsCard({ card, isActive }: { card: PlatformStatsCardType, isActive?: boolean }) {
   const topPlatforms = card.data.slice(0, 4);
   const totalGames = card.data.reduce((sum, item) => sum + item.count, 0);
 
   return (
-    <div className="relative min-h-[600px] flex flex-col items-center justify-center p-4">
+    <div className="relative min-h-[600px] flex flex-col items-center justify-center p-4 overflow-hidden">
       {/* Retro grid background */}
       <div className="absolute inset-0 opacity-10 pointer-events-none bg-retro-grid-40" />
 
       {/* Header */}
-      <div className="text-center space-y-4 mb-8 relative z-10">
-        <h1 className="font-headline text-2xl md:text-4xl text-foreground uppercase tracking-widest flex items-center justify-center gap-2 drop-shadow-[2px_2px_0px_rgba(255,46,80,0.3)]">
-          {card.title}
+      <div className="text-center space-y-4 mb-12 relative z-10">
+        <h1 className="font-headline text-2xl md:text-3xl lg:text-4xl text-foreground uppercase tracking-widest flex items-center justify-center gap-2 drop-shadow-[2px_2px_0px_rgba(255,46,80,0.3)]">
+          System Analysis
         </h1>
         <p className="text-muted-foreground text-xl md:text-2xl max-w-2xl mx-auto font-body">
           {card.description}
         </p>
       </div>
 
-      {/* Main Card */}
-      <div className="w-full max-w-2xl relative z-10">
-        <div className="bg-card border-4 border-border shadow-2xl pixel-corners">
+      {/* Main Laboratory Container */}
+      <div className="w-full max-w-4xl relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {topPlatforms.map((platform, index) => {
+            const Icon = getPlatformIcon(platform.platform);
+            const percentage = ((platform.count / totalGames) * 100).toFixed(0);
+            const colors = platformColors[index % platformColors.length];
 
-          {/* Inner card */}
-          <div className="bg-card/50 border-2 border-border/50 p-8">
-
-            {/* Title and Total */}
-            <div className="flex items-start justify-between mb-6">
-              <h2 className="font-headline text-xl md:text-2xl text-foreground uppercase mb-6 tracking-wide">
-                System<br />Breakdown
-              </h2>
-              <div className="text-right">
-                <div className="text-muted-foreground text-sm uppercase font-body font-bold tracking-wider">Total Games</div>
-                <div className="text-primary font-headline text-3xl md:text-4xl mt-1 drop-shadow-[1px_1px_0px_rgba(0,0,0,0.1)]">{totalGames}</div>
-              </div>
-            </div>
-
-            {/* Stacked Bar Chart */}
-            <div className="mb-8 overflow-hidden">
-              <div className="flex h-12 w-full border-4 border-foreground pixel-corners overflow-hidden shadow-inner">
-                {topPlatforms.map((platform, index) => {
-                  const percentage = (platform.count / totalGames) * 100;
-                  const colors = platformColors[index % platformColors.length];
-                  return (
-                    <div
-                      key={platform.platform}
-                      className={`${colors.bg} transition-all hover:brightness-110`}
-                      style={{ width: `${percentage}%` }}
-                      title={`${platform.platform}: ${percentage.toFixed(0)}%`}
-                    />
-                  );
-                })}
-              </div>
-
-              {/* Percentage labels split across more markers for precision */}
-              <div className="flex justify-between text-[10px] text-muted-foreground font-headline mt-2 px-1 tracking-tighter">
-                <span>0%</span>
-                <span>25%</span>
-                <span>50%</span>
-                <span>75%</span>
-                <span>100%</span>
-              </div>
-            </div>
-
-            {/* Platform List */}
-            <div className="space-y-4">
-              {topPlatforms.map((platform, index) => {
-                const Icon = getPlatformIcon(platform.platform);
-                const percentage = ((platform.count / totalGames) * 100).toFixed(0);
-                const colors = platformColors[index % platformColors.length];
-
-                return (
-                  <div key={platform.platform} className="flex items-center gap-4 group/item">
-                    {/* Icon */}
-                    <div className={`w-10 h-10 flex-shrink-0 flex items-center justify-center ${colors.bg} border-2 border-foreground pixel-corners shadow-[2px_2px_0px_rgba(0,0,0,1)] transition-transform group-hover/item:scale-110`}
-                      style={{
-                        imageRendering: 'pixelated'
-                      }}>
-                      <Icon className="w-5 h-5 text-white dark:text-background" />
-                    </div>
-
-                    {/* Platform Name */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-headline text-sm md:text-base text-foreground truncate uppercase">
-                          {platform.platform}
-                        </span>
-                        <span className="text-xs text-muted-foreground font-body whitespace-nowrap">
-                          {platform.count} Games
-                        </span>
+            return (
+              <motion.div
+                key={platform.platform}
+                initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                animate={{ 
+                  opacity: isActive ? 1 : 0, 
+                  scale: isActive ? 1 : 0.9, 
+                  y: isActive ? 0 : 30 
+                }}
+                transition={{ duration: 0.6, delay: index * 0.15 }}
+                className="relative"
+              >
+                <div className="relative bg-card border-4 border-border p-6 pixel-corners shadow-xl group hover:-translate-y-1 transition-transform">
+                  
+                  {/* Unit Identification */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className={cn(
+                        "w-12 h-12 flex items-center justify-center border-4 border-foreground pixel-corners shadow-[2px_2px_0px_rgba(0,0,0,1)] transition-colors group-hover:scale-110",
+                        colors.bg
+                      )}>
+                        <Icon className="w-6 h-6 text-white dark:text-background" />
                       </div>
-
-                      {/* Progress Bar */}
-                      <div className="relative h-6 bg-secondary border border-border pixel-corners overflow-hidden">
-                        <div
-                          className={`h-full ${colors.bg} transition-all duration-700 ease-out`}
-                          style={{ width: `${percentage}%` }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
+                      <div>
+                        <span className="font-headline text-[8px] text-muted-foreground uppercase block tracking-tighter">Hardware ID</span>
+                        <span className="font-headline text-sm md:text-base text-foreground uppercase">{platform.platform}</span>
                       </div>
                     </div>
-
-                    {/* Percentage */}
-                    <div className={`font-headline text-lg md:text-xl ${colors.text} min-w-[60px] text-right drop-shadow-sm`}>
-                      {percentage}%
+                    <div className="text-right">
+                      <span className="font-headline text-[8px] text-muted-foreground uppercase block tracking-tighter">Usage Log</span>
+                      <span className="font-headline text-lg md:text-xl text-primary">{platform.count} UNITS</span>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
 
-        {/* Shadow layer */}
-        <div className="absolute -bottom-4 left-4 right-[-10px] h-full w-full bg-foreground/10 dark:bg-black/50 -z-10 transform translate-y-2 pixel-corners">
+                  {/* Frequency Visualizer */}
+                  <div className="relative h-12 bg-secondary border-4 border-foreground pixel-corners overflow-hidden mb-4 shadow-inner">
+                    {/* Scanning Animation */}
+                    {isActive && (
+                      <motion.div 
+                        initial={{ left: "-10%" }}
+                        animate={{ left: "110%" }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        className="absolute top-0 bottom-0 w-1 bg-white opacity-20 z-20 blur-sm"
+                      />
+                    )}
+                    
+                    {/* Level Bar */}
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: isActive ? `${percentage}%` : 0 }}
+                      transition={{ duration: 1.5, ease: "circOut", delay: 0.5 + (index * 0.1) }}
+                      className={cn("h-full relative", colors.bg)}
+                    >
+                      <div className="absolute inset-0 bar-pattern opacity-30" />
+                      {/* Glow segment */}
+                      <div className="absolute top-0 right-0 bottom-0 w-2 bg-white opacity-40 animate-pulse" />
+                    </motion.div>
+                  </div>
+
+                  {/* Percentage Readout */}
+                  <div className="flex justify-between items-center px-1">
+                    <div className="flex gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <div key={i} className={cn(
+                          "w-2 h-2 rounded-full", 
+                          parseInt(percentage) > (i * 20) ? colors.bg : "bg-muted"
+                        )} />
+                      ))}
+                    </div>
+                    <span className={cn("font-headline text-2xl drop-shadow-sm", colors.text)}>
+                      {percentage}<span className="text-xs opacity-70 ml-0.5">%</span>
+                    </span>
+                  </div>
+
+                </div>
+                {/* Shadow layer */}
+                <div className="absolute -bottom-2 left-2 right-[-4px] h-full w-full bg-foreground/10 dark:bg-black/50 -z-10 transform translate-y-1 pixel-corners" />
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </div>
