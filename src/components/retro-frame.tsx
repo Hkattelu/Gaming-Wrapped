@@ -50,15 +50,15 @@ export function RetroFrame({
   return (
     <div className={cn("relative group", className)}>
       {/* Outer Case */}
-      <div className="absolute -inset-4 bg-[#27272a] border-b-8 border-r-8 border-black rounded-xl hidden lg:block shadow-2xl" />
+      <div className="absolute -inset-4 bg-gray-300 dark:bg-[#27272a] border-b-8 border-r-8 border-gray-800 dark:border-black rounded-xl hidden lg:block shadow-2xl" />
       
       {/* Screen Inset */}
-      <div className="relative bg-black rounded-lg p-1 lg:p-4 border-4 border-[#3f3f46] shadow-inner overflow-hidden">
+      <div className="relative bg-white dark:bg-black rounded-lg p-1 lg:p-4 border-4 border-gray-400 dark:border-[#3f3f46] shadow-inner overflow-hidden">
         {/* Decorative Screws */}
-        <div className="hidden lg:block absolute top-2 left-2 w-3 h-3 bg-[#52525b] rounded-full border-b-2 border-black" />
-        <div className="hidden lg:block absolute top-2 right-2 w-3 h-3 bg-[#52525b] rounded-full border-b-2 border-black" />
-        <div className="hidden lg:block absolute bottom-2 left-2 w-3 h-3 bg-[#52525b] rounded-full border-b-2 border-black" />
-        <div className="hidden lg:block absolute bottom-2 right-2 w-3 h-3 bg-[#52525b] rounded-full border-b-2 border-black" />
+        <div className="hidden lg:block absolute top-2 left-2 w-3 h-3 bg-gray-400 dark:bg-[#52525b] rounded-full border-b-2 border-gray-700 dark:border-black" />
+        <div className="hidden lg:block absolute top-2 right-2 w-3 h-3 bg-gray-400 dark:bg-[#52525b] rounded-full border-b-2 border-gray-700 dark:border-black" />
+        <div className="hidden lg:block absolute bottom-2 left-2 w-3 h-3 bg-gray-400 dark:bg-[#52525b] rounded-full border-b-2 border-gray-700 dark:border-black" />
+        <div className="hidden lg:block absolute bottom-2 right-2 w-3 h-3 bg-gray-400 dark:bg-[#52525b] rounded-full border-b-2 border-gray-700 dark:border-black" />
 
         {/* Power LED */}
         <div className="hidden lg:flex absolute top-4 right-12 items-center gap-2">
@@ -72,7 +72,7 @@ export function RetroFrame({
       </div>
 
       {/* Side "Arcade" Decorations (Wide Desktop Only) */}
-      <div className="hidden xl:block absolute top-1/2 -left-16 -translate-y-1/2 w-16 h-64 bg-[#18181b] border-2 border-[#3f3f46] rounded-l-2xl shadow-xl">
+      <div className="hidden xl:block absolute top-1/2 -left-16 -translate-y-1/2 w-16 h-64 bg-gray-200 dark:bg-[#18181b] border-2 border-gray-400 dark:border-[#3f3f46] rounded-l-2xl shadow-xl">
         <div className="flex flex-col h-full items-center justify-around py-8 gap-3">
           <div className="flex flex-col items-center gap-1">
             <button 
@@ -113,7 +113,7 @@ export function RetroFrame({
 
         </div>
       </div>
-      <div className="hidden xl:block absolute top-1/2 -right-16 -translate-y-1/2 w-16 h-64 bg-[#18181b] border-2 border-[#3f3f46] rounded-r-2xl shadow-xl overflow-hidden">
+      <div className="hidden xl:block absolute top-1/2 -right-16 -translate-y-1/2 w-16 h-64 bg-gray-200 dark:bg-[#18181b] border-2 border-gray-400 dark:border-[#3f3f46] rounded-r-2xl shadow-xl overflow-hidden">
         <div className="flex flex-col h-full items-center justify-start py-4 gap-4">
           <button 
             onClick={onNext}
@@ -140,39 +140,39 @@ export function RetroFrame({
               {mounted && (isDark ? <Sun className="w-5 h-5 text-white" /> : <Moon className="w-5 h-5 text-white" />)}
             </button>
             <span className="text-xs text-muted-foreground uppercase">Theme</span>
-            <div className="mt-4 w-8 h-1 bg-[#3f3f46] rounded-full" />
-            <div className="w-8 h-1 bg-[#3f3f46] rounded-full" />
+            <div className="mt-4 w-8 h-1 bg-gray-400 dark:bg-[#3f3f46] rounded-full" />
+            <div className="w-8 h-1 bg-gray-400 dark:bg-[#3f3f46] rounded-full" />
            </div>
         </div>
       </div>
 
       {/* Decorative Branding on the Case */}
-      <div className="flex absolute -bottom-12 left-1/2 -translate-x-1/2 w-[400px] h-10 bg-[#18181b] border-2 border-[#3f3f46] rounded-b-xl flex items-center justify-around px-4">
+      <div className="flex absolute -bottom-12 left-1/2 -translate-x-1/2 w-[400px] h-10 bg-gray-200 dark:bg-[#18181b] border-2 border-gray-400 dark:border-[#3f3f46] rounded-b-xl flex items-center justify-around px-4">
         <div className="flex flex-col items-center gap-1">
           <div 
             onClick={onSelect}
-            className="w-8 h-3 bg-[#3f3f46] rounded-sm border-b-2 border-black active:border-b-0 active:translate-y-0.5 cursor-pointer hover:bg-[#52525b]" 
+            className="w-8 h-3 bg-gray-400 dark:bg-[#3f3f46] rounded-sm border-b-2 border-gray-600 dark:border-black active:border-b-0 active:translate-y-0.5 cursor-pointer hover:bg-gray-500 dark:hover:bg-[#52525b]" 
           />
-          <span className="text-[6px] font-headline text-[#71717a]">SELECT</span>
+          <span className="text-[6px] font-headline text-gray-600 dark:text-[#71717a]">SELECT</span>
         </div>
         
         {/* Coin Slot */}
         <div 
           onClick={onCoin}
-          className="retro-frame-coin-slot flex items-center justify-center gap-2 px-4 border-x border-[#3f3f46] group/coin hover:bg-yellow-500/5 transition-colors"
+          className="retro-frame-coin-slot flex items-center justify-center gap-2 px-4 border-x border-gray-400 dark:border-[#3f3f46] group/coin hover:bg-yellow-500/5 transition-colors"
         >
-           <div className="w-4 h-6 bg-black rounded-sm border-2 border-[#3f3f46] flex flex-col items-center justify-center gap-1 group-hover/coin:border-yellow-600 transition-colors">
-              <div className="w-0.5 h-3 bg-yellow-600/50 rounded-full group-hover/coin:bg-yellow-500" />
+           <div className="w-4 h-6 bg-gray-100 dark:bg-black rounded-sm border-2 border-gray-400 dark:border-[#3f3f46] flex flex-col items-center justify-center gap-1 group-hover/coin:border-yellow-600 transition-colors">
+              <div className="w-0.5 h-3 bg-yellow-600/50 dark:bg-yellow-600/50 rounded-full group-hover/coin:bg-yellow-500" />
            </div>
-           <span className="text-[6px] font-headline text-yellow-600/50 group-hover/coin:text-yellow-500">INSERT COIN</span>
+           <span className="text-[6px] font-headline text-amber-700 dark:text-yellow-600/50 group-hover/coin:text-yellow-500">INSERT COIN</span>
         </div>
 
         <div className="flex flex-col items-center gap-1">
           <div 
             onClick={onStart}
-            className="w-8 h-3 bg-[#3f3f46] rounded-sm border-b-2 border-black active:border-b-0 active:translate-y-0.5 cursor-pointer hover:bg-[#52525b]" 
+            className="w-8 h-3 bg-gray-400 dark:bg-[#3f3f46] rounded-sm border-b-2 border-gray-600 dark:border-black active:border-b-0 active:translate-y-0.5 cursor-pointer hover:bg-gray-500 dark:hover:bg-[#52525b]" 
           />
-          <span className="text-[6px] font-headline text-[#71717a]">START</span>
+          <span className="text-[6px] font-headline text-gray-600 dark:text-[#71717a]">START</span>
         </div>
       </div>
     </div>

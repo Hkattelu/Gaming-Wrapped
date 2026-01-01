@@ -126,11 +126,21 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
   };
 
-  const handleInstagramShare = () => {
-    toast({
-      title: "POST TO STORIES",
-      description: "Download the STORY version below and upload it to your Instagram Stories!",
-    });
+  const handleInstagramShare = async () => {
+    try {
+      const shareUrl = `${window.location.origin}/wrapped?id=${id}`;
+      await navigator.clipboard.writeText(shareUrl);
+      toast({
+        title: "Link Copied!",
+        description: "The Gaming Wrapped link has been copied to your clipboard.",
+      });
+    } catch (err) {
+      toast({
+        title: "Copy Failed",
+        description: "Unable to copy link to clipboard. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleStartWrapped = () => {
@@ -288,7 +298,7 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
       {/* Slide Progress Indicators (Story Style) */}
       <div className="fixed top-6 left-1/2 -translate-x-1/2 w-full max-w-md px-4 flex gap-1.5 z-50">
         {[...Array(count)].map((_, i) => (
-          <div key={i} className="h-1 flex-1 bg-white/10 rounded-full overflow-hidden relative">
+          <div key={i} className="h-1 flex-1 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden relative">
             {/* Background static fill */}
             <div
               className={cn(

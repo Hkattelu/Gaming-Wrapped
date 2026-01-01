@@ -69,12 +69,12 @@ export function RoastCardComponent({ card, isActive }: RoastCardProps) {
               <div className="absolute inset-0 bg-noise-pattern opacity-30 pointer-events-none mix-blend-overlay" />
               <div className="relative z-20">
                 <motion.div 
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: isActive ? 1 : 0, opacity: isActive ? 1 : 0 }}
-                  transition={{ type: "spring", stiffness: 200, delay: 0.3 }}
-                  className="bg-zinc-950 border-4 border-foreground p-6 pixel-corners shadow-[4px_4px_0px_rgba(0,0,0,0.5)]"
-                >
-                  <p className="font-mono text-xs md:text-sm leading-relaxed text-emerald-500">
+                   initial={{ scale: 0, opacity: 0 }}
+                   animate={{ scale: isActive ? 1 : 0, opacity: isActive ? 1 : 0 }}
+                   transition={{ type: "spring", stiffness: 200, delay: 0.3 }}
+                   className="bg-gray-100 dark:bg-zinc-950 border-4 border-foreground p-6 pixel-corners shadow-[4px_4px_0px_rgba(0,0,0,0.5)]"
+                 >
+                  <p className="font-mono text-xs md:text-sm leading-relaxed text-emerald-600 dark:text-emerald-500">
                     <span className="opacity-50"># ROAST_INITIALIZED...</span><br/>
                     <motion.span 
                       initial={{ opacity: 0 }}
@@ -94,7 +94,7 @@ export function RoastCardComponent({ card, isActive }: RoastCardProps) {
                     )}
                   </p>
                 </motion.div>
-                <div className="absolute -bottom-3 right-10 w-6 h-6 bg-zinc-950 border-r-4 border-b-4 border-foreground transform rotate-45 z-10" />
+                <div className="absolute -bottom-3 right-10 w-6 h-6 bg-background dark:bg-zinc-950 border-r-4 border-b-4 border-foreground transform rotate-45 z-10" />
               </div>
 
               <div className="relative z-20 flex items-end justify-end w-full mt-8">
@@ -110,23 +110,39 @@ export function RoastCardComponent({ card, isActive }: RoastCardProps) {
                 </div>
 
                 <motion.div 
-                  initial={{ y: 50 }}
-                  animate={{ y: isActive ? 0 : 50 }}
-                  transition={{ type: "spring", delay: 0.5 }}
-                  className="relative cursor-pointer hover:scale-110 transition-transform origin-bottom"
-                >
-                  <div className="w-16 h-16 grid grid-cols-8 grid-rows-8">
-                    <div className="col-start-1 col-span-1 bg-emerald-600" /><div className="col-start-8 col-span-1 bg-emerald-600" />
-                    <div className="col-start-1 col-span-1 bg-emerald-600" /><div className="col-start-3 col-span-4 bg-emerald-500" /><div className="col-start-8 col-span-1 bg-emerald-600" />
-                    <div className="col-start-2 col-span-6 bg-emerald-500" />
-                    <div className="col-start-2 col-span-6 bg-emerald-500 flex items-center justify-around px-1">
-                      <div className="w-2 h-2 bg-white border border-black animate-pulse" /><div className="w-2 h-2 bg-white border border-black animate-pulse" />
-                    </div>
-                    <div className="col-start-3 col-span-4 bg-emerald-700 h-1 mt-1" />
-                    <div className="col-start-2 col-span-4 bg-black h-1 mt-1 animate-bounce" />
-                    <div className="col-start-2 col-span-6 bg-emerald-600" />
-                  </div>
-                </motion.div>
+                   initial={{ y: 50 }}
+                   animate={{ y: isActive ? 0 : 50 }}
+                   transition={{ type: "spring", delay: 0.5 }}
+                   className="relative cursor-pointer hover:scale-110 transition-transform origin-bottom"
+                 >
+                   <div className="w-16 h-16 grid grid-cols-8 grid-rows-8 gap-0">
+                     {/* Row 1 - Horns and top of head */}
+                     <div className="col-start-2 row-start-1 col-span-1 bg-orange-700" />
+                     <div className="col-start-3 row-start-1 col-span-4 bg-emerald-500" />
+                     <div className="col-start-7 row-start-1 col-span-1 bg-orange-700" />
+                     {/* Row 2 - Head wide */}
+                     <div className="col-start-2 row-start-2 col-span-6 bg-emerald-500" />
+                     {/* Row 3 - Eyes (spaced apart) */}
+                     <div className="col-start-2 row-start-3 col-span-1 bg-emerald-500" />
+                     <div className="col-start-3 row-start-3 col-span-1  bg-emerald-500 border border-black" />
+                     <div className="col-start-4 row-start-3 col-span-2 bg-emerald-500" />
+                     <div className="col-start-6 row-start-3 col-span-1  bg-emerald-500 border border-black" />
+                     <div className="col-start-7 row-start-3 col-span-1 bg-emerald-500" />
+                     {/* Row 4 - Mouth area */}
+                     <div className="col-start-2 row-start-4 col-span-6 bg-emerald-500" />
+                     {/* Row 5 - Body top */}
+                     <div className="col-start-2 row-start-5 col-span-6 bg-emerald-600" />
+                     {/* Row 6 - Body middle */}
+                     <div className="col-start-2 row-start-6 col-span-2 bg-emerald-600" />
+                     <div className="col-start-4 row-start-6 col-span-2 bg-black" />
+                     <div className="col-start-6 row-start-6 col-span-2 bg-emerald-600" />
+                     {/* Row 7 - Body bottom */}
+                     <div className="col-start-2 row-start-7 col-span-6 bg-emerald-600" />
+                     {/* Row 8 - Legs (spaced apart) */}
+                     <div className="col-start-2 row-start-8 col-span-2 bg-emerald-700" />
+                     <div className="col-start-6 row-start-8 col-span-2 bg-emerald-700 animate-bounce" />
+                   </div>
+                 </motion.div>
               </div>
             </div>
           </div>

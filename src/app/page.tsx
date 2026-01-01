@@ -228,8 +228,8 @@ export default function Home() {
                 <Dialog open={steamDialogOpen} onOpenChange={setSteamDialogOpen}>
                   <DialogTrigger asChild>
                     <Button variant="outline" size="lg" className="h-auto py-4 flex flex-col gap-1 border-2 hover:border-accent hover:bg-accent/5">
-                      <Import className="text-primary-foreground h-6 w-6 mb-1" />
-                      <span className="text-primary-foreground font-headline tracking-wider">Steam</span>
+                      <Import className="dark:text-primary-foreground h-6 w-6 mb-1" />
+                      <span className="dark:text-primary-foreground font-headline tracking-wider">Steam</span>
                       <span className="text-xs text-muted-foreground font-normal">Public Profile</span>
                     </Button>
                   </DialogTrigger>
@@ -270,8 +270,8 @@ export default function Home() {
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                   <DialogTrigger asChild>
                     <Button variant="outline" size="lg" className="h-auto py-4 flex flex-col gap-1 border-2 hover:border-accent hover:bg-accent/5">
-                      <Import className="text-primary-foreground h-6 w-6 mb-1" />
-                      <span className="text-primary-foreground font-headline tracking-wider">Backloggd</span>
+                      <Import className="dark:text-primary-foreground h-6 w-6 mb-1" />
+                      <span className="dark:text-primary-foreground font-headline tracking-wider">Backloggd</span>
                       <span className="text-xs text-muted-foreground font-normal">Username</span>
                     </Button>
                   </DialogTrigger>

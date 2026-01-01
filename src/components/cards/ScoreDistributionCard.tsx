@@ -86,7 +86,7 @@ export function ScoreDistributionCard({ card, isActive }: { card: ScoreDistribut
         <div className="relative bg-card border-4 border-border p-6 md:p-10 pixel-corners shadow-2xl">
           
           {/* Average Score Badge */}
-          <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20">
+          <div className="absolute bottom-25 left-1/2 -translate-x-1/2 z-20">
             <motion.div 
               initial={{ scale: 0, rotate: -10 }}
               animate={{ scale: isActive ? 1 : 0, rotate: isActive ? -2 : -10 }}
