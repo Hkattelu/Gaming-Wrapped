@@ -70,7 +70,7 @@ const TopGameCardSchema = z.object({
   game: z.object({
     title: z.string(),
     platform: z.string(),
-    score: z.union([z.string(), z.number()]),
+    score: z.coerce.number().or(z.string()),
     notes: z.string(),
   }),
 });
