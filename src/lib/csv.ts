@@ -68,3 +68,37 @@ export function parseCsv(csvText: string): Game[] {
   if (parseError) throw parseError;
   return games;
 }
+
+/**
+ * Sanitizes a field for CSV output to prevent CSV Injection (Formula Injection).
+ * It escapes double quotes and wraps the field in double quotes.
+ * If the field starts with =, @, +, or -, it prepends a tab character.
+ *
+ * @param {unknown} value - The value to sanitize.
+ * @returns {string} The sanitized CSV field string.
+ */
+export function sanitizeCsvField(value: unknown): string {
+  if (value === null || value === undefined) {
+    return '""';
+  }
+
+  const raw = String(value);
+  const trimmedStart = raw.replace(/^[\u0000-\u0020]+/, '');
+  // Preserve a leading tab (even after other leading whitespace/control chars) so we don't double-prefix.
+  const trimmedForTabCheck = raw.replace(/^[\u0000-\u0008\u000A-\u0020]+/, '');
+  const hasLeadingTab = /^\t/.test(trimmedForTabCheck);
+
+  let stringValue = raw;
+
+  // Check for CSV Injection (Formula Injection) triggers after leading whitespace/control chars.
+  if (/^[=@+\-]/.test(trimmedStart) && !hasLeadingTab) {
+    stringValue = `	${raw}`;
+  }
+
+
+  // Escape double quotes by doubling them
+  stringValue = stringValue.replace(/"/g, '""');
+
+  // Wrap in double quotes
+  return `"${stringValue}"`;
+}
