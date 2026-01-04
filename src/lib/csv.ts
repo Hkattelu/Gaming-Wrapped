@@ -84,13 +84,13 @@ export function sanitizeCsvField(value: unknown): string {
 
   const raw = String(value);
   const trimmedStart = raw.replace(/^[\u0000-\u0020]+/, '');
-  const alreadyPrefixed = /^\t/.test(trimmedStart);
+  const hasLeadingTab = /^\t/.test(raw);
 
   let stringValue = raw;
 
   // Check for CSV Injection (Formula Injection) triggers after leading whitespace/control chars.
-  if (/^[=@+\-]/.test(trimmedStart) && !alreadyPrefixed) {
-    stringValue = `\t${raw}`;
+  if (/^[=@+\-]/.test(trimmedStart) && !hasLeadingTab) {
+    stringValue = `	${raw}`;
   }
 
 
