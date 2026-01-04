@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { sanitizeCsvField } from '@/lib/csv';
 
 export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
@@ -110,7 +111,7 @@ export async function GET(req: NextRequest) {
             headers.join(','),
             ...gameData.map((row) =>
               headers
-                .map((header) => `"${String(row[header as keyof typeof row]).replace(/"/g, '""')}"`)
+                .map((header) => sanitizeCsvField(row[header as keyof typeof row]))
                 .join(','),
             ),
           ];
@@ -174,7 +175,7 @@ export async function GET(req: NextRequest) {
     headers.join(','),
     ...gameData.map((row) =>
       headers
-        .map((header) => `"${String(row[header as keyof typeof row]).replace(/"/g, '""')}"`)
+        .map((header) => sanitizeCsvField(row[header as keyof typeof row]))
         .join(','),
     ),
   ];

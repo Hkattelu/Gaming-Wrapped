@@ -1,6 +1,6 @@
 'use server';
 
-import { parseCsv } from "@/lib/csv";
+import { parseCsv, sanitizeCsvField } from "@/lib/csv";
 import type { ManualGame, StoryIdentifier } from "@/types";
 
 export async function generateWrappedData(csvText: string): Promise<StoryIdentifier> {
@@ -45,13 +45,13 @@ export async function generateWrappedData(csvText: string): Promise<StoryIdentif
 function manualGamesToCsv(games: ManualGame[]): string {
   const header = "Title,Platform,Review Score,Review Notes\n";
   const rows = games.map(game => {
-    // Simple CSV encoding: handle commas by quoting
-    const title = `"${game.title.replace(/\"/g, '""')}"`;
-    const platform = `"${game.platform.replace(/\"/g, '""')}"`;
+    // Use sanitizeCsvField to handle quotes and CSV injection risks
+    const title = sanitizeCsvField(game.title);
+    const platform = sanitizeCsvField(game.platform);
     const score = game.score;
     // Use explicit notes if provided, otherwise fall back to status
     const reviewNotes = game.notes && game.notes.trim().length > 0 ? game.notes : game.status;
-    const notes = `"${reviewNotes.replace(/\"/g, '""')}"`;
+    const notes = sanitizeCsvField(reviewNotes);
     return `${title},${platform},${score},${notes}`;
   });
   return header + rows.join('\n');

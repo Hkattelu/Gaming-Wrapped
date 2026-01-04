@@ -68,3 +68,30 @@ export function parseCsv(csvText: string): Game[] {
   if (parseError) throw parseError;
   return games;
 }
+
+/**
+ * Sanitizes a field for CSV output to prevent CSV Injection (Formula Injection).
+ * It escapes double quotes and wraps the field in double quotes.
+ * If the field starts with =, @, +, or -, it prepends a tab character.
+ *
+ * @param {unknown} value - The value to sanitize.
+ * @returns {string} The sanitized CSV field string.
+ */
+export function sanitizeCsvField(value: unknown): string {
+  if (value === null || value === undefined) {
+    return '""';
+  }
+
+  let stringValue = String(value);
+
+  // Check for CSV Injection (Formula Injection) triggers
+  if (/^[=@+-]/.test(stringValue)) {
+    stringValue = `\t${stringValue}`;
+  }
+
+  // Escape double quotes by doubling them
+  stringValue = stringValue.replace(/"/g, '""');
+
+  // Wrap in double quotes
+  return `"${stringValue}"`;
+}

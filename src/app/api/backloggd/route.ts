@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { sanitizeCsvField } from '@/lib/csv';
 import { load, CheerioAPI, Cheerio } from 'cheerio';
 import type { AnyNode } from 'domhandler';
 import { isTag } from 'domutils';
@@ -192,7 +193,7 @@ export async function GET(req: NextRequest) {
             headers.join(','),
             ...allGameData.map((row) =>
               headers
-                .map((header) => `"${String(row[header as keyof typeof row]).replace(/"/g, '""')}"`)
+                .map((header) => sanitizeCsvField(row[header as keyof typeof row]))
                 .join(','),
             ),
           ];
@@ -283,7 +284,7 @@ export async function GET(req: NextRequest) {
     headers.join(','),
     ...allGameData.map((row) =>
       headers
-        .map((header) => `"${String(row[header as keyof typeof row]).replace(/"/g, '""')}"`)
+        .map((header) => sanitizeCsvField(row[header as keyof typeof row]))
         .join(','),
     ),
   ];

@@ -11,6 +11,7 @@ let mockParseCsv: jest.Mock;
 // Mock the csv module, referencing mockParseCsv
 jest.mock('@/lib/csv', () => ({
   parseCsv: jest.fn((csvText: string) => mockParseCsv(csvText)), // Reference the prefixed variable
+  sanitizeCsvField: jest.fn((val) => `"${val}"`),
 }));
 
 // Removed outdated mocks for '@/lib/stats' and the AI flow; the current actions
