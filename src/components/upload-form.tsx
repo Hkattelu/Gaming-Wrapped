@@ -234,7 +234,7 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
         <label
           htmlFor="dropzone-file"
           className={cn(
-            "flex flex-col items-center justify-center w-full border-2 border-dashed rounded-lg cursor-pointer transition-colors",
+            "flex flex-col items-center justify-center w-full border-2 border-dashed rounded-lg cursor-pointer transition-colors focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2",
             file
               ? "border-accent bg-accent/5 hover:bg-accent/10"
               : "border-primary/50 bg-card hover:bg-muted"
@@ -254,6 +254,7 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
                   type="button"
                   variant="ghost"
                   size="lg"
+                  aria-label="Remove selected file"
                   className="h-12 text-md text-accent hover:text-destructive hover:bg-destructive/10 transition-colors border border-destructive/20"
                   onClick={(e) => {
                     e.preventDefault();
@@ -274,7 +275,7 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
               </>
             )}
           </div>
-          <Input id="dropzone-file" type="file" accept=".csv" className="hidden" onChange={handleFileChange} />
+          <Input id="dropzone-file" type="file" accept=".csv" className="sr-only" onChange={handleFileChange} />
         </label>
       </div>
 
