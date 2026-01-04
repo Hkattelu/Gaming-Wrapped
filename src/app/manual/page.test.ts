@@ -144,7 +144,6 @@ describe('Manual page: banner and quick-picks', () => {
     
     // Fresh sessionStorage mock per test with isolated storage Map
     const store = new Map<string, string>();
-    // @ts-expect-error - Mock sessionStorage for testing
     global.sessionStorage = {
       getItem: (k: string) => (store.has(k) ? store.get(k)! : null),
       setItem: (k: string, v: string) => void store.set(k, String(v)),
@@ -157,7 +156,6 @@ describe('Manual page: banner and quick-picks', () => {
 
   afterEach(() => {
     global.fetch = originalFetch as unknown as typeof fetch;
-    // @ts-expect-error - Restore original sessionStorage
     global.sessionStorage = originalSession;
   });
 
@@ -193,7 +191,6 @@ describe('Manual page: banner and quick-picks', () => {
       if (String(input).includes('/api/igdb/top-this-year')) return { ok: true, json: async () => ({ suggestions }) } as unknown as Response;
       throw new Error('unexpected fetch ' + input);
     });
-    // @ts-expect-error - Mock fetch for testing
     global.fetch = fetchMock;
 
     const Page = (await import('./page')).default as React.ComponentType;
@@ -239,7 +236,6 @@ describe('Manual page: banner and quick-picks', () => {
       if (String(input).includes('/api/igdb/top-this-year')) return { ok: true, json: async () => ({ suggestions: [] }) } as unknown as Response;
       throw new Error('unexpected fetch ' + input);
     });
-    // @ts-expect-error - Mock fetch for testing
     global.fetch = fetchMock;
 
     const Page = (await import('./page')).default as React.ComponentType;
@@ -265,7 +261,6 @@ describe('Manual page: banner and quick-picks', () => {
       }
       throw new Error('unexpected fetch ' + input);
     });
-    // @ts-expect-error - Mock fetch for testing
     global.fetch = fetchMock;
 
     const Page = (await import('./page')).default as React.ComponentType;

@@ -19,7 +19,7 @@ export class NextRequest {
 
     this.url = url;
 
-    const requestLike = typeof input === 'string' || input instanceof URL ? undefined : (input as Record<string, unknown>);
+    const requestLike = typeof input === 'string' || input instanceof URL ? undefined : (input as unknown as Record<string, unknown>);
     this.method = init?.method ?? (requestLike?.method as string | undefined) ?? 'GET';
     this.headers = new Headers(init?.headers ?? (requestLike?.headers as HeadersInit | undefined));
   }

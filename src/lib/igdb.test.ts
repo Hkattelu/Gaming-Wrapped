@@ -10,7 +10,7 @@ function mockFetchSequence(
 ): typeof fetch {
   const fn = jest.fn();
   impls.forEach((impl) => {
-    fn.mockImplementationOnce(impl);
+    fn.mockImplementationOnce(impl as unknown as jest.Mock);
   });
   return fn as unknown as typeof fetch;
 }
@@ -74,7 +74,6 @@ describe('lib/igdb integration', () => {
         return { ok: true, json: async () => gameRows } as unknown as Response;
       },
     ]);
-    // @ts-expect-error - Mock global fetch for testing
     global.fetch = fetchMock;
 
     const { searchCoverByTitle } = await import(IGDB_MODULE_PATH);
@@ -87,7 +86,7 @@ describe('lib/igdb integration', () => {
     // Advance time close to expiry: expires_at = 300s; safety window is 60s → token becomes invalid when now >= 240s
     nowSpy.mockReturnValue(250_000);
     // Next call should trigger a new token fetch before hitting IGDB
-    (global.fetch as unknown as jest.Mock).mockImplementationOnce(async (input: RequestInfo) => {
+    (global.fetch as unknown as jest.Mock).mockImplementationOnce(async (input: any) => {
       expect(String(input)).toContain('https://id.twitch.tv/oauth2/token');
       return { ok: true, json: async () => ({ access_token: 't2', expires_in: 300 }) } as unknown as Response;
     });
@@ -293,7 +292,6 @@ describe('lib/igdb integration', () => {
         return { ok: true, json: async () => rows } as unknown as Response;
       },
     ]);
-    // @ts-expect-error - Mock global fetch for testing
     global.fetch = mf as unknown as typeof fetch;
 
     const { getTopGamesOfYear } = await import(IGDB_MODULE_PATH);
@@ -315,7 +313,6 @@ describe('lib/igdb integration', () => {
       async () => ({ ok: true, json: async () => ({ access_token: 't2', expires_in: 300 }) }) as unknown as Response,
       async () => ({ ok: false, status: 500, text: async () => 'nope' }) as unknown as Response,
     ]);
-    // @ts-expect-error - Mock global fetch for testing
     global.fetch = mf as unknown as typeof fetch;
 
     const { searchCoverByTitle } = await import(IGDB_MODULE_PATH);

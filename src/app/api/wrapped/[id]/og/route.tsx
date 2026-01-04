@@ -5,24 +5,24 @@ import { getWrapped } from '@/lib/db';
 export const dynamic = 'force-dynamic';
 
 const PERSONA_CONFIG: Record<string, { seed: string; color: string; accent: string; icon: string }> = {
-  "The Loyal Legend": { seed: "legend", color: "#facc15", accent: "#f97316", icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" }, // Star
-  "The Platinum Plunderer": { seed: "trophy", color: "#60a5fa", accent: "#4f46e5", icon: "M6 3h12l4 6-10 13L2 9z" }, // Gem
-  "The Squadron Leader": { seed: "commander", color: "#4ade80", accent: "#059669", icon: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" }, // Shield
-  "The Narrative Navigator": { seed: "book", color: "#c084fc", accent: "#db2777", icon: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" }, // Book
-  "The Apex Predator": { seed: "skull", color: "#ef4444", accent: "#be123c", icon: "M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2" }, // Sword
-  "The Cozy Cultivator": { seed: "plant", color: "#6ee7b7", accent: "#14b8a6", icon: "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" }, // Heart
-  "The Artisan Adventurer": { seed: "palette", color: "#fdba74", accent: "#f59e0b", icon: "M12 19l7-7 3 3-7 7-3-3z" }, // Pen nib
-  "The Master Architect": { seed: "building", color: "#22d3ee", accent: "#3b82f6", icon: "M3 21h18v-8H3v8zm0-10h18V3H3v8z" }, // Bricks
-  "The High-Octane Hero": { seed: "power", color: "#f97316", accent: "#dc2626", icon: "M13 2L3 14h9l-1 8 10-12h-9l1-8z" }, // Lightning
-  "The Vanguard Gamer": { seed: "future", color: "#818cf8", accent: "#7c3aed", icon: "M2 12h20M12 2v20" }, // Crosshair
-  "The Backlog Baron": { seed: "library", color: "#a1a1aa", accent: "#3f3f46", icon: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" }, // Library/Book
-  "The Digital Hoarder": { seed: "ghost", color: "#f472b6", accent: "#9d174d", icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" }, // Ghost
-  "The Completionist Cultist": { seed: "crown", color: "#fbbf24", accent: "#78350f", icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" }, // Crown (Star icon)
-  "The Early Access Enthusiast": { seed: "construction", color: "#fb923c", accent: "#7c2d12", icon: "M3 21h18v-8H3v8zm0-10h18V3H3v8z" }, // Construction (Bricks icon)
-  "The Diamond in the Rough Digger": { seed: "diamond", color: "#2dd4bf", accent: "#0f766e", icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" }, // Diamond
-  "The Speedrun Sorcerer": { seed: "clock", color: "#facc15", accent: "#ca8a04", icon: "M13 2L3 14h9l-1 8 10-12h-9l1-8z" }, // Lightning/Clock
-  "The Modded Maestro": { seed: "gear", color: "#94a3b8", accent: "#475569", icon: "M12 2v20M2 12h20" }, // Gear
-  "The Digital Monogamist": { seed: "heart", color: "#f472b6", accent: "#be123c", icon: "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" }, // Heart
+  "The Loyal Legend": { seed: "Loyal Legend", color: "#facc15", accent: "#f97316", icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" }, // Star
+  "The Platinum Plunderer": { seed: "Platinum Plunderer", color: "#60a5fa", accent: "#4f46e5", icon: "M6 3h12l4 6-10 13L2 9z" }, // Gem
+  "The Squadron Leader": { seed: "Squadron Leader", color: "#4ade80", accent: "#059669", icon: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" }, // Shield
+  "The Narrative Navigator": { seed: "Narrative Navigator", color: "#c084fc", accent: "#db2777", icon: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" }, // Book
+  "The Apex Predator": { seed: "Apex Predator", color: "#ef4444", accent: "#be123c", icon: "M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2" }, // Sword
+  "The Cozy Cultivator": { seed: "Cozy Cultivator", color: "#6ee7b7", accent: "#14b8a6", icon: "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" }, // Heart
+  "The Artisan Adventurer": { seed: "lsjda", color: "#fdba74", accent: "#f59e0b", icon: "M12 19l7-7 3 3-7 7-3-3z" }, // Pen nib
+  "The Master Architect": { seed: "jhsakdhjasduheu", color: "#22d3ee", accent: "#3b82f6", icon: "M3 21h18v-8H3v8zm0-10h18V3H3v8z" }, // Bricks
+  "The High-Octane Hero": { seed: "High-Octane Hero", color: "#f97316", accent: "#dc2626", icon: "M13 2L3 14h9l-1 8 10-12h-9l1-8z" }, // Lightning
+  "The Vanguard Gamer": { seed: "Vanguard Gamer", color: "#818cf8", accent: "#7c3aed", icon: "M2 12h20M12 2v20" }, // Crosshair
+  "The Backlog Baron": { seed: "Backlog Baron", color: "#a1a1aa", accent: "#3f3f46", icon: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" }, // Library/Book
+  "The Digital Hoarder": { seed: "Digital Hoarder", color: "#f472b6", accent: "#9d174d", icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" }, // Ghost
+  "The Completionist Cultist": { seed: "Completionist Cultist", color: "#fbbf24", accent: "#78350f", icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" }, // Crown (Star icon)
+  "The Early Access Enthusiast": { seed: "Early Access Enthusiast", color: "#fb923c", accent: "#7c2d12", icon: "M3 21h18v-8H3v8zm0-10h18V3H3v8z" }, // Construction (Bricks icon)
+  "The Diamond in the Rough Digger": { seed: "diamondint", color: "#2dd4bf", accent: "#0f766e", icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" }, // Diamond
+  "The Speedrun Sorcerer": { seed: "Speedrun Specialist", color: "#facc15", accent: "#ca8a04", icon: "M13 2L3 14h9l-1 8 10-12h-9l1-8z" }, // Lightning/Clock
+  "The Modded Maestro": { seed: "Community Coordinator", color: "#94a3b8", accent: "#475569", icon: "M12 2v20M2 12h20" }, // Gear
+  "The Digital Monogamist": { seed: "Master Architect", color: "#f472b6", accent: "#be123c", icon: "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" }, // Heart
 };
 
 const DEFAULT_THEME = { seed: "gamer", color: "#ff0092", accent: "#fff700", icon: "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" }; // Stack
@@ -82,13 +82,18 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     // Use activeCard theme if available (for specific card sharing)
     // For now, keep the persona theme consistent for brand identity
 
-    // Fetch font (Press Start 2P)
-    const fontData = await fetch(
-      new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/pressstart2p/PressStart2P-Regular.ttf')
-    ).then((res) => res.arrayBuffer());
+    // Fetch fonts
+    const [fontData, interData] = await Promise.all([
+      fetch(
+        new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/pressstart2p/PressStart2P-Regular.ttf')
+      ).then((res) => res.arrayBuffer()),
+      fetch(
+        new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/inter/static/Inter-Bold.ttf')
+      ).then((res) => res.arrayBuffer())
+    ]);
 
     // Fetch Avatar
-    const avatarUrl = `https://api.dicebear.com/7.x/pixel-art/png?seed=${theme.seed}&backgroundColor=1a1a1a&scale=120`;
+    const avatarUrl = `https://api.dicebear.com/9.x/bottts/png?seed=${theme.seed}&backgroundColor=1a1a1a&size=512`;
     const avatarBuffer = await fetch(avatarUrl).then(res => res.arrayBuffer());
     const avatarBase64 = `data:image/png;base64,${Buffer.from(avatarBuffer).toString('base64')}`;
 
@@ -147,24 +152,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             backgroundSize: isVertical ? '60px 60px' : '30px 30px',
             opacity: 0.05,
           }} />
-
-          {/* Background Watermark (Free Version Only) */}
-          {!isPro && (
-            <div style={{
-              display: 'flex',
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%) rotate(-30deg)',
-              fontSize: isVertical ? '120px' : '180px',
-              color: 'rgba(255,255,255,0.03)',
-              whiteSpace: 'nowrap',
-              pointerEvents: 'none',
-              zIndex: 0,
-            }}>
-              GAMING WRAPPED
-            </div>
-          )}
 
           {/* Decorative Corner Pixels */}
           <div style={{ display: 'flex', position: 'absolute', top: 40, left: 40, width: 40, height: 40, backgroundColor: theme.color }} />
@@ -310,7 +297,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', alignItems: isVertical ? 'center' : 'flex-start' }}>
                     <div style={{ 
                         display: 'flex',
-                        fontSize: isVertical ? 24 : 18, 
+                        fontSize: isVertical ? 36 : 24, 
                         color: theme.accent,
                         backgroundColor: 'rgba(255,255,255,0.05)',
                         padding: '20px',
@@ -318,36 +305,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
                         borderBottom: isVertical ? `8px solid ${theme.accent}` : 'none',
                         width: isVertical ? '100%' : 'auto',
                         justifyContent: isVertical ? 'center' : 'flex-start',
-                        lineHeight: '1.4'
+                        lineHeight: '1.6',
+                        fontFamily: 'Inter',
                     }}>
                         {bodySubtitle}
                     </div>
                 </div>
-
-                {/* Genre Breakdown Chart */}
-                {showGenres && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                     <div style={{ display: 'flex', fontSize: isVertical ? 24 : 16, color: '#a1a1aa' }}>TOP GENRES:</div>
-                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
-                        {topGenres.map((g: any, i: number) => (
-                           <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
-                              <div style={{ display: 'flex', fontSize: isVertical ? 18 : 14, color: '#fff', width: isVertical ? '200px' : '150px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                {g.genre}
-                              </div>
-                              <div style={{ display: 'flex', flex: 1, height: '12px', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '6px' }}>
-                                 <div style={{ 
-                                    display: 'flex',
-                                    width: `${(g.count / Math.max(...topGenres.map((t:any) => t.count))) * 100}%`, 
-                                    height: '100%', 
-                                    backgroundColor: theme.accent,
-                                    borderRadius: '6px'
-                                 }} />
-                              </div>
-                           </div>
-                        ))}
-                     </div>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -364,24 +327,24 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
                 marginTop: '20px'
             }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ display: 'flex', fontSize: isVertical ? 18 : 12, color: '#a1a1aa' }}>GAMES</span>
+                    <span style={{ display: 'flex', fontSize: isVertical ? 18 : 12, color: '#e4e4e7' }}>GAMES</span>
                     <span style={{ display: 'flex', fontSize: isVertical ? 36 : 24, color: theme.color }}>{totalGames}</span>
                 </div>
                 <div style={{ width: '4px', height: '60px', backgroundColor: '#3f3f46' }} />
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ display: 'flex', fontSize: isVertical ? 18 : 12, color: '#a1a1aa' }}>SCORE</span>
+                    <span style={{ display: 'flex', fontSize: isVertical ? 18 : 12, color: '#e4e4e7' }}>SCORE</span>
                     <span style={{ display: 'flex', fontSize: isVertical ? 36 : 24, color: theme.accent }}>{avgScore}</span>
                 </div>
                 <div style={{ width: '4px', height: '60px', backgroundColor: '#3f3f46' }} />
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ display: 'flex', fontSize: isVertical ? 18 : 12, color: '#a1a1aa' }}>HOURS</span>
+                    <span style={{ display: 'flex', fontSize: isVertical ? 18 : 12, color: '#e4e4e7' }}>HOURS</span>
                     <span style={{ display: 'flex', fontSize: isVertical ? 36 : 24, color: '#fff' }}>{playtime.toLocaleString()}</span>
                 </div>
                 {isPro && (
                   <>
                     <div style={{ width: '4px', height: '60px', backgroundColor: '#3f3f46' }} />
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                        <span style={{ display: 'flex', fontSize: isVertical ? 18 : 12, color: '#a1a1aa' }}>SYSTEM</span>
+                        <span style={{ display: 'flex', fontSize: isVertical ? 18 : 12, color: '#e4e4e7' }}>SYSTEM</span>
                         <span style={{ display: 'flex', fontSize: isVertical ? 24 : 18, color: '#fbbf24' }}>{topPlatform}</span>
                     </div>
                   </>
@@ -398,19 +361,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
                 alignItems: 'flex-end',
                 gap: '8px'
             }}>
-                {!isPro && (
-                  <div style={{
-                      fontSize: isVertical ? '16px' : '10px',
-                      color: '#ef4444',
-                      backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                      padding: '8px 16px',
-                      borderRadius: '8px',
-                      border: '2px solid #ef4444',
-                      marginBottom: '10px'
-                  }}>
-                      FREE VERSION
-                  </div>
-                )}
                 {isPro && (
                   <div style={{
                       fontSize: isVertical ? '16px' : '10px',
@@ -425,14 +375,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
                       <div style={{ display: 'flex', fontSize: '8px', color: 'rgba(251, 191, 36, 0.6)' }}>SERIAL: GW-2025-{serial}</div>
                   </div>
                 )}
-                <div style={{
-                    fontSize: isVertical ? '24px' : '14px',
-                    color: borderColor,
-                    fontWeight: 'bold',
-                    textShadow: '2px 2px 0px #000'
-                }}>
-                    gamingwrapped.com
-                </div>
             </div>
           </div>
         </div>
@@ -445,6 +387,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             name: 'Press Start 2P',
             data: fontData,
             style: 'normal',
+          },
+          {
+            name: 'Inter',
+            data: interData,
+            style: 'normal',
+            weight: 700,
           },
         ],
       }
