@@ -48,7 +48,7 @@ function manualGamesToCsv(games: ManualGame[]): string {
     // Use sanitizeCsvField to handle quotes and CSV injection risks
     const title = sanitizeCsvField(game.title);
     const platform = sanitizeCsvField(game.platform);
-    const score = game.score;
+    const score = sanitizeCsvField(game.score);
     // Use explicit notes if provided, otherwise fall back to status
     const reviewNotes = game.notes && game.notes.trim().length > 0 ? game.notes : game.status;
     const notes = sanitizeCsvField(reviewNotes);
