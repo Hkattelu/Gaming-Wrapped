@@ -143,7 +143,10 @@ describe('generateWrappedDataFromManual', () => {
     // Ensure we attempted to parse a CSV string with the expected header
     expect(mockParseCsv).toHaveBeenCalledTimes(1);
     expect(typeof mockParseCsv.mock.calls[0][0]).toBe('string');
-    expect(String(mockParseCsv.mock.calls[0][0])).toContain('Title,Platform,Review Score,Review Notes');
+    const csvArg = String(mockParseCsv.mock.calls[0][0]);
+    expect(csvArg).toContain('Title,Platform,Review Score,Review Notes');
+    expect(csvArg).toContain(',"9",');
+    expect(csvArg).toContain(',"8",');
 
     // The underlying generateWrappedData should post to /api/generate with the parsed games
     expect(mockFetch).toHaveBeenCalledWith(

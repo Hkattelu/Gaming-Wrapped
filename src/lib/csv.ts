@@ -84,6 +84,7 @@ export function sanitizeCsvField(value: unknown): string {
 
   const raw = String(value);
   const trimmedStart = raw.replace(/^[\u0000-\u0020]+/, '');
+  // Preserve a leading tab (even after other leading whitespace/control chars) so we don't double-prefix.
   const trimmedForTabCheck = raw.replace(/^[\u0000-\u0008\u000A-\u0020]+/, '');
   const hasLeadingTab = /^\t/.test(trimmedForTabCheck);
 
