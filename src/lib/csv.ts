@@ -84,7 +84,8 @@ export function sanitizeCsvField(value: unknown): string {
 
   const raw = String(value);
   const trimmedStart = raw.replace(/^[\u0000-\u0020]+/, '');
-  const hasLeadingTab = /^\t/.test(raw);
+  const trimmedForTabCheck = raw.replace(/^[\u0000-\u0008\u000A-\u0020]+/, '');
+  const hasLeadingTab = /^\t/.test(trimmedForTabCheck);
 
   let stringValue = raw;
 

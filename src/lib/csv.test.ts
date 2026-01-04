@@ -29,6 +29,8 @@ describe('sanitizeCsvField', () => {
 
   it('does not double-prefix values that are already tab-prefixed', () => {
     expect(sanitizeCsvField(`${TAB}=1+1`)).toBe(`"${TAB}=1+1"`);
+    expect(sanitizeCsvField(`  ${TAB}=1+1`)).toBe(`"  ${TAB}=1+1"`);
+    expect(sanitizeCsvField(`${NL}${TAB}=1+1`)).toBe(`"${NL}${TAB}=1+1"`);
   });
 
   it('does not prefix values that do not become formula triggers after trimming', () => {
