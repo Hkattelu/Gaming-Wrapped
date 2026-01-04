@@ -82,11 +82,14 @@ export function sanitizeCsvField(value: unknown): string {
     return '""';
   }
 
-  let stringValue = String(value);
+  const raw = String(value);
+  const trimmedStart = raw.replace(/^[\u0000-\u0020]+/, '');
 
-  // Check for CSV Injection (Formula Injection) triggers
-  if (/^[=@+-]/.test(stringValue)) {
-    stringValue = `\t${stringValue}`;
+  let stringValue = raw;
+
+  // Check for CSV Injection (Formula Injection) triggers after leading whitespace/control chars.
+  if (/^[=@+\-]/.test(trimmedStart) && !raw.startsWith('\t')) {
+    stringValue = `\t${raw}`;
   }
 
   // Escape double quotes by doubling them
