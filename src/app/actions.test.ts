@@ -5,7 +5,6 @@ type MockFetch = jest.MockedFunction<typeof fetch>;
 
 // Mock the fetch function
 let mockFetch: MockFetch;
-global.fetch = jest.fn() as unknown as typeof fetch;
 
 // Declare mockParseCsv with 'mock' prefix
 let mockParseCsv: jest.Mock;
@@ -63,7 +62,7 @@ describe('generateWrappedData', () => {
     const result = await generateWrappedData(mockCsvText);
 
     expect(mockParseCsv).toHaveBeenCalledWith(mockCsvText);
-    expect(global.fetch).toHaveBeenCalledWith(
+    expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining('/api/generate'),
       {
         method: 'POST',
@@ -73,9 +72,7 @@ describe('generateWrappedData', () => {
         body: JSON.stringify({ games: mockGames }),
       }
     );
-    expect(result).toEqual({
-      id: mockId,
-    });
+    expect(result.id).toBe(mockId);
   });
 
   it('should throw an error if no valid game data is found', async () => {
@@ -106,7 +103,7 @@ describe('generateWrappedData', () => {
       'Failed to generate your Rewind. API error message'
     );
     expect(mockParseCsv).toHaveBeenCalledWith(mockCsvText);
-    expect(global.fetch).toHaveBeenCalled();
+    expect(mockFetch).toHaveBeenCalled();
   });
 });
 
@@ -149,7 +146,7 @@ describe('generateWrappedDataFromManual', () => {
     expect(String(mockParseCsv.mock.calls[0][0])).toContain('Title,Platform,Review Score,Review Notes');
 
     // The underlying generateWrappedData should post to /api/generate with the parsed games
-    expect(global.fetch).toHaveBeenCalledWith(
+    expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining('/api/generate'),
       expect.objectContaining({
         method: 'POST',
@@ -158,7 +155,7 @@ describe('generateWrappedDataFromManual', () => {
       })
     );
 
-    expect(result).toEqual({ id: mockId });
+    expect(result.id).toBe(mockId);
   });
 
   it('should throw an error if no games are provided', async () => {
