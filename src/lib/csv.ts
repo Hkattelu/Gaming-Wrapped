@@ -93,6 +93,7 @@ export function sanitizeCsvField(value: unknown): string {
     stringValue = `\t${raw}`;
   }
 
+
   // Escape double quotes by doubling them
   stringValue = stringValue.replace(/"/g, '""');
 
