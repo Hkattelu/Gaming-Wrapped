@@ -231,6 +231,8 @@ const generateGamingWrappedFlow = ai.defineFlow(
     const totalGames = games.length;
 
     const normalizeMarker = (value?: string) => (value ?? '').trim().toUpperCase();
+    // Reviews are expected to be numeric-like strings (e.g. "7.5" or "0" for unrated), so we intentionally
+    // avoid case normalization here.
     const normalizeScore = (value?: string) => (value ?? '').trim();
     const isMarked = (value?: string) => {
       const v = normalizeMarker(value);
@@ -240,6 +242,7 @@ const generateGamingWrappedFlow = ai.defineFlow(
 
     // Count rated games (assuming 'review' is the score field)
     // Filter out '0' scores as they typically represent unrated games in HLTB exports
+    // Note: this intentionally matches the previous behavior (any non-empty, non-'0' review counts as "rated").
     const ratedGames = games.filter(g => {
       const review = normalizeScore(g.review);
       return Boolean(review) && review !== '0';
