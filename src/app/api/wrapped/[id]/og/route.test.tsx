@@ -23,7 +23,7 @@ describe('GET /api/wrapped/[id]/og', () => {
     jest.resetModules();
     mockGetWrapped.mockReset();
     mockImageResponse.mockClear();
-    mockFetch = jest.fn<ReturnType<typeof fetch>, Parameters<typeof fetch>>();
+    mockFetch = jest.fn() as unknown as jest.MockedFunction<typeof fetch>;
     global.fetch = mockFetch;
   });
 
