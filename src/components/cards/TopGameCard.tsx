@@ -55,7 +55,7 @@ export function TopGameCard({ card, isActive }: { card: TopGameCardType, isActiv
       </div>
 
       {/* Main Content */}
-      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-12 relative z-10">
+      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-24 md:mt-32 relative z-10">
         
         {/* Game Art Side */}
         <motion.div 
@@ -104,7 +104,7 @@ export function TopGameCard({ card, isActive }: { card: TopGameCardType, isActiv
             )}
             <div className="absolute inset-0 crt-overlay opacity-30 pointer-events-none" />
             <div className="absolute bottom-0 left-0 right-0 bg-black/80 p-2 border-t-4 border-foreground">
-               <p className="font-headline text-[8px] text-primary animate-pulse text-center">BOSS DEFEATED</p>
+               <p className="font-headline text-[8px] text-primary animate-pulse text-center uppercase">Top Game</p>
             </div>
           </motion.div>
           {/* Shadow layer */}
