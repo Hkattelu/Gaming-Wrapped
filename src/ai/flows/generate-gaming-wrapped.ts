@@ -240,7 +240,7 @@ const generateGamingWrappedFlow = ai.defineFlow(
     // Count rated games (assuming 'review' is the score field)
     // Filter out '0' scores as they typically represent unrated games in HLTB exports
     const ratedGames = games.filter(g => {
-      const review = g.review?.trim();
+      const review = normalizeMarker(g.review);
       return Boolean(review) && review !== '0';
     }).length;
 

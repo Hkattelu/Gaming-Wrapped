@@ -91,15 +91,18 @@ describe('GET /api/wrapped/[id]/og', () => {
   it('returns 200 image response when avatar fails', async () => {
     mockGetWrapped.mockResolvedValue(createWrappedData());
 
-    // Font fetch happens twice (via `Promise.all`), then avatar fetch.
-    let call = 0;
-    mockFetch.mockImplementation(async (..._args: unknown[]) => {
-      call += 1;
-      if (call <= 2) {
+    mockFetch.mockImplementation(async input => {
+      const url = input.toString();
+
+      if (url.includes('raw.githubusercontent.com/google/fonts')) {
         return {
           ok: true,
           arrayBuffer: async () => new ArrayBuffer(8),
         } as unknown as Response;
+      }
+
+      if (url.includes('dicebear')) {
+        return { ok: false } as unknown as Response;
       }
 
       return { ok: false } as unknown as Response;
