@@ -1,26 +1,30 @@
 import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import type { WrappedData } from '@/types';
 
 // Mock getWrapped
-const mockGetWrapped = jest.fn();
+type GetWrapped = (id: string) => Promise<WrappedData | null>;
+const mockGetWrapped = jest.fn<GetWrapped>();
 jest.mock('@/lib/db', () => ({
   getWrapped: (id: string) => mockGetWrapped(id),
 }));
 
 // Mock ImageResponse
+const mockImageResponse = jest.fn(() => new Response('Mock Image', { status: 200 }));
 jest.mock('next/og', () => ({
-  ImageResponse: jest.fn().mockImplementation((element: any, options: any) => {
-    // Return a simple Response mock
-    return new Response('Mock Image', { status: 200 });
-  }),
+  ImageResponse: mockImageResponse,
 }));
 
 describe('GET /api/wrapped/[id]/og', () => {
   const originalFetch = global.fetch;
+  let mockFetch: jest.MockedFunction<typeof fetch>;
 
   beforeEach(() => {
+    jest.resetModules();
     mockGetWrapped.mockReset();
-    global.fetch = jest.fn() as any;
+    mockImageResponse.mockClear();
+    mockFetch = jest.fn<ReturnType<typeof fetch>, Parameters<typeof fetch>>();
+    global.fetch = mockFetch;
   });
 
   afterEach(() => {
@@ -43,17 +47,17 @@ describe('GET /api/wrapped/[id]/og', () => {
   it('returns 200 image response when everything succeeds', async () => {
     mockGetWrapped.mockResolvedValue({
       cards: [
-        { type: 'summary', totalGames: 10, averageScore: 8.5 },
-        { type: 'player_persona', persona: 'The Loyal Legend' },
-        { type: 'top_game', game: { title: 'Test Game', score: 10 } },
-        { type: 'genre_breakdown', data: [] },
+        { type: 'summary', title: 'Summary', description: 'desc', totalGames: 10, averageScore: 8.5 },
+        { type: 'player_persona', title: 'Persona', persona: 'The Loyal Legend', description: 'desc' },
+        { type: 'top_game', title: 'Top game', description: 'desc', game: { title: 'Test Game', platform: 'PC', score: 10, notes: '' } },
+        { type: 'genre_breakdown', title: 'Genres', description: 'desc', data: [] },
       ]
     });
 
-    (global.fetch as jest.Mock).mockResolvedValue({
+    mockFetch.mockResolvedValue({
       ok: true,
       arrayBuffer: async () => new ArrayBuffer(8),
-    } as any);
+    } as unknown as Response);
 
     const { GET } = await import('./route');
     const res = await GET(createMockRequest('http://localhost/api/wrapped/123/og'), { params: Promise.resolve({ id: '123' }) });
@@ -64,18 +68,18 @@ describe('GET /api/wrapped/[id]/og', () => {
   it('returns 200 image response when fonts fail', async () => {
     mockGetWrapped.mockResolvedValue({
       cards: [
-        { type: 'summary', totalGames: 10, averageScore: 8.5 },
-        { type: 'player_persona', persona: 'The Loyal Legend' },
-        { type: 'top_game', game: { title: 'Test Game', score: 10 } },
-        { type: 'genre_breakdown', data: [] },
+        { type: 'summary', title: 'Summary', description: 'desc', totalGames: 10, averageScore: 8.5 },
+        { type: 'player_persona', title: 'Persona', persona: 'The Loyal Legend', description: 'desc' },
+        { type: 'top_game', title: 'Top game', description: 'desc', game: { title: 'Test Game', platform: 'PC', score: 10, notes: '' } },
+        { type: 'genre_breakdown', title: 'Genres', description: 'desc', data: [] },
       ]
     });
 
     // Mock fetch to fail for fonts
-    (global.fetch as jest.Mock).mockResolvedValue({
+    mockFetch.mockResolvedValue({
       ok: false,
       status: 404,
-    } as any);
+    } as unknown as Response);
 
     const { GET } = await import('./route');
     const res = await GET(createMockRequest('http://localhost/api/wrapped/123/og'), { params: Promise.resolve({ id: '123' }) });
@@ -87,29 +91,29 @@ describe('GET /api/wrapped/[id]/og', () => {
   it('returns 200 image response when avatar fails', async () => {
      mockGetWrapped.mockResolvedValue({
       cards: [
-        { type: 'summary', totalGames: 10, averageScore: 8.5 },
-        { type: 'player_persona', persona: 'The Loyal Legend' },
-        { type: 'top_game', game: { title: 'Test Game', score: 10 } },
-        { type: 'genre_breakdown', data: [] },
+        { type: 'summary', title: 'Summary', description: 'desc', totalGames: 10, averageScore: 8.5 },
+        { type: 'player_persona', title: 'Persona', persona: 'The Loyal Legend', description: 'desc' },
+        { type: 'top_game', title: 'Top game', description: 'desc', game: { title: 'Test Game', platform: 'PC', score: 10, notes: '' } },
+        { type: 'genre_breakdown', title: 'Genres', description: 'desc', data: [] },
       ]
     });
 
     // Mock fetch to succeed for fonts but fail for avatar (simplified: just fail all)
     // Or we can mock implementation to check URL
-    (global.fetch as jest.Mock).mockImplementation(async (url: any) => {
-        const urlString = url.toString();
-        if (urlString.includes('google/fonts')) {
-             return {
-                 ok: true,
-                 arrayBuffer: async () => new ArrayBuffer(8),
-             };
-        }
-        if (urlString.includes('dicebear')) {
-             return {
-                 ok: false,
-             };
-        }
-        return { ok: false };
+    mockFetch.mockImplementation(async url => {
+      const urlString = url.toString();
+      if (urlString.includes('google/fonts')) {
+        return {
+          ok: true,
+          arrayBuffer: async () => new ArrayBuffer(8),
+        } as unknown as Response;
+      }
+      if (urlString.includes('dicebear')) {
+        return {
+          ok: false,
+        } as unknown as Response;
+      }
+      return { ok: false } as unknown as Response;
     });
 
     const { GET } = await import('./route');
