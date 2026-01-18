@@ -20,14 +20,6 @@ describe('GET /api/wrapped/[id]/og', () => {
   const createWrappedData = (): WrappedData => ({
     cards: [
       { type: 'summary', title: 'Summary', description: 'desc', totalGames: 10, averageScore: 8.5 },
-      { type: 'player_persona', title: 'Persona', persona: 'The Loyal Legend', description: 'desc' },
-      {
-        type: 'top_game',
-        title: 'Top game',
-        description: 'desc',
-        game: { title: 'Test Game', platform: 'PC', score: 10, notes: '' },
-      },
-      { type: 'genre_breakdown', title: 'Genres', description: 'desc', data: [] },
     ],
   });
 
@@ -74,7 +66,7 @@ describe('GET /api/wrapped/[id]/og', () => {
   it('returns 200 image response when everything succeeds', async () => {
     mockGetWrapped.mockResolvedValue(createWrappedData());
 
-    mockFetch.mockImplementation(async (input) => {
+    mockFetch.mockImplementation(async input => {
       const url = input.toString();
       if (url.includes('raw.githubusercontent.com/google/fonts')) {
         return new Response(new Uint8Array([1, 2, 3]), { status: 200 });
@@ -104,7 +96,7 @@ describe('GET /api/wrapped/[id]/og', () => {
   it('returns 200 image response when fonts fail', async () => {
     mockGetWrapped.mockResolvedValue(createWrappedData());
 
-    mockFetch.mockImplementation(async (input) => {
+    mockFetch.mockImplementation(async input => {
       const url = input.toString();
       if (url.includes('raw.githubusercontent.com/google/fonts')) {
         return new Response(null, { status: 404 });
@@ -131,7 +123,7 @@ describe('GET /api/wrapped/[id]/og', () => {
   it('returns 200 image response when avatar fails', async () => {
     mockGetWrapped.mockResolvedValue(createWrappedData());
 
-    mockFetch.mockImplementation(async (input) => {
+    mockFetch.mockImplementation(async input => {
       const url = input.toString();
       if (url.includes('raw.githubusercontent.com/google/fonts')) {
         return new Response(new Uint8Array([1, 2, 3]), { status: 200 });

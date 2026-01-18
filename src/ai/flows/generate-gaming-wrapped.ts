@@ -231,6 +231,7 @@ const generateGamingWrappedFlow = ai.defineFlow(
     const totalGames = games.length;
 
     const normalizeMarker = (value?: string) => (value ?? '').trim().toUpperCase();
+    const normalizeScore = (value?: string) => (value ?? '').trim();
     const isMarked = (value?: string) => {
       const v = normalizeMarker(value);
       // HLTB exports use 'X', but accept a few common truthy markers to avoid skew from minor CSV variations.
@@ -240,7 +241,7 @@ const generateGamingWrappedFlow = ai.defineFlow(
     // Count rated games (assuming 'review' is the score field)
     // Filter out '0' scores as they typically represent unrated games in HLTB exports
     const ratedGames = games.filter(g => {
-      const review = normalizeMarker(g.review);
+      const review = normalizeScore(g.review);
       return Boolean(review) && review !== '0';
     }).length;
 
