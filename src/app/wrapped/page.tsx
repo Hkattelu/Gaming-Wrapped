@@ -53,15 +53,15 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const totalGames = summaryCard?.totalGames ?? 0;
   const playtime = (totalGames * 20).toLocaleString();
 
-  const title = `Gaming Wrapped 2025: ${persona}`;
-  const description = `I played ${totalGames} games (mostly ${topGame}) for over ${playtime} hours this year! Check out my Gaming Wrapped.`;
-  const imageAlt = `Gaming Wrapped 2025 Summary for a ${persona}. Featured Game: ${topGame}. Total Games: ${totalGames}.`;
+  const title = `Gaming Wrapped: ${persona}`;
+  const description = `I played ${totalGames} games (mostly ${topGame}) for over ${playtime} hours! Check out my Gaming Wrapped.`;
+  const imageAlt = `Gaming Wrapped Summary for a ${persona}. Featured Game: ${topGame}. Total Games: ${totalGames}.`;
 
   return {
     metadataBase: safeHost,
     title,
     description,
-    keywords: ['Gaming Wrapped', 'Year in Review', '2025', 'Video Games', persona, topGame],
+    keywords: ['Gaming Wrapped', 'Year in Review', 'Video Games', persona, topGame],
     openGraph: {
       title,
       description,
