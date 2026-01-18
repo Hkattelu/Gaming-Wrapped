@@ -230,9 +230,18 @@ const generateGamingWrappedFlow = ai.defineFlow(
     const games = input.games || [];
     const totalGames = games.length;
 
+    const normalizeMarker = (value?: string) => (value ?? '').trim().toUpperCase();
+    const isMarked = (value?: string) => {
+      const v = normalizeMarker(value);
+      return v === 'X' || v === 'TRUE' || v === 'CHECK';
+    };
+
     // Count rated games (assuming 'review' is the score field)
     // Filter out '0' scores as they typically represent unrated games in HLTB exports
-    const ratedGames = games.filter(g => g.review && g.review.trim() !== '' && g.review !== '0').length;
+    const ratedGames = games.filter(g => {
+      const review = g.review?.trim();
+      return Boolean(review) && review !== '0';
+    }).length;
 
     // Count platforms
     const platforms = new Set(games.map(g => g.platform).filter(p => p && p.trim() !== ''));
@@ -240,19 +249,10 @@ const generateGamingWrappedFlow = ai.defineFlow(
 
     // Count completions
     // HLTB CSV uses 'X' for completed games. Also check for 'true'/'check' for potential other formats.
-    const completedGames = games.filter(g => 
-      g.completed === 'X' || 
-      g.completed === 'true' || 
-      g.completed === 'check' || 
-      g.mainStory === 'check'
-    ).length;
+    const completedGames = games.filter(g => isMarked(g.completed) || isMarked(g.mainStory)).length;
 
     // Calculate Backlog Hoarding
-    const backlogCount = games.filter(g => 
-      g.backlog === 'X' || 
-      g.backlog === 'true' || 
-      g.backlog === 'check'
-    ).length;
+    const backlogCount = games.filter(g => isMarked(g.backlog)).length;
     const hoardingRatio = totalGames > 0 ? (backlogCount / totalGames) : 0;
 
     // Platform analysis
