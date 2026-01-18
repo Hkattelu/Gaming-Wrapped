@@ -139,7 +139,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     }
 
     // Fetch Avatar with resilience
-    const avatarUrl = `https://api.dicebear.com/9.x/bottts/png?seed=${theme.seed}&backgroundColor=1a1a1a&size=512`;
+    const avatarUrl = `https://api.dicebear.com/9.x/bottts/png?seed=${encodeURIComponent(theme.seed)}&backgroundColor=1a1a1a&size=512`;
     let avatarBase64 = '';
     try {
         const avatarRes = await fetchWithTimeout(avatarUrl, 2000);
