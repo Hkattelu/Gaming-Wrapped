@@ -19,6 +19,20 @@ describe('GET /api/wrapped/[id]/og', () => {
   const originalFetch = global.fetch;
   let mockFetch: jest.MockedFunction<typeof fetch>;
 
+  const createWrappedData = (): WrappedData => ({
+    cards: [
+      { type: 'summary', title: 'Summary', description: 'desc', totalGames: 10, averageScore: 8.5 },
+      { type: 'player_persona', title: 'Persona', persona: 'The Loyal Legend', description: 'desc' },
+      {
+        type: 'top_game',
+        title: 'Top game',
+        description: 'desc',
+        game: { title: 'Test Game', platform: 'PC', score: 10, notes: '' },
+      },
+      { type: 'genre_breakdown', title: 'Genres', description: 'desc', data: [] },
+    ],
+  });
+
   beforeEach(() => {
     jest.resetModules();
     mockGetWrapped.mockReset();
@@ -45,14 +59,7 @@ describe('GET /api/wrapped/[id]/og', () => {
   });
 
   it('returns 200 image response when everything succeeds', async () => {
-    mockGetWrapped.mockResolvedValue({
-      cards: [
-        { type: 'summary', title: 'Summary', description: 'desc', totalGames: 10, averageScore: 8.5 },
-        { type: 'player_persona', title: 'Persona', persona: 'The Loyal Legend', description: 'desc' },
-        { type: 'top_game', title: 'Top game', description: 'desc', game: { title: 'Test Game', platform: 'PC', score: 10, notes: '' } },
-        { type: 'genre_breakdown', title: 'Genres', description: 'desc', data: [] },
-      ]
-    });
+    mockGetWrapped.mockResolvedValue(createWrappedData());
 
     mockFetch.mockResolvedValue({
       ok: true,
@@ -66,14 +73,7 @@ describe('GET /api/wrapped/[id]/og', () => {
   });
 
   it('returns 200 image response when fonts fail', async () => {
-    mockGetWrapped.mockResolvedValue({
-      cards: [
-        { type: 'summary', title: 'Summary', description: 'desc', totalGames: 10, averageScore: 8.5 },
-        { type: 'player_persona', title: 'Persona', persona: 'The Loyal Legend', description: 'desc' },
-        { type: 'top_game', title: 'Top game', description: 'desc', game: { title: 'Test Game', platform: 'PC', score: 10, notes: '' } },
-        { type: 'genre_breakdown', title: 'Genres', description: 'desc', data: [] },
-      ]
-    });
+    mockGetWrapped.mockResolvedValue(createWrappedData());
 
     // Mock fetch to fail for fonts
     mockFetch.mockResolvedValue({
@@ -89,30 +89,19 @@ describe('GET /api/wrapped/[id]/og', () => {
   });
   
   it('returns 200 image response when avatar fails', async () => {
-     mockGetWrapped.mockResolvedValue({
-      cards: [
-        { type: 'summary', title: 'Summary', description: 'desc', totalGames: 10, averageScore: 8.5 },
-        { type: 'player_persona', title: 'Persona', persona: 'The Loyal Legend', description: 'desc' },
-        { type: 'top_game', title: 'Top game', description: 'desc', game: { title: 'Test Game', platform: 'PC', score: 10, notes: '' } },
-        { type: 'genre_breakdown', title: 'Genres', description: 'desc', data: [] },
-      ]
-    });
+    mockGetWrapped.mockResolvedValue(createWrappedData());
 
-    // Mock fetch to succeed for fonts but fail for avatar (simplified: just fail all)
-    // Or we can mock implementation to check URL
-    mockFetch.mockImplementation(async url => {
-      const urlString = url.toString();
-      if (urlString.includes('google/fonts')) {
+    // Font fetch happens twice (via `Promise.all`), then avatar fetch.
+    let call = 0;
+    mockFetch.mockImplementation(async (..._args: unknown[]) => {
+      call += 1;
+      if (call <= 2) {
         return {
           ok: true,
           arrayBuffer: async () => new ArrayBuffer(8),
         } as unknown as Response;
       }
-      if (urlString.includes('dicebear')) {
-        return {
-          ok: false,
-        } as unknown as Response;
-      }
+
       return { ok: false } as unknown as Response;
     });
 

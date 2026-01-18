@@ -233,7 +233,8 @@ const generateGamingWrappedFlow = ai.defineFlow(
     const normalizeMarker = (value?: string) => (value ?? '').trim().toUpperCase();
     const isMarked = (value?: string) => {
       const v = normalizeMarker(value);
-      return v === 'X' || v === 'TRUE' || v === 'CHECK';
+      // HLTB exports use 'X', but accept a few common truthy markers to avoid skew from minor CSV variations.
+      return v === 'X' || v === 'TRUE' || v === 'CHECK' || v === 'YES' || v === 'Y' || v === '1';
     };
 
     // Count rated games (assuming 'review' is the score field)
