@@ -79,23 +79,57 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     };
     const rankColor = rankColors[rank] || "#cd7f32";
 
-    // Use activeCard theme if available (for specific card sharing)
-    // For now, keep the persona theme consistent for brand identity
+    // Fetch fonts with resilience
+    let fonts: any[] = [];
+    try {
+      const [fontData, interData] = await Promise.all([
+        fetch(
+          new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/pressstart2p/PressStart2P-Regular.ttf')
+        ).then((res) => {
+            if (!res.ok) throw new Error('Failed to fetch font');
+            return res.arrayBuffer();
+        }),
+        fetch(
+          new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/inter/static/Inter-Bold.ttf')
+        ).then((res) => {
+            if (!res.ok) throw new Error('Failed to fetch font');
+            return res.arrayBuffer();
+        })
+      ]);
+      
+      fonts = [
+          {
+            name: 'Press Start 2P',
+            data: fontData,
+            style: 'normal',
+          },
+          {
+            name: 'Inter',
+            data: interData,
+            style: 'normal',
+            weight: 700,
+          },
+        ];
+    } catch (e) {
+        console.warn('Failed to load fonts, using system fallback', e);
+    }
 
-    // Fetch fonts
-    const [fontData, interData] = await Promise.all([
-      fetch(
-        new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/pressstart2p/PressStart2P-Regular.ttf')
-      ).then((res) => res.arrayBuffer()),
-      fetch(
-        new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/inter/static/Inter-Bold.ttf')
-      ).then((res) => res.arrayBuffer())
-    ]);
-
-    // Fetch Avatar
+    // Fetch Avatar with resilience
     const avatarUrl = `https://api.dicebear.com/9.x/bottts/png?seed=${theme.seed}&backgroundColor=1a1a1a&size=512`;
-    const avatarBuffer = await fetch(avatarUrl).then(res => res.arrayBuffer());
-    const avatarBase64 = `data:image/png;base64,${Buffer.from(avatarBuffer).toString('base64')}`;
+    let avatarBase64 = '';
+    try {
+        const avatarRes = await fetch(avatarUrl);
+        if (avatarRes.ok) {
+            const avatarBuffer = await avatarRes.arrayBuffer();
+            avatarBase64 = `data:image/png;base64,${Buffer.from(avatarBuffer).toString('base64')}`;
+        } else {
+            throw new Error('Avatar fetch failed');
+        }
+    } catch (e) {
+        console.warn('Failed to load avatar', e);
+        // Fallback: 1x1 transparent pixel
+        avatarBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+    }
 
     const width = isVertical ? 1080 : 1200;
     const height = isVertical ? 1920 : 630;
@@ -136,7 +170,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             flexDirection: 'column',
             backgroundColor: '#09090b',
             color: 'white',
-            fontFamily: '"Press Start 2P"',
+            fontFamily: fonts.length > 0 ? '"Press Start 2P"' : 'sans-serif',
             position: 'relative',
           }}
         >
@@ -306,7 +340,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
                         width: isVertical ? '100%' : 'auto',
                         justifyContent: isVertical ? 'center' : 'flex-start',
                         lineHeight: '1.6',
-                        fontFamily: 'Inter',
+                        fontFamily: fonts.length > 0 ? 'Inter' : 'sans-serif',
                     }}>
                         {bodySubtitle}
                     </div>
@@ -372,7 +406,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
                       gap: '4px'
                   }}>
                       <div style={{ display: 'flex' }}>THANK YOU FOR SUPPORTING!</div>
-                      <div style={{ display: 'flex', fontSize: '8px', color: 'rgba(251, 191, 36, 0.6)' }}>SERIAL: GW-2025-{serial}</div>
+                      <div style={{ display: 'flex', fontSize: '8px', color: 'rgba(251, 191, 36, 0.6)' }}>SERIAL: GW-{serial}</div>
                   </div>
                 )}
             </div>
@@ -382,19 +416,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       {
         width,
         height,
-        fonts: [
-          {
-            name: 'Press Start 2P',
-            data: fontData,
-            style: 'normal',
-          },
-          {
-            name: 'Inter',
-            data: interData,
-            style: 'normal',
-            weight: 700,
-          },
-        ],
+        fonts: fonts.length > 0 ? fonts as any : undefined,
       }
     );
   } catch (error) {
