@@ -4,6 +4,23 @@ import { getWrapped } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
+type OgFont = {
+  name: string;
+  data: ArrayBuffer;
+  style: 'normal' | 'italic';
+  weight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+};
+
+async function fetchWithTimeout(input: URL | string, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(input, { signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 const PERSONA_CONFIG: Record<string, { seed: string; color: string; accent: string; icon: string }> = {
   "The Loyal Legend": { seed: "Loyal Legend", color: "#facc15", accent: "#f97316", icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" }, // Star
   "The Platinum Plunderer": { seed: "Platinum Plunderer", color: "#60a5fa", accent: "#4f46e5", icon: "M6 3h12l4 6-10 13L2 9z" }, // Gem
@@ -80,20 +97,26 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const rankColor = rankColors[rank] || "#cd7f32";
 
     // Fetch fonts with resilience
-    let fonts: any[] = [];
+    let fonts: OgFont[] = [];
     try {
       const [fontData, interData] = await Promise.all([
-        fetch(
-          new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/pressstart2p/PressStart2P-Regular.ttf')
-        ).then((res) => {
-            if (!res.ok) throw new Error('Failed to fetch font');
-            return res.arrayBuffer();
+        fetchWithTimeout(
+          new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/pressstart2p/PressStart2P-Regular.ttf'),
+          2000
+        ).then(async (res) => {
+          if (!res.ok) {
+            throw new Error(`Failed to fetch font (status ${res.status})`);
+          }
+          return await res.arrayBuffer();
         }),
-        fetch(
-          new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/inter/static/Inter-Bold.ttf')
-        ).then((res) => {
-            if (!res.ok) throw new Error('Failed to fetch font');
-            return res.arrayBuffer();
+        fetchWithTimeout(
+          new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/inter/static/Inter-Bold.ttf'),
+          2000
+        ).then(async (res) => {
+          if (!res.ok) {
+            throw new Error(`Failed to fetch font (status ${res.status})`);
+          }
+          return await res.arrayBuffer();
         })
       ]);
       
@@ -111,22 +134,24 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           },
         ];
     } catch (e) {
-        console.warn('Failed to load fonts, using system fallback', e);
+        const message = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+        console.warn(`Failed to load fonts, using system fallback (${message})`);
     }
 
     // Fetch Avatar with resilience
     const avatarUrl = `https://api.dicebear.com/9.x/bottts/png?seed=${theme.seed}&backgroundColor=1a1a1a&size=512`;
     let avatarBase64 = '';
     try {
-        const avatarRes = await fetch(avatarUrl);
+        const avatarRes = await fetchWithTimeout(avatarUrl, 2000);
         if (avatarRes.ok) {
             const avatarBuffer = await avatarRes.arrayBuffer();
             avatarBase64 = `data:image/png;base64,${Buffer.from(avatarBuffer).toString('base64')}`;
         } else {
-            throw new Error('Avatar fetch failed');
+            throw new Error(`Avatar fetch failed (status ${avatarRes.status})`);
         }
     } catch (e) {
-        console.warn('Failed to load avatar', e);
+        const message = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+        console.warn(`Failed to load avatar (${message})`);
         // Fallback: 1x1 transparent pixel
         avatarBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
     }
@@ -416,7 +441,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       {
         width,
         height,
-        fonts: fonts.length > 0 ? fonts as any : undefined,
+        fonts: fonts.length > 0 ? fonts : undefined,
       }
     );
   } catch (error) {
