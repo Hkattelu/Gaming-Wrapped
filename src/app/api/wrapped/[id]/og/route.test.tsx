@@ -40,15 +40,14 @@ describe('GET /api/wrapped/[id]/og', () => {
   };
 
   const getImageResponseOptions = () => {
+    expect(mockImageResponse).toHaveBeenCalled();
+
     const options = mockImageResponse.mock.calls[0]?.[1] as
       | { width?: number; height?: number; fonts?: unknown }
       | undefined;
 
-    if (!options) {
-      throw new Error('Expected ImageResponse to have been called with options');
-    }
-
-    return options;
+    expect(options).toBeDefined();
+    return options as { width?: number; height?: number; fonts?: unknown };
   };
 
   it('returns 404 if wrapped data not found', async () => {
@@ -66,8 +65,8 @@ describe('GET /api/wrapped/[id]/og', () => {
   it('returns 200 image response when everything succeeds', async () => {
     mockGetWrapped.mockResolvedValue(createWrappedData());
 
-    mockFetch.mockImplementation(async input => {
-      const url = input.toString();
+    mockFetch.mockImplementation(async (input) => {
+      const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
       if (url.includes('raw.githubusercontent.com/google/fonts')) {
         return new Response(new Uint8Array([1, 2, 3]), { status: 200 });
       }
@@ -96,8 +95,8 @@ describe('GET /api/wrapped/[id]/og', () => {
   it('returns 200 image response when fonts fail', async () => {
     mockGetWrapped.mockResolvedValue(createWrappedData());
 
-    mockFetch.mockImplementation(async input => {
-      const url = input.toString();
+    mockFetch.mockImplementation(async (input) => {
+      const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
       if (url.includes('raw.githubusercontent.com/google/fonts')) {
         return new Response(null, { status: 404 });
       }
@@ -123,8 +122,8 @@ describe('GET /api/wrapped/[id]/og', () => {
   it('returns 200 image response when avatar fails', async () => {
     mockGetWrapped.mockResolvedValue(createWrappedData());
 
-    mockFetch.mockImplementation(async input => {
-      const url = input.toString();
+    mockFetch.mockImplementation(async (input) => {
+      const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
       if (url.includes('raw.githubusercontent.com/google/fonts')) {
         return new Response(new Uint8Array([1, 2, 3]), { status: 200 });
       }
