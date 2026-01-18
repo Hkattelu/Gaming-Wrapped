@@ -2,15 +2,13 @@ import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals
 import { NextRequest } from 'next/server';
 import type { WrappedData } from '@/types';
 
-// Mock getWrapped
 type GetWrapped = (id: string) => Promise<WrappedData | null>;
 const mockGetWrapped = jest.fn<GetWrapped>();
 jest.mock('@/lib/db', () => ({
   getWrapped: (id: string) => mockGetWrapped(id),
 }));
 
-// Mock ImageResponse
-const mockImageResponse = jest.fn(() => new Response('Mock Image', { status: 200 }));
+const mockImageResponse = jest.fn((..._args: unknown[]) => new Response('Mock Image', { status: 200 }));
 jest.mock('next/og', () => ({
   ImageResponse: mockImageResponse,
 }));
@@ -49,68 +47,112 @@ describe('GET /api/wrapped/[id]/og', () => {
     return new NextRequest(new URL(url, 'http://localhost'));
   };
 
+  const getImageResponseOptions = () => {
+    const options = mockImageResponse.mock.calls[0]?.[1] as
+      | { width?: number; height?: number; fonts?: unknown }
+      | undefined;
+
+    if (!options) {
+      throw new Error('Expected ImageResponse to have been called with options');
+    }
+
+    return options;
+  };
+
   it('returns 404 if wrapped data not found', async () => {
     mockGetWrapped.mockResolvedValue(null);
-    
+
     const { GET } = await import('./route');
-    const res = await GET(createMockRequest('http://localhost/api/wrapped/123/og'), { params: Promise.resolve({ id: '123' }) });
-    
+    const res = await GET(createMockRequest('http://localhost/api/wrapped/123/og'), {
+      params: Promise.resolve({ id: '123' }),
+    });
+
     expect(res.status).toBe(404);
+    expect(mockImageResponse).not.toHaveBeenCalled();
   });
 
   it('returns 200 image response when everything succeeds', async () => {
     mockGetWrapped.mockResolvedValue(createWrappedData());
 
-    mockFetch.mockResolvedValue({
-      ok: true,
-      arrayBuffer: async () => new ArrayBuffer(8),
-    } as unknown as Response);
+    mockFetch.mockImplementation(async (input) => {
+      const url = input.toString();
+      if (url.includes('raw.githubusercontent.com/google/fonts')) {
+        return new Response(new Uint8Array([1, 2, 3]), { status: 200 });
+      }
+      if (url.includes('api.dicebear.com')) {
+        return new Response(new Uint8Array([4, 5, 6]), { status: 200 });
+      }
+
+      return new Response(null, { status: 404 });
+    });
 
     const { GET } = await import('./route');
-    const res = await GET(createMockRequest('http://localhost/api/wrapped/123/og'), { params: Promise.resolve({ id: '123' }) });
-    
+    const res = await GET(createMockRequest('http://localhost/api/wrapped/123/og'), {
+      params: Promise.resolve({ id: '123' }),
+    });
+
     expect(res.status).toBe(200);
+
+    expect(mockImageResponse).toHaveBeenCalledTimes(1);
+    const options = getImageResponseOptions();
+    expect(options.width).toBe(1200);
+    expect(options.height).toBe(630);
+    expect(Array.isArray(options.fonts)).toBe(true);
+    expect((options.fonts as unknown[]).length).toBe(2);
   });
 
   it('returns 200 image response when fonts fail', async () => {
     mockGetWrapped.mockResolvedValue(createWrappedData());
 
-    // Mock fetch to fail for fonts
-    mockFetch.mockResolvedValue({
-      ok: false,
-      status: 404,
-    } as unknown as Response);
-
-    const { GET } = await import('./route');
-    const res = await GET(createMockRequest('http://localhost/api/wrapped/123/og'), { params: Promise.resolve({ id: '123' }) });
-    
-    expect(res.status).toBe(200);
-    // You could spy on console.warn if you wanted to verify the warning
-  });
-  
-  it('returns 200 image response when avatar fails', async () => {
-    mockGetWrapped.mockResolvedValue(createWrappedData());
-
-    mockFetch.mockImplementation(async input => {
+    mockFetch.mockImplementation(async (input) => {
       const url = input.toString();
-
       if (url.includes('raw.githubusercontent.com/google/fonts')) {
-        return {
-          ok: true,
-          arrayBuffer: async () => new ArrayBuffer(8),
-        } as unknown as Response;
+        return new Response(null, { status: 404 });
+      }
+      if (url.includes('api.dicebear.com')) {
+        return new Response(new Uint8Array([4, 5, 6]), { status: 200 });
       }
 
-      if (url.includes('dicebear')) {
-        return { ok: false } as unknown as Response;
-      }
-
-      return { ok: false } as unknown as Response;
+      return new Response(null, { status: 404 });
     });
 
     const { GET } = await import('./route');
-    const res = await GET(createMockRequest('http://localhost/api/wrapped/123/og'), { params: Promise.resolve({ id: '123' }) });
-    
+    const res = await GET(createMockRequest('http://localhost/api/wrapped/123/og'), {
+      params: Promise.resolve({ id: '123' }),
+    });
+
     expect(res.status).toBe(200);
+
+    expect(mockImageResponse).toHaveBeenCalledTimes(1);
+    const options = getImageResponseOptions();
+    expect(options.fonts).toBeUndefined();
+  });
+
+  it('returns 200 image response when avatar fails', async () => {
+    mockGetWrapped.mockResolvedValue(createWrappedData());
+
+    mockFetch.mockImplementation(async (input) => {
+      const url = input.toString();
+      if (url.includes('raw.githubusercontent.com/google/fonts')) {
+        return new Response(new Uint8Array([1, 2, 3]), { status: 200 });
+      }
+      if (url.includes('api.dicebear.com')) {
+        return new Response(null, { status: 404 });
+      }
+
+      return new Response(null, { status: 404 });
+    });
+
+    const { GET } = await import('./route');
+    const res = await GET(createMockRequest('http://localhost/api/wrapped/123/og'), {
+      params: Promise.resolve({ id: '123' }),
+    });
+
+    expect(res.status).toBe(200);
+
+    expect(mockImageResponse).toHaveBeenCalledTimes(1);
+    const options = getImageResponseOptions();
+    expect(Array.isArray(options.fonts)).toBe(true);
+    expect((options.fonts as unknown[]).length).toBe(2);
   });
 });
