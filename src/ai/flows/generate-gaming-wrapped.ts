@@ -231,17 +231,28 @@ const generateGamingWrappedFlow = ai.defineFlow(
     const totalGames = games.length;
 
     // Count rated games (assuming 'review' is the score field)
-    const ratedGames = games.filter(g => g.review && g.review.trim() !== '').length;
+    // Filter out '0' scores as they typically represent unrated games in HLTB exports
+    const ratedGames = games.filter(g => g.review && g.review.trim() !== '' && g.review !== '0').length;
 
     // Count platforms
     const platforms = new Set(games.map(g => g.platform).filter(p => p && p.trim() !== ''));
     const uniquePlatforms = platforms.size;
 
     // Count completions
-    const completedGames = games.filter(g => g.completed === 'true' || g.completed === 'check' || g.mainStory === 'check').length;
+    // HLTB CSV uses 'X' for completed games. Also check for 'true'/'check' for potential other formats.
+    const completedGames = games.filter(g => 
+      g.completed === 'X' || 
+      g.completed === 'true' || 
+      g.completed === 'check' || 
+      g.mainStory === 'check'
+    ).length;
 
     // Calculate Backlog Hoarding
-    const backlogCount = games.filter(g => g.backlog === 'true' || g.backlog === 'check').length;
+    const backlogCount = games.filter(g => 
+      g.backlog === 'X' || 
+      g.backlog === 'true' || 
+      g.backlog === 'check'
+    ).length;
     const hoardingRatio = totalGames > 0 ? (backlogCount / totalGames) : 0;
 
     // Platform analysis
@@ -252,7 +263,7 @@ const generateGamingWrappedFlow = ai.defineFlow(
     const topPlatform = Object.entries(platformCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'None';
 
     // Average Score
-    const rawScores = games.map(g => parseFloat(g.review || '')).filter(s => !isNaN(s));
+    const rawScores = games.map(g => parseFloat(g.review || '')).filter(s => !isNaN(s) && s > 0);
     const averageRating = rawScores.length > 0 ? rawScores.reduce((a, b) => a + b, 0) / rawScores.length : 0;
 
     // Build Context Instructions
