@@ -46,7 +46,7 @@ describe('generateWrappedData', () => {
     const mockId = 'test-id';
 
     mockParseCsv.mockReturnValue(mockGames);
-    (global.fetch as any).mockResolvedValue({
+    (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ id: mockId }),
     });
@@ -88,7 +88,7 @@ describe('generateWrappedData', () => {
     const mockErrorData = { error: 'API error message' };
 
     mockParseCsv.mockReturnValue(mockGames);
-    (global.fetch as any).mockResolvedValue({
+    (global.fetch as jest.Mock).mockResolvedValue({
       ok: false,
       json: () => Promise.resolve(mockErrorData),
     });
@@ -125,7 +125,7 @@ describe('generateWrappedDataFromManual', () => {
 
     // parseCsv is called inside generateWrappedData with the CSV derived from manual games
     mockParseCsv.mockReturnValue(parsedGames as unknown as typeof parsedGames);
-    (global.fetch as any).mockResolvedValue({ ok: true, json: async () => ({ id: mockId }) });
+    (global.fetch as jest.Mock).mockResolvedValue({ ok: true, json: async () => ({ id: mockId }) });
 
     const result = await generateWrappedDataFromManual(mockManualGames);
 

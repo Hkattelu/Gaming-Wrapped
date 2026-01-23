@@ -55,7 +55,7 @@ export function TopGameCard({ card, isActive }: { card: TopGameCardType, isActiv
       </div>
 
       {/* Main Content */}
-      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-12 relative z-10">
+      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-24 md:mt-32 relative z-10">
         
         {/* Game Art Side */}
         <motion.div 

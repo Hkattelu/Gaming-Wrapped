@@ -4,6 +4,23 @@ import { getWrapped } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
+type OgFont = {
+  name: string;
+  data: ArrayBuffer;
+  style: 'normal' | 'italic';
+  weight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+};
+
+async function fetchWithTimeout(input: URL | string, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(input, { signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 const PERSONA_CONFIG: Record<string, { seed: string; color: string; accent: string; icon: string }> = {
   "The Loyal Legend": { seed: "Loyal Legend", color: "#facc15", accent: "#f97316", icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" }, // Star
   "The Platinum Plunderer": { seed: "Platinum Plunderer", color: "#60a5fa", accent: "#4f46e5", icon: "M6 3h12l4 6-10 13L2 9z" }, // Gem
@@ -79,23 +96,65 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     };
     const rankColor = rankColors[rank] || "#cd7f32";
 
-    // Use activeCard theme if available (for specific card sharing)
-    // For now, keep the persona theme consistent for brand identity
+    // Fetch fonts with resilience
+    let fonts: OgFont[] = [];
+    try {
+      const [fontData, interData] = await Promise.all([
+        fetchWithTimeout(
+          new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/pressstart2p/PressStart2P-Regular.ttf'),
+          2000
+        ).then(async (res) => {
+          if (!res.ok) {
+            throw new Error(`Failed to fetch font (status ${res.status})`);
+          }
+          return await res.arrayBuffer();
+        }),
+        fetchWithTimeout(
+          new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/inter/static/Inter-Bold.ttf'),
+          2000
+        ).then(async (res) => {
+          if (!res.ok) {
+            throw new Error(`Failed to fetch font (status ${res.status})`);
+          }
+          return await res.arrayBuffer();
+        })
+      ]);
+      
+      fonts = [
+          {
+            name: 'Press Start 2P',
+            data: fontData,
+            style: 'normal',
+          },
+          {
+            name: 'Inter',
+            data: interData,
+            style: 'normal',
+            weight: 700,
+          },
+        ];
+    } catch (e) {
+        const message = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+        console.warn(`Failed to load fonts, using system fallback (${message})`);
+    }
 
-    // Fetch fonts
-    const [fontData, interData] = await Promise.all([
-      fetch(
-        new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/pressstart2p/PressStart2P-Regular.ttf')
-      ).then((res) => res.arrayBuffer()),
-      fetch(
-        new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/inter/static/Inter-Bold.ttf')
-      ).then((res) => res.arrayBuffer())
-    ]);
-
-    // Fetch Avatar
-    const avatarUrl = `https://api.dicebear.com/9.x/bottts/png?seed=${theme.seed}&backgroundColor=1a1a1a&size=512`;
-    const avatarBuffer = await fetch(avatarUrl).then(res => res.arrayBuffer());
-    const avatarBase64 = `data:image/png;base64,${Buffer.from(avatarBuffer).toString('base64')}`;
+    // Fetch Avatar with resilience
+    const avatarUrl = `https://api.dicebear.com/9.x/bottts/png?seed=${encodeURIComponent(theme.seed)}&backgroundColor=1a1a1a&size=512`;
+    let avatarBase64 = '';
+    try {
+        const avatarRes = await fetchWithTimeout(avatarUrl, 2000);
+        if (avatarRes.ok) {
+            const avatarBuffer = await avatarRes.arrayBuffer();
+            avatarBase64 = `data:image/png;base64,${Buffer.from(avatarBuffer).toString('base64')}`;
+        } else {
+            throw new Error(`Avatar fetch failed (status ${avatarRes.status})`);
+        }
+    } catch (e) {
+        const message = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+        console.warn(`Failed to load avatar (${message})`);
+        // Fallback: 1x1 transparent pixel
+        avatarBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+    }
 
     const width = isVertical ? 1080 : 1200;
     const height = isVertical ? 1920 : 630;
@@ -136,7 +195,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             flexDirection: 'column',
             backgroundColor: '#09090b',
             color: 'white',
-            fontFamily: '"Press Start 2P"',
+            fontFamily: fonts.length > 0 ? '"Press Start 2P"' : 'sans-serif',
             position: 'relative',
           }}
         >
@@ -292,7 +351,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
                         width: isVertical ? '100%' : 'auto',
                         justifyContent: isVertical ? 'center' : 'flex-start',
                         lineHeight: '1.6',
-                        fontFamily: 'Inter',
+                        fontFamily: fonts.length > 0 ? 'Inter' : 'sans-serif',
                     }}>
                         {bodySubtitle}
                     </div>
@@ -358,7 +417,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
                       gap: '4px'
                   }}>
                       <div style={{ display: 'flex' }}>THANK YOU FOR SUPPORTING!</div>
-                      <div style={{ display: 'flex', fontSize: '8px', color: 'rgba(251, 191, 36, 0.6)' }}>SERIAL: GW-2025-{serial}</div>
+                      <div style={{ display: 'flex', fontSize: '8px', color: 'rgba(251, 191, 36, 0.6)' }}>SERIAL: GW-{serial}</div>
                   </div>
                 )}
             </div>
@@ -368,19 +427,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       {
         width,
         height,
-        fonts: [
-          {
-            name: 'Press Start 2P',
-            data: fontData,
-            style: 'normal',
-          },
-          {
-            name: 'Inter',
-            data: interData,
-            style: 'normal',
-            weight: 700,
-          },
-        ],
+        fonts: fonts.length > 0 ? fonts : undefined,
       }
     );
   } catch (error) {

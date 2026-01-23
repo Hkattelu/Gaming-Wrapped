@@ -86,7 +86,7 @@ describe('lib/igdb integration', () => {
     // Advance time close to expiry: expires_at = 300s; safety window is 60s → token becomes invalid when now >= 240s
     nowSpy.mockReturnValue(250_000);
     // Next call should trigger a new token fetch before hitting IGDB
-    (global.fetch as unknown as jest.Mock).mockImplementationOnce(async (input: any) => {
+    (global.fetch as unknown as jest.Mock).mockImplementationOnce(async (input: string) => {
       expect(String(input)).toContain('https://id.twitch.tv/oauth2/token');
       return { ok: true, json: async () => ({ access_token: 't2', expires_in: 300 }) } as unknown as Response;
     });

@@ -274,7 +274,7 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
               </>
             )}
           </div>
-          <Input id="dropzone-file" type="file" accept=".csv" className="hidden" onChange={handleFileChange} />
+          <Input id="dropzone-file" type="file" accept=".csv" className="sr-only" onChange={handleFileChange} />
         </label>
       </div>
 

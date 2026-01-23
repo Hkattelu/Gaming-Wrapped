@@ -45,17 +45,6 @@ const GenerateGamingWrappedInputSchema = z.object({
 
 type GenerateGamingWrappedInput = z.infer<typeof GenerateGamingWrappedInputSchema>;
 
-const CARD_TYPES = [
-  'platform_stats',
-  'top_game',
-  'summary',
-  'genre_breakdown',
-  'score_distribution',
-  'player_persona',
-  'roast',
-  'recommendations',
-] as const;
-
 const PlatformStatsCardSchema = z.object({
   type: z.literal('platform_stats'),
   title: z.string().describe('Title for the platform stats card'),
@@ -231,18 +220,34 @@ const generateGamingWrappedFlow = ai.defineFlow(
     const games = input.games || [];
     const totalGames = games.length;
 
+    const normalizeMarker = (value?: string) => (value ?? '').trim().toUpperCase();
+    // Reviews are expected to be numeric-like strings (e.g. "7.5" or "0" for unrated), so we intentionally
+    // avoid case normalization here.
+    const normalizeScore = (value?: string) => (value ?? '').trim();
+    const isMarked = (value?: string) => {
+      const v = normalizeMarker(value);
+      // HLTB exports use 'X', but accept a few common truthy markers to avoid skew from minor CSV variations.
+      return v === 'X' || v === 'TRUE' || v === 'CHECK' || v === 'YES' || v === 'Y' || v === '1';
+    };
+
     // Count rated games (assuming 'review' is the score field)
-    const ratedGames = games.filter(g => g.review && g.review.trim() !== '').length;
+    // Filter out '0' scores as they typically represent unrated games in HLTB exports
+    // Note: this intentionally matches the previous behavior (any non-empty, non-'0' review counts as "rated").
+    const ratedGames = games.filter(g => {
+      const review = normalizeScore(g.review);
+      return Boolean(review) && review !== '0';
+    }).length;
 
     // Count platforms
     const platforms = new Set(games.map(g => g.platform).filter(p => p && p.trim() !== ''));
     const uniquePlatforms = platforms.size;
 
     // Count completions
-    const completedGames = games.filter(g => g.completed === 'true' || g.completed === 'check' || g.mainStory === 'check').length;
+    // HLTB CSV uses 'X' for completed games. Also check for 'true'/'check' for potential other formats.
+    const completedGames = games.filter(g => isMarked(g.completed) || isMarked(g.mainStory)).length;
 
     // Calculate Backlog Hoarding
-    const backlogCount = games.filter(g => g.backlog === 'true' || g.backlog === 'check').length;
+    const backlogCount = games.filter(g => isMarked(g.backlog)).length;
     const hoardingRatio = totalGames > 0 ? (backlogCount / totalGames) : 0;
 
     // Platform analysis
@@ -253,7 +258,7 @@ const generateGamingWrappedFlow = ai.defineFlow(
     const topPlatform = Object.entries(platformCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'None';
 
     // Average Score
-    const rawScores = games.map(g => parseFloat(g.review || '')).filter(s => !isNaN(s));
+    const rawScores = games.map(g => parseFloat(g.review || '')).filter(s => !isNaN(s) && s > 0);
     const averageRating = rawScores.length > 0 ? rawScores.reduce((a, b) => a + b, 0) / rawScores.length : 0;
 
     // Build Context Instructions
