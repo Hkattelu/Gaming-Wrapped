@@ -215,7 +215,7 @@ export default function Home() {
           <div className="mb-12 relative group">
             <div className="absolute -inset-4 bg-primary/20 blur-xl rounded-full opacity-50 animate-pulse-slow group-hover:opacity-80 transition-opacity" />
             <Logo className="text-5xl md:text-7xl mb-4 text-neon animate-flicker relative z-10" />
-            <div className="mt-6 inline-block bg-black/40 border-b-2 border-primary/20 px-6 py-2 backdrop-blur-sm">
+            <div className="mt-6 inline-block bg-muted/30 dark:bg-black/40 border-b-2 border-primary/20 px-6 py-2 backdrop-blur-sm">
               <p className="text-xl md:text-2xl text-muted-foreground font-body tracking-[0.2em] uppercase">
                 Your year in gaming, visualized.
               </p>
@@ -227,7 +227,7 @@ export default function Home() {
             {/* Input Selection "Arcade Menu" */}
             <div className="relative">
               <div className="absolute -inset-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent blur-sm" />
-              <div className="bg-card/90 border-4 border-primary/30 pixel-corners p-8 backdrop-blur-md shadow-2xl relative overflow-hidden">
+              <div className="bg-card border-4 border-primary/30 pixel-corners p-8 backdrop-blur-md shadow-2xl relative overflow-hidden">
                  {/* Decorative Corner Screws */}
                 <div className="absolute top-2 left-2 w-2 h-2 bg-muted-foreground/30 rounded-full" />
                 <div className="absolute top-2 right-2 w-2 h-2 bg-muted-foreground/30 rounded-full" />
@@ -243,7 +243,7 @@ export default function Home() {
                   {/* Steam Option */}
                   <Dialog open={steamDialogOpen} onOpenChange={setSteamDialogOpen}>
                     <DialogTrigger asChild>
-                      <button className="group relative h-full min-h-[160px] bg-black/40 border-2 border-border hover:border-accent transition-all duration-300 p-6 flex flex-col items-center justify-center gap-4 pixel-corners hover:-translate-y-1 hover:shadow-[0_0_20px_oklch(var(--accent)/0.3)]">
+                      <button className="group relative h-full min-h-[160px] bg-muted/20 dark:bg-black/40 border-2 border-border hover:border-accent transition-all duration-300 p-6 flex flex-col items-center justify-center gap-4 pixel-corners hover:-translate-y-1 hover:shadow-[0_0_20px_oklch(var(--accent)/0.3)]">
                         <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center border border-accent/30 group-hover:scale-110 transition-transform duration-300">
                           <Import className="w-8 h-8 text-accent" />
                         </div>
@@ -254,41 +254,49 @@ export default function Home() {
                         <div className="absolute bottom-2 w-12 h-1 bg-border group-hover:bg-accent transition-colors" />
                       </button>
                     </DialogTrigger>
-                    <DialogContent className="pixel-corners border-4 border-primary bg-black/95">
+                    <DialogContent className="pixel-corners border-4 border-accent bg-zinc-950 text-emerald-500 font-mono shadow-[0_0_50px_rgba(16,185,129,0.2)] max-w-lg">
                       <DialogHeader>
-                        <DialogTitle className="font-headline text-xl text-primary tracking-wider">CONNECT TO STEAM</DialogTitle>
-                        <DialogDescription className="font-body text-lg text-muted-foreground">
-                          Enter your public Steam ID or Profile URL.
-                        </DialogDescription>
+                        <DialogTitle className="font-headline text-xl text-accent tracking-wider flex items-center gap-2">
+                           CONNECT STEAM
+                        </DialogTitle>
                       </DialogHeader>
                       <div className="space-y-6 pt-4">
-                        <input
-                          placeholder="STEAM ID OR URL..."
-                          value={steamId}
-                          onChange={(e) => setSteamId(e.target.value)}
-                          disabled={steamLoading}
-                          className="terminal-input w-full"
-                        />
-                        <p className="text-sm font-body text-muted-foreground">
-                          * Profile must be set to PUBLIC.<br/>
-                          * Find ID at <a href="https://steamid.io" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">steamid.io</a>.
-                        </p>
+                        <div className="relative">
+                           <div className="absolute inset-0 bg-emerald-500/10 animate-pulse pointer-events-none" />
+                           <input
+                             placeholder="ENTER STEAM ID / URL..."
+                             value={steamId}
+                             onChange={(e) => setSteamId(e.target.value)}
+                             disabled={steamLoading}
+                             className="w-full bg-black border-2 border-emerald-500/50 text-emerald-400 font-mono p-4 outline-none focus:border-emerald-400 focus:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all placeholder:text-emerald-500/30"
+                           />
+                        </div>
+                        
+                        <div className="text-xs font-mono text-emerald-500/60 space-y-1 p-4 border border-emerald-900/50 bg-black/50">
+                          <p>{'>'} PROFILE MUST BE PUBLIC</p>
+                        </div>
+
                         <Button 
                           onClick={handleSteamExport} 
                           disabled={steamLoading} 
-                          className="arcade-button w-full h-14 text-xl"
+                          className="w-full h-14 bg-emerald-600 hover:bg-emerald-500 text-black font-headline tracking-widest pixel-corners border-b-4 border-emerald-800 active:border-b-0 active:translate-y-1 transition-all"
                         >
-                          {steamLoading ? 'SCANNING...' : 'IMPORT GAMES'}
+                          {steamLoading ? 'READING' : 'CONNECT'}
                         </Button>
+
                         {steamProgress && (
-                          <div className="space-y-2 font-body text-accent">
+                          <div className="space-y-2 font-mono text-xs text-emerald-400">
                             <p className="animate-pulse">{'>'} {steamProgress}</p>
-                            <div className="w-full bg-primary/20 h-2 pixel-corners overflow-hidden">
-                              <div className="w-full h-full bg-primary animate-progress-indeterminate" />
+                            <div className="w-full bg-emerald-900/30 h-1 pixel-corners overflow-hidden">
+                              <div className="w-full h-full bg-emerald-500 animate-progress-indeterminate" />
                             </div>
                           </div>
                         )}
-                        {steamError && <p className="font-body text-red-500 bg-red-950/30 p-2 border border-red-900">{'>'} ERROR: {steamError}</p>}
+                        {steamError && (
+                           <div className="font-mono text-xs text-red-500 bg-red-950/20 p-2 border border-red-900 pixel-corners">
+                              <span className="blink">ERROR_FATAL:</span> {steamError}
+                           </div>
+                        )}
                       </div>
                     </DialogContent>
                   </Dialog>
@@ -296,7 +304,7 @@ export default function Home() {
                   {/* Backloggd Option */}
                   <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
-                      <button className="group relative h-full min-h-[160px] bg-black/40 border-2 border-border hover:border-primary transition-all duration-300 p-6 flex flex-col items-center justify-center gap-4 pixel-corners hover:-translate-y-1 hover:shadow-[0_0_20px_oklch(var(--primary)/0.3)]">
+                      <button className="group relative h-full min-h-[160px] bg-muted/20 dark:bg-black/40 border-2 border-border hover:border-primary transition-all duration-300 p-6 flex flex-col items-center justify-center gap-4 pixel-corners hover:-translate-y-1 hover:shadow-[0_0_20px_oklch(var(--primary)/0.3)]">
                         <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center border border-primary/30 group-hover:scale-110 transition-transform duration-300">
                           <GanttChartSquare className="w-8 h-8 text-primary" />
                         </div>
@@ -307,37 +315,45 @@ export default function Home() {
                         <div className="absolute bottom-2 w-12 h-1 bg-border group-hover:bg-primary transition-colors" />
                       </button>
                     </DialogTrigger>
-                    <DialogContent className="pixel-corners border-4 border-primary bg-black/95">
+                    <DialogContent className="pixel-corners border-4 border-primary bg-zinc-950 text-primary font-mono shadow-[0_0_50px_rgba(255,46,80,0.2)] max-w-lg">
                       <DialogHeader>
-                        <DialogTitle className="font-headline text-xl text-primary tracking-wider">CONNECT BACKLOGGD</DialogTitle>
-                        <DialogDescription className="font-body text-lg text-muted-foreground">
-                          Enter your username to fetch data.
-                        </DialogDescription>
+                        <DialogTitle className="font-headline text-xl text-primary tracking-wider flex items-center gap-2">
+                           CONNECT BACKLOGGD
+                        </DialogTitle>
                       </DialogHeader>
                       <div className="space-y-6 pt-4">
-                        <input
-                          placeholder="USERNAME..."
-                          value={backloggdUsername}
-                          onChange={(e) => setBackloggdUsername(e.target.value)}
-                          disabled={isLoading}
-                          className="terminal-input w-full"
-                        />
+                        <div className="relative">
+                           <div className="absolute inset-0 bg-primary/10 pointer-events-none" />
+                           <input
+                              placeholder="ENTER USERNAME..."
+                              value={backloggdUsername}
+                              onChange={(e) => setBackloggdUsername(e.target.value)}
+                              disabled={isLoading}
+                              className="w-full bg-black border-2 border-primary/50 text-primary font-mono p-4 outline-none focus:border-primary focus:shadow-[0_0_20px_rgba(255,46,80,0.3)] transition-all placeholder:text-primary"
+                           />
+                        </div>
+
                         <Button 
                           onClick={handleBackloggdExport} 
                           disabled={isLoading} 
-                          className="arcade-button w-full h-14 text-xl"
+                          className="w-full h-14 bg-primary hover:bg-primary/90 text-white font-headline tracking-widest pixel-corners border-b-4 border-red-900 active:border-b-0 active:translate-y-1 transition-all"
                         >
-                          {isLoading ? 'LOADING...' : 'IMPORT GAMES'}
+                          {isLoading ? 'DOWNLOADING...' : 'IMPORT'}
                         </Button>
+
                         {progress && (
-                          <div className="space-y-2 font-body text-primary">
-                            <p className="animate-pulse">{'>'} {progress.page > 0 ? `FETCHING PAGE ${progress.page}...` : 'IMPORT COMPLETE.'}</p>
-                            <div className="w-full bg-primary/20 h-2 pixel-corners overflow-hidden">
+                          <div className="space-y-2 font-mono text-xs text-primary">
+                            <p className="animate-pulse">{'>'} {progress.page > 0 ? `PACKET_RECEIVED: PAGE ${progress.page}...` : 'TRANSFER COMPLETE.'}</p>
+                            <div className="w-full bg-primary/20 h-1 pixel-corners overflow-hidden">
                               <div className="w-full h-full bg-primary animate-progress-indeterminate" />
                             </div>
                           </div>
                         )}
-                        {error && <p className="font-body text-red-500 bg-red-950/30 p-2 border border-red-900">{'>'} ERROR: {error}</p>}
+                        {error && (
+                           <div className="font-mono text-xs text-red-500 bg-red-950/20 p-2 border border-red-900 pixel-corners">
+                              <span className="blink">ERROR_FATAL:</span> {error}
+                           </div>
+                        )}
                       </div>
                     </DialogContent>
                   </Dialog>
@@ -348,17 +364,17 @@ export default function Home() {
                 <div className="relative my-10 flex items-center gap-4">
                    <div className="h-px bg-border flex-1" />
                    <div className="w-3 h-3 bg-primary rotate-45" />
-                   <span className="font-headline text-sm text-muted-foreground tracking-widest">FILE SYSTEM</span>
+                   <span className="font-headline text-sm text-muted-foreground tracking-widest"></span>
                    <div className="w-3 h-3 bg-primary rotate-45" />
                    <div className="h-px bg-border flex-1" />
                 </div>
 
                 {/* Upload Card */}
                 <Card className={cn(
-                  "w-full bg-black/40 backdrop-blur-sm transition-all duration-500 pixel-corners border-2",
-                  file ? "shadow-[0_0_30px_oklch(var(--accent)/0.2)] border-accent" : "border-border shadow-lg"
+                  "w-full backdrop-blur-sm transition-all duration-500 pixel-corners border-2",
+                  file ? "shadow-[0_0_30px_oklch(var(--accent)/0.2)] border-accent bg-accent/5" : "border-border shadow-lg bg-card/50"
                 )}>
-                  <CardHeader className="text-center pb-2 border-b border-border/50 bg-black/20">
+                  <CardHeader className="text-center pb-2 border-b border-border/50 bg-muted/20">
                     <CardTitle className={cn(
                       "font-headline text-xl tracking-widest transition-colors duration-500 flex items-center justify-center gap-3",
                       file ? "text-accent animate-pulse" : "text-foreground"
@@ -432,65 +448,74 @@ export default function Home() {
             </div>
           )}
 
-          {/* Walkthrough - Process */}
-          <div className="mt-32 w-full max-w-6xl">
-             <div className="flex items-center gap-4 mb-16 justify-center">
-                <div className="h-1 bg-gradient-to-r from-transparent to-primary w-24 md:w-48 opacity-30" />
-                <h2 className="text-3xl md:text-4xl font-headline text-center text-primary text-neon tracking-widest uppercase">
-                  WALKTHROUGH
-                </h2>
-                <div className="h-1 bg-gradient-to-l from-transparent to-primary w-24 md:w-48 opacity-30" />
+          {/* Walkthrough - Instruction Manual Style */}
+          <div className="mt-32 w-full max-w-6xl pb-20">
+             <div className="bg-card border-4 border-border pixel-corners p-8 relative overflow-hidden">
+                {/* Decorative Binding */}
+                <div className="absolute top-0 left-0 bottom-0 w-8 bg-border/20 border-r-2 border-border/50 hidden md:block" />
+                <div className="absolute top-0 right-0 w-16 h-16 bg-primary/10 rotate-45 transform translate-x-8 -translate-y-8" />
+                
+                <div className="md:pl-12 relative z-10">
+                   <div className="flex flex-col md:flex-row items-start md:items-center justify-center mb-12 border-b-2 border-dashed border-border/50 pb-6">
+                      <h2 className="text-3xl md:text-5xl font-headline text-primary text-neon uppercase tracking-widest">
+                        HOW TO PLAY
+                      </h2>
+                   </div>
+
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                      {/* Step 1 */}
+                      <div className="relative group">
+                         <div className="absolute -left-4 -top-4 text-6xl font-headline text-border/30 z-0">01</div>
+                         <div className="relative z-10">
+                            <h3 className="text-xl font-headline text-foreground mb-4 group-hover:text-primary transition-colors uppercase">
+                               Connect
+                            </h3>
+                            <div className="h-32 bg-black/5 border-2 border-dashed border-foreground/20 mb-4 flex items-center justify-center pixel-corners group-hover:border-primary/50 transition-colors">
+                               <Import className="w-12 h-12 text-muted-foreground group-hover:text-primary group-hover:scale-110 transition-all duration-300" />
+                            </div>
+                            <p className="font-body text-lg text-muted-foreground leading-relaxed">
+                               Insert your gaming history via Steam, Backloggd, or CSV file. Secure connection established.
+                            </p>
+                         </div>
+                      </div>
+
+                      {/* Step 2 */}
+                      <div className="relative group">
+                         <div className="absolute -left-4 -top-4 text-6xl font-headline text-border/30 z-0">02</div>
+                         <div className="relative z-10">
+                            <h3 className="text-xl font-headline text-foreground mb-4 group-hover:text-accent transition-colors uppercase">
+                               Process
+                            </h3>
+                            <div className="h-32 bg-black/5 border-2 border-dashed border-foreground/20 mb-4 flex items-center justify-center pixel-corners group-hover:border-accent/50 transition-colors">
+                               <div className="relative">
+                                  <GanttChartSquare className="w-12 h-12 text-muted-foreground group-hover:text-accent group-hover:rotate-12 transition-all duration-300" />
+                                  <div className="absolute -right-2 -top-2 w-3 h-3 bg-accent rounded-full animate-ping opacity-0 group-hover:opacity-100" />
+                               </div>
+                            </div>
+                            <p className="font-body text-lg text-muted-foreground leading-relaxed">
+                               Our engine analyzes your playstyle, genres, and completion rates to build your profile.
+                            </p>
+                         </div>
+                      </div>
+
+                      {/* Step 3 */}
+                      <div className="relative group">
+                         <div className="absolute -left-4 -top-4 text-6xl font-headline text-border/30 z-0">03</div>
+                         <div className="relative z-10">
+                            <h3 className="text-xl font-headline text-foreground mb-4 group-hover:text-secondary transition-colors uppercase">
+                               Unlock
+                            </h3>
+                            <div className="h-32 bg-black/5 border-2 border-dashed border-foreground/20 mb-4 flex items-center justify-center pixel-corners group-hover:border-secondary/50 transition-colors">
+                               <Share2 className="w-12 h-12 text-muted-foreground group-hover:text-secondary group-hover:-translate-y-2 transition-all duration-300" />
+                            </div>
+                            <p className="font-body text-lg text-muted-foreground leading-relaxed">
+                               Receive your personalized player persona and share your stats card with the squad.
+                            </p>
+                         </div>
+                      </div>
+                   </div>
+                </div>
              </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-left relative">
-              {/* Connecting Line */}
-              <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-1 bg-border -z-10 border-t-2 border-dashed border-muted-foreground/20" />
-
-              <div className="group relative">
-                <div className="absolute inset-0 bg-primary/20 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="bg-card border-4 border-border p-8 flex flex-col items-center text-center gap-6 pixel-corners shadow-xl relative z-10 h-full hover:-translate-y-2 transition-transform duration-300">
-                  <div className="flex items-center justify-center h-20 w-20 bg-black border-2 border-primary shadow-[0_0_15px_oklch(var(--primary)/0.4)] pixel-corners rotate-3 group-hover:rotate-0 transition-all duration-300">
-                    <Import className="h-10 w-10 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-headline text-xl mb-3 text-foreground tracking-wider">1. CONNECT</h3>
-                    <p className="font-body text-xl text-muted-foreground leading-relaxed">
-                      Connect your gaming accounts or upload a CSV file to begin the analysis.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group relative">
-                <div className="absolute inset-0 bg-accent/20 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="bg-card border-4 border-border p-8 flex flex-col items-center text-center gap-6 pixel-corners shadow-xl relative z-10 h-full hover:-translate-y-2 transition-transform duration-300">
-                  <div className="flex items-center justify-center h-20 w-20 bg-black border-2 border-accent shadow-[0_0_15px_oklch(var(--accent)/0.4)] pixel-corners -rotate-2 group-hover:rotate-0 transition-all duration-300">
-                    <GanttChartSquare className="h-10 w-10 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="font-headline text-xl mb-3 text-foreground tracking-wider">2. ANALYZE</h3>
-                    <p className="font-body text-xl text-muted-foreground leading-relaxed">
-                      Our AI decodes your playstyle and ratings to craft your personalized story.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group relative">
-                <div className="absolute inset-0 bg-secondary/20 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="bg-card border-4 border-border p-8 flex flex-col items-center text-center gap-6 pixel-corners shadow-xl relative z-10 h-full hover:-translate-y-2 transition-transform duration-300">
-                  <div className="flex items-center justify-center h-20 w-20 bg-black border-2 border-secondary shadow-[0_0_15px_oklch(var(--secondary)/0.4)] pixel-corners rotate-1 group-hover:rotate-0 transition-all duration-300">
-                    <Share2 className="h-10 w-10 text-secondary" />
-                  </div>
-                  <div>
-                    <h3 className="font-headline text-xl mb-3 text-foreground tracking-wider">3. SHARE</h3>
-                    <p className="font-body text-xl text-muted-foreground leading-relaxed">
-                      Download your high-res cards and share your gaming highlights with friends.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
 
           <div className="mt-32 w-full text-left max-w-4xl pb-20">

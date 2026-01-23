@@ -237,7 +237,7 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
             "flex flex-col items-center justify-center w-full border-4 border-dashed cursor-pointer transition-all duration-300 pixel-corners min-h-[200px]",
             file
               ? "border-accent bg-accent/10 hover:bg-accent/20"
-              : "border-primary/50 bg-black/40 hover:bg-primary/10 hover:border-primary"
+              : "border-primary/50 bg-muted/10 dark:bg-black/40 hover:bg-primary/10 hover:border-primary"
           )}
         >
           <div className="flex flex-col items-center justify-center pt-5 pb-6 px-4 text-center">
@@ -279,7 +279,7 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
       </div>
 
       {file && previewData && !isLoading && (
-        <div className="grid grid-cols-1 gap-4 p-6 bg-black/40 border-4 border-accent/50 pixel-corners animate-in fade-in slide-in-from-bottom-4 duration-500 shadow-[0_0_15px_oklch(var(--accent)/0.2)]">
+        <div className="grid grid-cols-1 gap-4 p-6 bg-muted/20 dark:bg-black/40 border-4 border-accent/50 pixel-corners animate-in fade-in slide-in-from-bottom-4 duration-500 shadow-[0_0_15px_oklch(var(--accent)/0.2)]">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-accent/10 border-2 border-accent pixel-corners">
               <Gamepad2 className="w-6 h-6 text-accent" />

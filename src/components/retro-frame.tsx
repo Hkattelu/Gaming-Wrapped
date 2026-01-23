@@ -175,6 +175,56 @@ export function RetroFrame({
           <span className="text-[6px] font-headline text-gray-600 dark:text-[#71717a]">START</span>
         </div>
       </div>
+
+      {/* Mobile Controls (Visible < xl) */}
+      <div className="xl:hidden fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4 pointer-events-none">
+        {/* Navigation Group */}
+        <div className="flex gap-2 pointer-events-auto">
+           <button 
+             onClick={onPrev}
+             className="w-12 h-12 bg-red-600 rounded-full border-b-4 border-red-800 active:border-b-0 active:translate-y-1 shadow-lg flex items-center justify-center"
+             aria-label="Previous"
+           >
+             <div className="w-0 h-0 border-t-[8px] border-t-transparent border-r-[12px] border-r-white/80 border-b-[8px] border-b-transparent" />
+           </button>
+           <button 
+             onClick={onNext}
+             className="w-12 h-12 bg-emerald-600 rounded-full border-b-4 border-emerald-800 active:border-b-0 active:translate-y-1 shadow-lg flex items-center justify-center"
+             aria-label="Next"
+           >
+             <div className="w-0 h-0 border-t-[8px] border-t-transparent border-l-[12px] border-l-white/80 border-b-[8px] border-b-transparent" />
+           </button>
+        </div>
+
+        {/* Action Group */}
+        <div className="flex gap-2 pointer-events-auto">
+          <button 
+            onClick={onToggleMute}
+            className={cn(
+              "w-10 h-10 rounded-full border-b-4 flex items-center justify-center shadow-lg transition-all",
+              isMuted 
+                ? "bg-blue-600 border-blue-800 translate-y-1 opacity-80" 
+                : "bg-blue-500 border-blue-700"
+            )}
+            aria-label="Toggle Mute"
+          >
+            {isMuted ? <VolumeX className="w-5 h-5 text-white" /> : <Volume2 className="w-5 h-5 text-white" />}
+          </button>
+          
+          <button 
+            onClick={handleThemeToggle}
+            className={cn(
+               "w-10 h-10 rounded-full border-b-4 flex items-center justify-center shadow-lg transition-all",
+               isDark
+                 ? "bg-purple-600 border-purple-800"
+                 : "bg-yellow-500 border-yellow-700"
+            )}
+            aria-label="Toggle Theme"
+          >
+             {mounted && (isDark ? <Sun className="w-5 h-5 text-white" /> : <Moon className="w-5 h-5 text-white" />)}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
