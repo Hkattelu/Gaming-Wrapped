@@ -336,7 +336,6 @@ const generateGamingWrappedFlow = ai.defineFlow(
         }, 0);
 
         if (totalPlaytimeMinutes > 0) {
-          // @ts-expect-error Property 'totalPlaytime' does not exist on type
           summaryCard.totalPlaytime = totalPlaytimeMinutes;
         }
       }

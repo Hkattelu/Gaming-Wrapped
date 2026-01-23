@@ -84,18 +84,6 @@ export function ScoreDistributionCard({ card, isActive }: { card: ScoreDistribut
       {/* Main Board Container */}
       <div className="w-full max-w-2xl relative z-10">
         <div className="relative bg-card border-4 border-border p-6 md:p-10 pixel-corners shadow-2xl">
-          
-          {/* Average Score Badge */}
-          <div className="absolute bottom-25 left-1/2 -translate-x-1/2 z-20">
-            <motion.div 
-              initial={{ scale: 0, rotate: -10 }}
-              animate={{ scale: isActive ? 1 : 0, rotate: isActive ? -2 : -10 }}
-              className="bg-accent text-accent-foreground font-headline text-sm md:text-base px-6 py-2 uppercase tracking-tighter border-4 border-foreground shadow-[4px_4px_0px_rgba(0,0,0,1)]"
-            >
-              Avg Grade: {averageScore}
-            </motion.div>
-          </div>
-
           <div className="grid grid-cols-1 gap-6">
             {sortedData.map((item, index) => {
               const config = getScoreCategory(item.range);
@@ -137,7 +125,7 @@ export function ScoreDistributionCard({ card, isActive }: { card: ScoreDistribut
                     <div className="flex justify-between items-end mb-2">
                       <div className="flex flex-col">
                         <span className="font-headline text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest">
-                          {config.label} Class
+                          {config.label}
                         </span>
                         <span className="font-headline text-sm md:text-base text-foreground uppercase">
                           Score {item.range}
@@ -172,16 +160,12 @@ export function ScoreDistributionCard({ card, isActive }: { card: ScoreDistribut
             className="mt-10 pt-6 border-t-4 border-dashed border-border flex flex-col md:flex-row items-center justify-between gap-4"
           >
             <div className="flex items-center gap-3">
-              <div className={cn("w-12 h-12 pixel-corners border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_black]", personaColor)}>
-                <span className="font-headline text-xl text-black">{personaTag}</span>
+              <div className={cn("w-20 h-12 pixel-corners border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_black]", personaColor)}>
+                <span className="font-headline text-xl text-black">{averageScore}</span>
               </div>
               <div className="text-center md:text-left">
-                <p className="text-[10px] font-headline text-muted-foreground uppercase">Critical Rating</p>
-                <p className="font-headline text-sm text-foreground uppercase">{persona}</p>
+                <p className="font-headline text-sm text-foreground uppercase">Average rating</p>
               </div>
-            </div>
-            <div className="bg-foreground/5 px-4 py-2 pixel-corners border border-border">
-               <p className="text-[8px] font-headline text-accent animate-pulse uppercase">Verdict: {avg >= 8 ? "Peak Taste" : "Mixed Signals"}</p>
             </div>
           </motion.div>
 

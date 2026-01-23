@@ -85,13 +85,11 @@ export function PlatformStatsCard({ card, isActive }: { card: PlatformStatsCardT
                         <Icon className="w-6 h-6 text-white dark:text-background" />
                       </div>
                       <div>
-                        <span className="font-headline text-[8px] text-muted-foreground uppercase block tracking-tighter">Hardware ID</span>
                         <span className="font-headline text-sm md:text-base text-foreground uppercase">{platform.platform}</span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="font-headline text-[8px] text-muted-foreground uppercase block tracking-tighter">Usage Log</span>
-                      <span className="font-headline text-lg md:text-xl text-primary">{platform.count} UNITS</span>
+                      <span className="font-headline text-lg md:text-xl text-primary">{platform.count} GAMES</span>
                     </div>
                   </div>
 

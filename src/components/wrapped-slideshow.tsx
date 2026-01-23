@@ -583,13 +583,6 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
               </CarouselItem>
             </CarouselContent>
           </Carousel>
-
-          {/* Subtle Watermark */}
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-50 opacity-30 pointer-events-none">
-            <span className="font-headline text-[6px] text-muted-foreground tracking-[0.3em]">
-              GAMINGWRAPPED.COM
-            </span>
-          </div>
         </div>
       </RetroFrame>
     </div>

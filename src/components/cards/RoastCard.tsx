@@ -74,7 +74,7 @@ export function RoastCardComponent({ card, isActive }: RoastCardProps) {
                    transition={{ type: "spring", stiffness: 200, delay: 0.3 }}
                    className="bg-gray-100 dark:bg-zinc-950 border-4 border-foreground p-6 pixel-corners shadow-[4px_4px_0px_rgba(0,0,0,0.5)]"
                  >
-                  <p className="font-mono text-xs md:text-sm leading-relaxed text-emerald-600 dark:text-emerald-500">
+                  <p className="font-mono text-sm md:text-base lg:text-lg leading-relaxed text-emerald-700 dark:text-emerald-400">
                     <span className="opacity-50"># ROAST_INITIALIZED...</span><br/>
                     <motion.span 
                       initial={{ opacity: 0 }}

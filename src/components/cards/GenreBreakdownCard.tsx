@@ -57,7 +57,7 @@ export function GenreBreakdownCard({ card, isActive }: { card: GenreBreakdownCar
           Genre Conquest
         </h1>
         <p className="text-muted-foreground text-xl md:text-2xl max-w-2xl mx-auto font-body">
-          The territories you dominated this year.
+          The genres you dominated this year.
         </p>
       </div>
 
@@ -94,7 +94,7 @@ export function GenreBreakdownCard({ card, isActive }: { card: GenreBreakdownCar
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-end mb-1">
                         <span className={cn("font-headline text-xs uppercase truncate", config.colorClass)}>
-                          {item.genre} Territory
+                          {item.genre}
                         </span>
                         <span className="font-headline text-lg text-foreground">{percentage}%</span>
                       </div>
@@ -109,12 +109,6 @@ export function GenreBreakdownCard({ card, isActive }: { card: GenreBreakdownCar
                         />
                       </div>
                     </div>
-                  </div>
-
-                  {/* Level / Status Text */}
-                  <div className="mt-3 pt-3 border-t-2 border-dashed border-border flex justify-between items-center">
-                    <span className="text-[8px] font-headline text-muted-foreground uppercase">Level: {item.count} Mastery</span>
-                    <span className="text-[8px] font-headline text-accent uppercase animate-pulse">Controlled</span>
                   </div>
                 </div>
                 {/* Shadow layer */}

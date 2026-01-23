@@ -104,7 +104,7 @@ export function TopGameCard({ card, isActive }: { card: TopGameCardType, isActiv
             )}
             <div className="absolute inset-0 crt-overlay opacity-30 pointer-events-none" />
             <div className="absolute bottom-0 left-0 right-0 bg-black/80 p-2 border-t-4 border-foreground">
-               <p className="font-headline text-[8px] text-primary animate-pulse text-center">BOSS DEFEATED</p>
+               <p className="font-headline text-[8px] text-primary animate-pulse text-center">TOP GAME</p>
             </div>
           </motion.div>
           {/* Shadow layer */}
@@ -118,7 +118,6 @@ export function TopGameCard({ card, isActive }: { card: TopGameCardType, isActiv
             animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : 20 }}
             transition={{ delay: 0.6 }}
           >
-            <span className="font-headline text-xs text-accent uppercase tracking-[0.2em]">Primary Target</span>
             <h2 className="font-headline text-3xl md:text-5xl text-foreground uppercase leading-none mt-2 break-words">
               {card.game.title}
             </h2>
@@ -132,7 +131,7 @@ export function TopGameCard({ card, isActive }: { card: TopGameCardType, isActiv
             className="space-y-2 origin-left"
           >
             <div className="flex justify-between items-end font-headline text-[10px] uppercase">
-              <span className="text-primary">Engagement Level</span>
+              <span className="text-primary">Your Rating</span>
               <span className="text-foreground">{displayScore}{card.game.formattedScore ? '' : '/10'}</span>
             </div>
             <div className="h-8 w-full bg-zinc-900 border-4 border-foreground p-1 pixel-corners relative overflow-hidden">
@@ -160,7 +159,7 @@ export function TopGameCard({ card, isActive }: { card: TopGameCardType, isActiv
               </p>
             </div>
             <div className="bg-foreground/5 border-2 border-border p-3 pixel-corners flex-1 min-w-[200px]">
-              <p className="text-[8px] font-headline text-muted-foreground uppercase">Verdict</p>
+              <p className="text-[8px] font-headline text-muted-foreground uppercase">Notes</p>
               <p className="font-body text-sm text-foreground mt-1 line-clamp-3 italic italic-muted">
                 &quot;{card.game.notes || "A journey that defined the year."}&quot;
               </p>
