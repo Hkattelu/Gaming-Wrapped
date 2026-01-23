@@ -229,24 +229,24 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 font-body">
+    <form onSubmit={handleSubmit} className="space-y-6 font-body">
       <div className="flex items-center justify-center w-full">
         <label
           htmlFor="dropzone-file"
           className={cn(
-            "flex flex-col items-center justify-center w-full border-2 border-dashed rounded-lg cursor-pointer transition-colors",
+            "flex flex-col items-center justify-center w-full border-4 border-dashed cursor-pointer transition-all duration-300 pixel-corners min-h-[200px]",
             file
-              ? "border-accent bg-accent/5 hover:bg-accent/10"
-              : "border-primary/50 bg-card hover:bg-muted"
+              ? "border-accent bg-accent/10 hover:bg-accent/20"
+              : "border-primary/50 bg-black/40 hover:bg-primary/10 hover:border-primary"
           )}
         >
           <div className="flex flex-col items-center justify-center pt-5 pb-6 px-4 text-center">
             {file ? (
-              <div className="relative w-full flex flex-col items-center space-y-2">
-                <div className="p-3 rounded-full bg-accent/20 mb-2">
-                  <UploadCloud className="w-8 h-8 text-accent" />
+              <div className="relative w-full flex flex-col items-center space-y-4">
+                <div className="p-4 bg-accent/20 mb-2 pixel-corners border-2 border-accent">
+                  <UploadCloud className="w-10 h-10 text-accent" />
                 </div>
-                <p className="mb-1 text-sm font-semibold text-accent truncate max-w-[200px] text-center">
+                <p className="mb-1 text-lg font-headline text-accent truncate max-w-[200px] text-center tracking-wider">
                   {file.name}
                 </p>
                 <p className="text-sm text-muted-foreground mb-2">Click or drag to change file</p>
@@ -254,23 +254,23 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
                   type="button"
                   variant="ghost"
                   size="lg"
-                  className="h-12 text-md text-accent hover:text-destructive hover:bg-destructive/10 transition-colors border border-destructive/20"
+                  className="h-10 text-sm text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors border-2 border-red-500/50 pixel-corners uppercase font-headline tracking-widest"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     onFileChange(null);
                   }}
                 >
-                  Remove file
+                  [ REMOVE CARTRIDGE ]
                 </Button>
               </div>
             ) : (
               <>
-                <UploadCloud className="w-8 h-8 mb-4 text-muted-foreground" />
-                <p className="mb-2 text-sm text-muted-foreground">
-                  <span className="font-semibold text-accent">Click to upload</span> or drag and drop
+                <UploadCloud className="w-12 h-12 mb-4 text-primary animate-pulse" />
+                <p className="mb-2 text-lg font-headline text-muted-foreground uppercase tracking-wider">
+                  <span className="text-primary">Insert CSV</span> to Start
                 </p>
-                <p className="text-sm text-muted-foreground">CSV file only</p>
+                <p className="text-sm text-muted-foreground">.CSV files supported</p>
               </>
             )}
           </div>
@@ -279,57 +279,68 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
       </div>
 
       {file && previewData && !isLoading && (
-        <div className="grid grid-cols-1 gap-3 p-4 bg-accent/5 border-2 border-accent/20 rounded-xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="grid grid-cols-1 gap-4 p-6 bg-black/40 border-4 border-accent/50 pixel-corners animate-in fade-in slide-in-from-bottom-4 duration-500 shadow-[0_0_15px_oklch(var(--accent)/0.2)]">
           <div className="flex items-center gap-4">
-            <div className="p-2 rounded-lg bg-accent/10">
-              <Gamepad2 className="w-5 h-5 text-accent" />
+            <div className="p-3 bg-accent/10 border-2 border-accent pixel-corners">
+              <Gamepad2 className="w-6 h-6 text-accent" />
             </div>
             <div className="text-left">
               <p className="text-sm font-headline tracking-widest text-muted-foreground uppercase">Total Games</p>
-              <p className="text-xl font-headline text-foreground">{previewData.totalGames}</p>
+              <p className="text-2xl font-headline text-foreground">{previewData.totalGames}</p>
             </div>
           </div>
           
           {previewData.topGames.length > 0 && (
-            <div className="flex items-start gap-4 border-t border-accent/10 pt-3">
-              <div className="p-2 rounded-lg bg-amber-500/10">
-                <Star className="w-5 h-5 text-amber-500" />
+            <div className="flex items-start gap-4 border-t-2 border-accent/20 pt-4 border-dashed">
+              <div className="p-3 bg-amber-500/10 border-2 border-amber-500 pixel-corners">
+                <Star className="w-6 h-6 text-amber-500" />
               </div>
               <div className="text-left">
                 <p className="text-sm font-headline tracking-widest text-muted-foreground uppercase">Top Rated</p>
-                <p className="text-sm text-foreground line-clamp-2">{previewData.topGames.join(", ")}</p>
+                <p className="text-lg font-body text-foreground line-clamp-2 uppercase">{previewData.topGames.join(", ")}</p>
               </div>
             </div>
           )}
 
           {previewData.platforms.length > 0 && (
-            <div className="flex items-start gap-4 border-t border-accent/10 pt-3">
-              <div className="p-2 rounded-lg bg-blue-500/10">
-                <Layers className="w-5 h-5 text-blue-500" />
+            <div className="flex items-start gap-4 border-t-2 border-accent/20 pt-4 border-dashed">
+              <div className="p-3 bg-blue-500/10 border-2 border-blue-500 pixel-corners">
+                <Layers className="w-6 h-6 text-blue-500" />
               </div>
               <div className="text-left">
                 <p className="text-sm font-headline tracking-widest text-muted-foreground uppercase">Platforms</p>
-                <p className="text-sm text-foreground line-clamp-1">{previewData.platforms.join(", ")}{previewData.platforms.length >= 5 ? "..." : ""}</p>
+                <p className="text-lg font-body text-foreground line-clamp-1 uppercase">{previewData.platforms.join(", ")}{previewData.platforms.length >= 5 ? "..." : ""}</p>
               </div>
             </div>
           )}
         </div>
       )}
 
-      <Button type="submit" className="w-full font-headline tracking-wider text-lg py-6" disabled={isLoading || !file}>
-        {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
-        {isLoading ? "Generating..." : "Generate My Rewind"}
+      <Button 
+        type="submit" 
+        className="arcade-button w-full h-16 text-xl tracking-widest" 
+        disabled={isLoading || !file}
+      >
+        {isLoading ? <Loader2 className="mr-3 h-6 w-6 animate-spin" /> : null}
+        {isLoading ? "PROCESSING..." : "GENERATE REWIND"}
       </Button>
 
       {isLoading && (
-        <div className="space-y-4 pt-4">
+        <div className="space-y-4 pt-4 bg-black/20 p-4 border-2 border-primary/30 pixel-corners">
           <div className="flex justify-between items-center px-1">
-            <span className="text-sm font-headline tracking-widest text-muted-foreground uppercase">Progress</span>
+            <span className="text-sm font-headline tracking-widest text-primary uppercase blink">SYSTEM_BUSY</span>
             <span className="text-sm font-headline tracking-widest text-accent">{Math.floor(fakeProgress)}%</span>
           </div>
-          <Progress value={fakeProgress} className="w-full h-3" />
-          <p className="min-h-[2rem] text-xl text-center text-foreground font-headline tracking-wider animate-pulse" aria-live="polite">
-            {loadingMessages[loadingStep]}
+          <div className="w-full h-4 bg-primary/20 pixel-corners p-0.5">
+             <div 
+               className="h-full bg-primary transition-all duration-300 relative overflow-hidden" 
+               style={{ width: `${fakeProgress}%` }}
+             >
+                <div className="absolute inset-0 bg-[url('/scanline.png')] opacity-20" />
+             </div>
+          </div>
+          <p className="min-h-[2rem] text-xl text-center text-foreground font-body tracking-wider uppercase" aria-live="polite">
+            {'>'} {loadingMessages[loadingStep]}
           </p>
         </div>
       )}

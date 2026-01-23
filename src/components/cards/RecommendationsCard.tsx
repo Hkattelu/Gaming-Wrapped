@@ -105,14 +105,6 @@ export function RecommendationsCardComponent({ card, isActive }: Recommendations
               >
                 <Map className="w-6 h-6 text-primary" />
               </motion.div>
-              <motion.span 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: isActive ? 1 : 0, y: isActive ? 0 : -10 }}
-                transition={{ delay: 0.2 }}
-                className="inline-block bg-primary text-primary-foreground font-headline text-[10px] md:text-xs px-3 py-1 uppercase tracking-widest border-2 border-foreground shadow-[2px_2px_0px_rgba(0,0,0,1)]"
-              >
-                New Quests Available
-              </motion.span>
             </div>
 
             <div className="w-full flex flex-col gap-3 relative z-10 flex-grow justify-center">
@@ -177,16 +169,8 @@ export function RecommendationsCardComponent({ card, isActive }: Recommendations
                             <span className="truncate">{rec.game.toUpperCase()}</span>
                             {rec.igdbUrl && <ExternalLink className="w-3 h-3 opacity-50 shrink-0 group-hover/item:opacity-100" />}
                           </h3>
-                          
-                          {rec.rating && (
-                            <div className={cn("flex-shrink-0 px-2 py-0.5 border-2 border-foreground/20 pixel-corners bg-background", accent.text)}>
-                              <span className="font-headline text-[10px]">
-                                {rec.rating >= 90 ? "S" : rec.rating >= 80 ? "A" : "B"}
-                              </span>
-                            </div>
-                          )}
                         </div>
-                        <p className="font-body text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-2 italic">
+                        <p className="font-body text-xs md:text-lg text-foreground leading-relaxed line-clamp-2 italic">
                           &quot;{rec.blurb}&quot;
                         </p>
                       </div>

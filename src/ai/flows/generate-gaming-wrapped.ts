@@ -57,7 +57,7 @@ const CARD_TYPES = [
 ] as const;
 
 const PlatformStatsCardSchema = z.object({
-  type: z.enum(CARD_TYPES),
+  type: z.literal('platform_stats'),
   title: z.string().describe('Title for the platform stats card'),
   description: z.string().describe('A short description of the platform stats'),
   data: z.array(z.object({
@@ -67,7 +67,7 @@ const PlatformStatsCardSchema = z.object({
 });
 
 const TopGameCardSchema = z.object({
-  type: z.enum(CARD_TYPES),
+  type: z.literal('top_game'),
   title: z.string().describe('Title for the top game card'),
   description: z.string().describe('A short description of the top game'),
   game: z.object({
@@ -80,7 +80,7 @@ const TopGameCardSchema = z.object({
 });
 
 const SummaryCardSchema = z.object({
-  type: z.enum(CARD_TYPES),
+  type: z.literal('summary'),
   title: z.string().describe('Title for the summary card'),
   description: z.string().describe('A short description of the summary'),
   totalGames: z.number(),
@@ -91,7 +91,7 @@ const SummaryCardSchema = z.object({
 });
 
 const GenreBreakdownCardSchema = z.object({
-  type: z.enum(CARD_TYPES),
+  type: z.literal('genre_breakdown'),
   title: z.string().describe('Title for the genre breakdown card'),
   description: z.string().describe('A short description of the genre breakdown'),
   data: z.array(z.object({
@@ -101,7 +101,7 @@ const GenreBreakdownCardSchema = z.object({
 });
 
 const ScoreDistributionCardSchema = z.object({
-  type: z.enum(CARD_TYPES),
+  type: z.literal('score_distribution'),
   title: z.string().describe('Title for the score distribution card'),
   description: z.string().describe('A short description of the score distribution'),
   data: z.array(z.object({
@@ -111,21 +111,21 @@ const ScoreDistributionCardSchema = z.object({
 });
 
 const PlayerPersonaCardSchema = z.object({
-  type: z.enum(CARD_TYPES),
+  type: z.literal('player_persona'),
   title: z.string().describe('Title for the player persona card'),
   persona: z.string().describe('The assigned player persona'),
   description: z.string().describe('A description of the player persona'),
 });
 
 const RoastCardSchema = z.object({
-  type: z.enum(CARD_TYPES),
+  type: z.literal('roast'),
   title: z.string().describe('Title for the roast card'),
   roast: z.string().describe("A roast of the user's gaming habits"),
   trigger: z.string().describe("The specific data point that triggered this roast (e.g., 'Trigger: 4000 hours in Stardew Valley', 'Trigger: 0% completion rate')"),
 });
 
 const RecommendationsCardSchema = z.object({
-  type: z.enum(CARD_TYPES),
+  type: z.literal('recommendations'),
   title: z.string().describe('Title for the recommendations card'),
   recommendations: z.array(z.object({
     game: z.string().describe('The title of the recommended game'),
@@ -310,7 +310,8 @@ const generateGamingWrappedFlow = ai.defineFlow(
     // Post-processing: Inject accurate stats if available
     if (output && output.cards) {
       const summaryCard = output.cards.find(c => c.type === 'summary');
-      if (summaryCard) {
+      
+      if (summaryCard && summaryCard.type === 'summary') {
         // Determine rank based on total games
         const total = totalGames;
         let rank = "BRONZE";
@@ -320,12 +321,10 @@ const generateGamingWrappedFlow = ai.defineFlow(
         else if (total > 10) rank = "GOLD";
         else if (total > 5) rank = "SILVER";
         
-        // @ts-expect-error Property 'rank' does not exist on type
         summaryCard.rank = rank;
 
         // Determine completion percentage if data exists
         if (completedGames > 0 && totalGames > 0) {
-          // @ts-expect-error Property 'completionPercentage' does not exist on type
           summaryCard.completionPercentage = Math.round((completedGames / totalGames) * 100);
         }
 
