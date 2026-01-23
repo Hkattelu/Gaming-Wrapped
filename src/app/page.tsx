@@ -215,10 +215,9 @@ export default function Home() {
           <div className="mb-12 relative group">
             <div className="absolute -inset-4 bg-primary/20 blur-xl rounded-full opacity-50 animate-pulse-slow group-hover:opacity-80 transition-opacity" />
             <Logo className="text-5xl md:text-7xl mb-4 text-neon animate-flicker relative z-10" />
-            <div className="mt-6 inline-block bg-black/80 border border-primary/50 px-4 py-2 rounded-sm backdrop-blur-sm">
-              <p className="text-xl md:text-2xl text-primary font-body tracking-widest typing-effect">
-                &gt; INITIALIZE_YEAR_REVIEW.EXE_
-                <span className="animate-pulse">_</span>
+            <div className="mt-6 inline-block bg-black/40 border-b-2 border-primary/20 px-6 py-2 backdrop-blur-sm">
+              <p className="text-xl md:text-2xl text-muted-foreground font-body tracking-[0.2em] uppercase">
+                Your year in gaming, visualized.
               </p>
             </div>
           </div>
@@ -236,7 +235,7 @@ export default function Home() {
                 <div className="absolute bottom-2 right-2 w-2 h-2 bg-muted-foreground/30 rounded-full" />
                 
                 <h2 className="text-2xl font-headline text-center mb-8 text-foreground tracking-widest uppercase">
-                  <span className="text-primary mr-2">▼</span> Select Data Source <span className="text-primary ml-2">▼</span>
+                  <span className="text-primary mr-2">▼</span> Choose Input <span className="text-primary ml-2">▼</span>
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
@@ -259,19 +258,19 @@ export default function Home() {
                       <DialogHeader>
                         <DialogTitle className="font-headline text-xl text-primary tracking-wider">CONNECT TO STEAM</DialogTitle>
                         <DialogDescription className="font-body text-lg text-muted-foreground">
-                          Enter 64-bit ID or Profile URL.
+                          Enter your public Steam ID or Profile URL.
                         </DialogDescription>
                       </DialogHeader>
                       <div className="space-y-6 pt-4">
                         <input
-                          placeholder="STEAM_ID_OR_URL..."
+                          placeholder="STEAM ID OR URL..."
                           value={steamId}
                           onChange={(e) => setSteamId(e.target.value)}
                           disabled={steamLoading}
                           className="terminal-input w-full"
                         />
                         <p className="text-sm font-body text-muted-foreground">
-                          * Profile must be PUBLIC.<br/>
+                          * Profile must be set to PUBLIC.<br/>
                           * Find ID at <a href="https://steamid.io" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">steamid.io</a>.
                         </p>
                         <Button 
@@ -279,7 +278,7 @@ export default function Home() {
                           disabled={steamLoading} 
                           className="arcade-button w-full h-14 text-xl"
                         >
-                          {steamLoading ? 'SCANNING...' : 'INSERT COIN'}
+                          {steamLoading ? 'SCANNING...' : 'IMPORT GAMES'}
                         </Button>
                         {steamProgress && (
                           <div className="space-y-2 font-body text-accent">
@@ -328,11 +327,11 @@ export default function Home() {
                           disabled={isLoading} 
                           className="arcade-button w-full h-14 text-xl"
                         >
-                          {isLoading ? 'LOADING...' : 'PRESS START'}
+                          {isLoading ? 'LOADING...' : 'IMPORT GAMES'}
                         </Button>
                         {progress && (
                           <div className="space-y-2 font-body text-primary">
-                            <p className="animate-pulse">{'>'} {progress.page > 0 ? `READING SECTOR ${progress.page}...` : 'DATA ACQUIRED.'}</p>
+                            <p className="animate-pulse">{'>'} {progress.page > 0 ? `FETCHING PAGE ${progress.page}...` : 'IMPORT COMPLETE.'}</p>
                             <div className="w-full bg-primary/20 h-2 pixel-corners overflow-hidden">
                               <div className="w-full h-full bg-primary animate-progress-indeterminate" />
                             </div>
@@ -349,7 +348,7 @@ export default function Home() {
                 <div className="relative my-10 flex items-center gap-4">
                    <div className="h-px bg-border flex-1" />
                    <div className="w-3 h-3 bg-primary rotate-45" />
-                   <span className="font-headline text-sm text-muted-foreground tracking-widest">MANUAL OVERRIDE</span>
+                   <span className="font-headline text-sm text-muted-foreground tracking-widest">FILE SYSTEM</span>
                    <div className="w-3 h-3 bg-primary rotate-45" />
                    <div className="h-px bg-border flex-1" />
                 </div>
@@ -364,7 +363,7 @@ export default function Home() {
                       "font-headline text-xl tracking-widest transition-colors duration-500 flex items-center justify-center gap-3",
                       file ? "text-accent animate-pulse" : "text-foreground"
                     )}>
-                      {file ? <><Coins className="w-6 h-6" /> READY PLAYER ONE</> : 'UPLOAD SAVE FILE'}
+                      {file ? <><Coins className="w-6 h-6" /> DATA LOADED</> : 'UPLOAD CSV'}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="pt-6">
@@ -373,47 +372,49 @@ export default function Home() {
                 </Card>
 
                 {/* Footer Links */}
-                <div className="flex flex-wrap justify-center gap-4 mt-8 font-body text-lg">
+                <div className="flex flex-wrap items-center justify-center gap-6 mt-10 font-body">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <button className="text-muted-foreground hover:text-primary hover:underline underline-offset-4 decoration-2 decoration-primary/50 transition-all uppercase tracking-wide">
-                        [ HLTB EXPORT ]
+                      <button className="text-muted-foreground text-lg hover:text-primary transition-all uppercase tracking-wide">
+                        [ HowLongToBeat? ]
                       </button>
                     </DialogTrigger>
                     <DialogContent className="pixel-corners border-4 border-border font-body">
                       <DialogHeader>
-                         <DialogTitle className="font-headline text-xl">HLTB EXTRACTION GUIDE</DialogTitle>
+                         <DialogTitle className="font-headline text-xl">HLTB Export Guide</DialogTitle>
                       </DialogHeader>
-                      <div className="space-y-4 text-xl">
-                        <p>1. ACCESS <a href="https://howlongtobeat.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">howlongtobeat.com</a>.</p>
-                        <p>2. NAVIGATE TO PROFILE.</p>
-                        <p>3. SELECT &apos;OPTIONS&apos; -&gt; &apos;EXPORT GAME LIST&apos;.</p>
-                        <p>4. UPLOAD .CSV FILE.</p>
+                      <div className="space-y-4 text-xl pt-4">
+                        <p>1. Log in to <a href="https://howlongtobeat.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">howlongtobeat.com</a>.</p>
+                        <p>2. Go to your Profile page.</p>
+                        <p>3. Click &apos;Options&apos; -&gt; &apos;Export Game List&apos;.</p>
+                        <p>4. Upload the CSV file here.</p>
                       </div>
                     </DialogContent>
                   </Dialog>
                   
-                  <span className="text-border">|</span>
+                  <div className="h-6 w-px bg-border hidden md:block" />
 
-                  <Link href="/manual" className="text-muted-foreground hover:text-accent hover:underline underline-offset-4 decoration-2 decoration-accent/50 transition-all uppercase tracking-wide">
-                    [ CREATE MANUALLY ]
+                  <Link href="/manual">
+                    <Button className="arcade-button h-10 px-6 text-sm bg-accent hover:bg-accent/80 border-accent/50">
+                      CREATE MANUALLY
+                    </Button>
                   </Link>
 
-                  <span className="text-border">|</span>
+                  <div className="h-6 w-px bg-border hidden md:block" />
 
                   <Dialog>
                     <DialogTrigger asChild>
-                      <button className="text-muted-foreground hover:text-primary hover:underline underline-offset-4 decoration-2 decoration-primary/50 transition-all uppercase tracking-wide">
-                        [ OTHER SYSTEMS ]
+                      <button className="text-muted-foreground text-lg hover:text-primary transition-all uppercase tracking-wide">
+                        [ Other Formats ]
                       </button>
                     </DialogTrigger>
                     <DialogContent className="pixel-corners border-4 border-border font-body">
                        <DialogHeader>
-                         <DialogTitle className="font-headline text-xl">UNIVERSAL PARSER</DialogTitle>
+                         <DialogTitle className="font-headline text-xl">Custom CSV Format</DialogTitle>
                       </DialogHeader>
-                      <p className="text-xl">
-                        REQUIRED: .CSV file with &quot;Title&quot; column.<br/>
-                        OPTIONAL: &quot;Rating&quot; (number), &quot;Platform&quot; (text), &quot;PlaytimeMinutes&quot; (number).
+                      <p className="text-xl pt-4 leading-relaxed">
+                        To import from other sources, ensure your CSV has a <span className="text-primary font-bold">Title</span> column.<br/><br/>
+                        Optional: <span className="text-accent">Rating</span> (number), <span className="text-accent">Platform</span> (text), <span className="text-accent">PlaytimeMinutes</span> (number).
                       </p>
                     </DialogContent>
                   </Dialog>
@@ -431,30 +432,30 @@ export default function Home() {
             </div>
           )}
 
-          {/* How It Works - "Mission Briefing" */}
+          {/* Walkthrough - Process */}
           <div className="mt-32 w-full max-w-6xl">
              <div className="flex items-center gap-4 mb-16 justify-center">
-                <div className="h-1 bg-gradient-to-r from-transparent to-primary w-24 md:w-48 opacity-50" />
+                <div className="h-1 bg-gradient-to-r from-transparent to-primary w-24 md:w-48 opacity-30" />
                 <h2 className="text-3xl md:text-4xl font-headline text-center text-primary text-neon tracking-widest uppercase">
-                  MISSION BRIEFING
+                  WALKTHROUGH
                 </h2>
-                <div className="h-1 bg-gradient-to-l from-transparent to-primary w-24 md:w-48 opacity-50" />
+                <div className="h-1 bg-gradient-to-l from-transparent to-primary w-24 md:w-48 opacity-30" />
              </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-left relative">
               {/* Connecting Line */}
-              <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-1 bg-border -z-10 border-t-2 border-dashed border-muted-foreground/30" />
+              <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-1 bg-border -z-10 border-t-2 border-dashed border-muted-foreground/20" />
 
               <div className="group relative">
                 <div className="absolute inset-0 bg-primary/20 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="bg-card border-4 border-border p-8 flex flex-col items-center text-center gap-6 pixel-corners shadow-xl relative z-10 h-full hover:-translate-y-2 transition-transform duration-300">
                   <div className="flex items-center justify-center h-20 w-20 bg-black border-2 border-primary shadow-[0_0_15px_oklch(var(--primary)/0.4)] pixel-corners rotate-3 group-hover:rotate-0 transition-all duration-300">
-                    <Import className="h-10 w-10 text-primary animate-pulse" />
+                    <Import className="h-10 w-10 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-headline text-xl mb-3 text-foreground">1. INSERT DATA</h3>
+                    <h3 className="font-headline text-xl mb-3 text-foreground tracking-wider">1. CONNECT</h3>
                     <p className="font-body text-xl text-muted-foreground leading-relaxed">
-                      Link your profiles to initialize the data extraction sequence.
+                      Connect your gaming accounts or upload a CSV file to begin the analysis.
                     </p>
                   </div>
                 </div>
@@ -464,12 +465,12 @@ export default function Home() {
                 <div className="absolute inset-0 bg-accent/20 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="bg-card border-4 border-border p-8 flex flex-col items-center text-center gap-6 pixel-corners shadow-xl relative z-10 h-full hover:-translate-y-2 transition-transform duration-300">
                   <div className="flex items-center justify-center h-20 w-20 bg-black border-2 border-accent shadow-[0_0_15px_oklch(var(--accent)/0.4)] pixel-corners -rotate-2 group-hover:rotate-0 transition-all duration-300">
-                    <GanttChartSquare className="h-10 w-10 text-accent animate-spin-slow" />
+                    <GanttChartSquare className="h-10 w-10 text-accent" />
                   </div>
                   <div>
-                    <h3 className="font-headline text-xl mb-3 text-foreground">2. PROCESS</h3>
+                    <h3 className="font-headline text-xl mb-3 text-foreground tracking-wider">2. ANALYZE</h3>
                     <p className="font-body text-xl text-muted-foreground leading-relaxed">
-                      Mainframe analyzes playstyle patterns and calculates high scores.
+                      Our AI decodes your playstyle and ratings to craft your personalized story.
                     </p>
                   </div>
                 </div>
@@ -482,9 +483,9 @@ export default function Home() {
                     <Share2 className="h-10 w-10 text-secondary" />
                   </div>
                   <div>
-                    <h3 className="font-headline text-xl mb-3 text-foreground">3. VICTORY</h3>
+                    <h3 className="font-headline text-xl mb-3 text-foreground tracking-wider">3. SHARE</h3>
                     <p className="font-body text-xl text-muted-foreground leading-relaxed">
-                      Unlock your Year-End Summary badge and share with the squad.
+                      Download your high-res cards and share your gaming highlights with friends.
                     </p>
                   </div>
                 </div>
@@ -496,12 +497,11 @@ export default function Home() {
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-privacy-terms" className="border-b-4 border-border">
                 <AccordionTrigger className="font-headline text-xl hover:text-primary transition-colors hover:no-underline py-6">
-                  [ DATA_PRIVACY_PROTOCOLS ]
+                  What about my data?
                 </AccordionTrigger>
-                <AccordionContent className="text-xl font-body text-muted-foreground space-y-4 pt-4 pb-8 pl-4 border-l-2 border-primary/30">
-                  <p>{'>'} User data is processed in volatile memory only.</p>
-                  <p>{'>'} No raw CSVs are permanently stored on the mainframe.</p>
-                  <p>{'>'} Generated &quot;Wrapped&quot; artifacts are cached for sharing capability.</p>
+                <AccordionContent className="text-xl font-body text-muted-foreground space-y-4 pt-4 pb-8 pl-4 border-l-4 border-primary/20">
+                  <p>Your privacy is our priority. We only use your uploaded gaming data to generate your personalized Wrapped experience.</p>
+                  <p>Input data is processed in memory and is not stored permanently. We only save the final generated summary so you can share it via a unique link.</p>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

@@ -119,7 +119,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         bodySubtitle = (activeCard as any).recommendations.map((r:any) => r.game).slice(0, 2).join(', ');
       } else if (activeCard.type === 'top_game') {
         bodyTitle = (activeCard as any).game.title;
-        bodySubtitle = `SCORE: ${(activeCard as any).game.formattedScore || (activeCard as any).game.score}/10`;
+        bodySubtitle = `SCORE: ${(activeCard as any).game.formattedScore || (activeCard as any).game.score}`;
       } else if (activeCard.type === 'player_persona') {
         bodyTitle = (activeCard as any).persona;
         bodySubtitle = (activeCard as any).description;
@@ -153,9 +153,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             opacity: 0.05,
           }} />
 
-          {/* Decorative Corner Pixels */}
-          <div style={{ display: 'flex', position: 'absolute', top: 40, left: 40, width: 40, height: 40, backgroundColor: theme.color }} />
-          <div style={{ display: 'flex', position: 'absolute', bottom: 40, right: 40, width: 40, height: 40, backgroundColor: theme.color }} />
+
 
           {/* Pro Collector Badge */}
           {isPro && (
@@ -208,18 +206,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
               </div>
               <div style={{ display: 'flex', fontSize: isVertical ? 48 : 32, color: '#fff', letterSpacing: '4px' }}>
                 {headerText}
-              </div>
-              <div style={{
-                display: 'flex',
-                backgroundColor: rankColor,
-                color: rank === 'SILVER' || rank === 'GOLD' || rank === 'PLATINUM' || rank === 'DIAMOND' ? '#000' : '#fff',
-                padding: '4px 12px',
-                fontSize: isVertical ? '18px' : '12px',
-                border: '2px solid #fff',
-                marginLeft: isVertical ? '0' : '20px',
-                marginTop: isVertical ? '10px' : '0',
-              }}>
-                {rank} RANK
               </div>
             </div>
 
@@ -332,7 +318,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
                 </div>
                 <div style={{ width: '4px', height: '60px', backgroundColor: '#3f3f46' }} />
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ display: 'flex', fontSize: isVertical ? 18 : 12, color: '#e4e4e7' }}>SCORE</span>
+                    <span style={{ display: 'flex', fontSize: isVertical ? 18 : 12, color: theme.accent }}>SCORE</span>
                     <span style={{ display: 'flex', fontSize: isVertical ? 36 : 24, color: theme.accent }}>{avgScore}</span>
                 </div>
                 <div style={{ width: '4px', height: '60px', backgroundColor: '#3f3f46' }} />
