@@ -87,18 +87,24 @@ If you see a hydration error related to the `<html>` tag (often caused by `next-
 5. Check Windows Firewall isn't blocking ports
 6. Make sure no other services are using ports 4000, 5001, 8080, or 9002
 
-### Iterating on Wrapped UI components
+### Viewing the Demo Wrapped
 
-Sometimes you may simply want to be developing individual UI wrapped components.
-Normally this can get mildly frustrating because you will have to generate a new wrapped
-every time you rebuild your code. To avoid this, you can set:
+To view a pre-populated demo wrapped without uploading any data or generating a new wrapped:
+
+1. Start the development server: `npm run dev`
+2. Navigate to: `http://localhost:3000/wrapped?demo=true`
+
+This will render a hardcoded mock wrapped that you can use for UI development and testing.
+
+### Using Mock Data During AI Generation
+
+If you want to skip the AI generation step during development and use mock data instead, set the following environment variable:
 
 ```bash
 USE_MOCK_WRAPPED_OUTPUT=true
 ```
 
-in your environment variables, which will trigger the rendering of a hardcoded wrapped
-you can use to develop against.
+This will cause the `generateGamingWrapped` function to return mock data instead of calling the AI flow, useful when iterating on the upload/processing pipeline without consuming API credits.
 
 ### Vibe Kanban
 

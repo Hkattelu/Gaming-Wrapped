@@ -87,6 +87,7 @@ const SummaryCardSchema = z.object({
   averageScore: z.number(),
   completionPercentage: z.number().optional().describe('Percentage of games completed'),
   rank: z.string().optional().describe('The player rank based on volume (e.g., Bronze, Gold, Diamond)'),
+  totalPlaytime: z.number().optional().describe('Total playtime in minutes'),
 });
 
 const GenreBreakdownCardSchema = z.object({

@@ -25,7 +25,7 @@ export function SummaryCard({ card, isActive, id }: { card: SummaryCardType, isA
     "GOLD": "bg-[#fbbf24] text-black",
     "PLATINUM": "bg-[#e5e4e2] text-black",
     "DIAMOND": "bg-[#b9f2ff] text-black shadow-[0_0_15px_rgba(185,242,255,0.5)]",
-    "MASTER": "bg-primary text-white shadow-[0_0_20px_rgba(255,46,80,0.6)] animate-pulse",
+    "MASTER": "bg-primary text-white shadow-[0_0_20px_rgba(255,46,80,0.6)]",
   };
 
   const currentRankColor = rankColors[card.rank || "BRONZE"] || "bg-muted text-muted-foreground";
