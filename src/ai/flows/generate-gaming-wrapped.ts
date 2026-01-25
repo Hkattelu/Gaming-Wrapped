@@ -45,20 +45,21 @@ const GenerateGamingWrappedInputSchema = z.object({
 
 type GenerateGamingWrappedInput = z.infer<typeof GenerateGamingWrappedInputSchema>;
 
-const PlatformStatsCardSchema = z.object({
+const BaseCardSchema = z.object({
+  title: z.string().describe('Title for the card'),
+  description: z.string().describe('A short description of the card'),
+});
+
+const PlatformStatsCardSchema = BaseCardSchema.extend({
   type: z.enum(['platform_stats']),
-  title: z.string().describe('Title for the platform stats card'),
-  description: z.string().describe('A short description of the platform stats'),
   data: z.array(z.object({
     platform: z.string(),
     count: z.number(),
   })).describe('Array of platform stats'),
 });
 
-const TopGameCardSchema = z.object({
+const TopGameCardSchema = BaseCardSchema.extend({
   type: z.enum(['top_game']),
-  title: z.string().describe('Title for the top game card'),
-  description: z.string().describe('A short description of the top game'),
   game: z.object({
     title: z.string(),
     platform: z.string(),
