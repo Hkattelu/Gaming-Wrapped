@@ -63,7 +63,7 @@ export const MOCK_WRAPPED_OUTPUT: GenerateGamingWrappedOutput = {
     {
       type: 'player_persona',
       title: 'Your Player Persona',
-      persona: 'The Souls-Addicted Completionist',
+      persona: 'The Completionist Cultist',
       description: 'You\'re drawn to punishing difficulty and intricate game design. You don\'t just play games—you master them. Whether it\'s perfecting parry timing or discovering every hidden path, you treat gaming like a science. You scoff at "easy modes" and wear your deaths as badges of honor.',
     },
     {

@@ -89,15 +89,16 @@ export function ScoreDistributionCard({ card, isActive }: { card: ScoreDistribut
               const config = getScoreCategory(item.range);
               const percentage = totalCount > 0 ? Math.round((item.count / totalCount) * 100) : 0;
               
-              // Map ranges to Arcade-style Ranks
-              const rankMap: Record<string, string> = {
-                "9-10": "S",
-                "7-8": "A",
-                "5-6": "B",
-                "3-4": "C",
-                "0-2": "F"
-              };
-              const rankLabel = rankMap[item.range] || "D";
+              const p = item.range.split(/[ -]/);
+              const r = p.length > 1 ? (parseFloat(p[0]) + parseFloat(p[1])) / 2 : parseFloat(item.range);
+              const val = r > 10 ? r / 10 : r;
+
+              let rankLabel = "D";
+              if (val >= 9) rankLabel = "S";
+              else if (val >= 7) rankLabel = "A";
+              else if (val >= 5) rankLabel = "B";
+              else if (val >= 3) rankLabel = "C";
+              else if (val >= 0) rankLabel = "F";
 
               return (
                 <motion.div

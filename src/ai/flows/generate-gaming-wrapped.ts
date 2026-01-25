@@ -59,7 +59,26 @@ const CardSchema = z.object({
   totalPlaytime: z.number().optional(),
   
   // Persona card fields
-  persona: z.string().optional(),
+  persona: z.enum([
+    "The Loyal Legend",
+    "The Platinum Plunderer",
+    "The Squadron Leader",
+    "The Narrative Navigator",
+    "The Apex Predator",
+    "The Cozy Cultivator",
+    "The Artisan Adventurer",
+    "The Master Architect",
+    "The High-Octane Hero",
+    "The Vanguard Gamer",
+    "The Backlog Baron",
+    "The Digital Hoarder",
+    "The Completionist Cultist",
+    "The Early Access Enthusiast",
+    "The Diamond in the Rough Digger",
+    "The Speedrun Sorcerer",
+    "The Modded Maestro",
+    "The Digital Monogamist"
+  ]).optional(),
   
   // Roast card fields
   roast: z.string().optional(),
@@ -207,8 +226,8 @@ CRITICAL: Each card type has specific required fields ONLY. Do not include extra
 - platform_stats: ONLY {type, title, description, data: [{platform, count}, ...]}
 - top_game: ONLY {type, title, description, game}
 - genre_breakdown: ONLY {type, title, description, data: [{genre, count}, ...]}
-- score_distribution: ONLY {type, title, description, data: [{range, count}, ...]} — Each range object MUST include a count field with the number of games in that range.
-- player_persona: ONLY {type, title, persona, description} — NO roast field, NO trigger field
+- score_distribution: ONLY {type, title, description, data: [{range, count}, ...]} — "range" MUST be a short string representing the score range (e.g., "9-10", "90-100"). NO descriptions or extra text in range. "count" is a separate number.
+- player_persona: ONLY {type, title, persona, description} — "persona" MUST be one of the exact strings from the list below.
 - roast: ONLY {type, title, roast, trigger} — NO persona field, NO description field. This is a SEPARATE card from player_persona.
 - recommendations: ONLY {type, title, recommendations}
 
@@ -216,8 +235,8 @@ CRITICAL: Each card type has specific required fields ONLY. Do not include extra
 2.  platform_stats: A card with the distribution of games by platform.
 3.  top_game: A card with the user's top-rated game. If many entries are unrated, infer a likely top pick using 'playtime' (highest is best), notes, completion status, or platform frequency.
 4.  genre_breakdown: A card that analyzes the game titles and notes to show the user's most played genres.
-5.  score_distribution: A chart that shows how many games fall into different score ranges (e.g., 9-10, 7-8, etc.). REQUIRED: For each range object, include BOTH the range label string AND the count of games in that range as a number. Example: {range: "90-100 (Masterpieces!)", count: 5}.
-6.  player_persona: Assigns a persona based on a holistic view of their gaming habits (including playtime and genres). See the Player Persona Taxonomy below and choose EXACTLY ONE persona. Fields: type, title, persona, description.
+5.  score_distribution: A chart that shows how many games fall into different score ranges. REQUIRED: "range" must be a short string representing the range (e.g. "9-10", "7-8" or "90-100", "70-89"). "count" must be the integer count. Do not include descriptive text or paragraphs in the range field.
+6.  player_persona: Assigns a persona based on a holistic view of their gaming habits (including playtime and genres). See the Player Persona Taxonomy below and choose EXACTLY ONE persona. The "persona" field must match the name exactly.
 7.  roast: Provide a sharp, witty, and slightly mean roast (1–2 sentences). Focus on specific habits like backlog hoarding (many games, 0 playtime), playing only one game forever, having terrible taste (high scores for bad games), or never finishing anything. Be a "tough love" critic. Do not hold back. IMPORTANT: A roast card is COMPLETELY SEPARATE from the player_persona card. Do NOT include persona fields in a roast card. Fields ONLY: type, title, roast, trigger.
 8.  recommendations: Provide "Unexpected Picks" that align with their "Hidden Tastes." For example, if they love high-score RPGs, suggest an obscure indie visual novel with great writing. Avoid obvious blockbusters. The goal is to introduce them to something new they'd actually love.
 
@@ -255,6 +274,7 @@ Personas:
 - The Modded Maestro — For the player who doesn't play the game; they play the 400 mods they installed. Half your "playtime" is actually just troubleshooting load orders and making sure the grass textures don't crash your PC. You've improved the developers' work beyond recognition.
 - The Digital Monogamist — For the player who marries one game and treats all others like side-flings. You have 4,000 hours in one title and 1 hour in 100 others. You don't need a library; you need a life sentence in your chosen world. Commitment issues? Not here.
   `,
+});
 });
 
 const generateGamingWrappedFlow = ai.defineFlow(

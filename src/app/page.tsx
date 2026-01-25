@@ -217,7 +217,7 @@ export default function Home() {
             <Logo className="text-5xl md:text-7xl mb-4 text-neon animate-flicker relative z-10" />
             <div className="mt-6 inline-block bg-muted/30 dark:bg-black/40 border-b-2 border-primary/20 px-6 py-2 backdrop-blur-sm">
               <p className="text-xl md:text-2xl text-muted-foreground font-body tracking-[0.2em] uppercase">
-                Your year in gaming, visualized.
+                Your gaming history, visualized.
               </p>
             </div>
           </div>
