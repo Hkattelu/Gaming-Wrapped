@@ -166,7 +166,7 @@ export function RecommendationsCardComponent({ card, isActive }: Recommendations
                             "font-headline text-xs md:text-sm leading-tight transition-colors flex items-center gap-1 min-w-0",
                             accent.text
                           )}>
-                            <span className="truncate">{rec.game.toUpperCase()}</span>
+                            <span className="truncate">{(rec.game ?? 'UNKNOWN GAME').toUpperCase()}</span>
                             {rec.igdbUrl && <ExternalLink className="w-3 h-3 opacity-50 shrink-0 group-hover/item:opacity-100" />}
                           </h3>
                         </div>
