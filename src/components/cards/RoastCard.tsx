@@ -82,7 +82,7 @@ export function RoastCardComponent({ card, isActive }: RoastCardProps) {
                       transition={{ delay: 0.5 }}
                       className="inline-block bg-primary/20 text-primary px-2 py-0.5 mb-2 text-[10px] border border-primary/30"
                     >
-                      LOG: {card.trigger.toUpperCase()}
+                      LOG: {(card.trigger ?? 'Game analysis').toUpperCase()}
                     </motion.span><br/>
                     <Typewriter text={card.roast} delay={1.2} isActive={isActive} />
                     {isActive && (
