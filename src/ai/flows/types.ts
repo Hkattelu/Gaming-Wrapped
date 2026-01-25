@@ -70,7 +70,7 @@ const TopGameCardSchema = z.object({
   game: z.object({
     title: z.string(),
     platform: z.string(),
-    score: z.coerce.number().or(z.string()),
+    score: z.number(),
     notes: z.string(),
   }),
 });
@@ -82,8 +82,6 @@ const SummaryCardSchema = z.object({
   totalGames: z.number(),
   averageScore: z.number(),
 });
-
-
 
 const GenreBreakdownCardSchema = z.object({
   type: z.enum(CARD_TYPES),
@@ -105,16 +103,12 @@ const ScoreDistributionCardSchema = z.object({
   })).describe('Array of score distribution stats'),
 });
 
-
-
 const PlayerPersonaCardSchema = z.object({
   type: z.enum(CARD_TYPES),
   title: z.string().describe('Title for the player persona card'),
   persona: z.string().describe('The assigned player persona'),
   description: z.string().describe('A description of the player persona'),
 });
-
-
 
 const RoastCardSchema = z.object({
   type: z.enum(CARD_TYPES),

@@ -106,6 +106,27 @@ USE_MOCK_WRAPPED_OUTPUT=true
 
 This will cause the `generateGamingWrapped` function to return mock data instead of calling the AI flow, useful when iterating on the upload/processing pipeline without consuming API credits.
 
+### Testing AI Flows Locally
+
+You can test the AI generation flow directly from the terminal without using the web UI. This is useful for debugging schema issues or prompt logic.
+
+1.  **Configure Environment**: Ensure `GEMINI_API_KEY` is set in your `.env.local` or environment.
+2.  **Run the Harness**:
+    ```bash
+    npm run dev:harness -- <cardType> "<gameTitle>"
+    ```
+    - `<cardType>`: One of the supported card types (see [CARD_TYPES](src/ai/flows/types.ts#L3-L11) for the complete list).
+    - `<gameTitle>`: The title of a game defined in [src/ai/dev-games.ts](src/ai/dev-games.ts).
+
+    **Example**:
+    ```bash
+    # Test the summary card generation for Cyberpunk 2077
+    npm run dev:harness -- summary "Cyberpunk 2077"
+    ```
+    The harness script is located at [src/ai/harness.ts](src/ai/harness.ts) and validates card types against the source of truth defined in [src/ai/flows/types.ts](src/ai/flows/types.ts#L3-L11).
+
+> **Note on Gemini API Schema Compatibility**: If you encounter errors like "Unknown name 'const'" or "Unknown name '$ref'" from the Gemini API, it indicates JSON Schema keywords that Gemini doesn't support. The fix is to use `z.enum(['value'])` instead of `z.literal('value')` and avoid schema composition patterns like `.extend()`. All schemas should be defined inline in [src/ai/flows/generate-gaming-wrapped.ts](src/ai/flows/generate-gaming-wrapped.ts) to prevent `$ref` generation.
+
 ### Vibe Kanban
 
 This project uses the VibeKanban WebCompanion, which allows you to render the local web UI
