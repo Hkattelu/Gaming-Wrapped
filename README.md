@@ -106,6 +106,26 @@ USE_MOCK_WRAPPED_OUTPUT=true
 
 This will cause the `generateGamingWrapped` function to return mock data instead of calling the AI flow, useful when iterating on the upload/processing pipeline without consuming API credits.
 
+### Testing AI Flows Locally
+
+You can test the AI generation flow directly from the terminal without using the web UI. This is useful for debugging schema issues or prompt logic.
+
+1.  **Configure Environment**: Ensure `GEMINI_API_KEY` is set in your `.env.local` or environment.
+2.  **Run the Harness**:
+    ```bash
+    npm run dev:harness -- <cardType> "<gameTitle>"
+    ```
+    - `<cardType>`: One of the supported card types (e.g., `summary`, `top_game`, `roast`, `player_persona`).
+    - `<gameTitle>`: The title of a game defined in `src/ai/dev-games.ts`.
+
+    **Example**:
+    ```bash
+    # Test the summary card generation for Cyberpunk 2077
+    npm run dev:harness -- summary "Cyberpunk 2077"
+    ```
+
+> **Note on Schema Fixes**: If you encounter an "Unknown name 'const'" error from the Gemini API, it is likely due to the use of `z.literal()` in a Zod schema. The Gemini API (via Vertex/Genkit) does not support the JSON Schema `const` field. Replace `z.literal('value')` with `z.enum(['value'])` to maintain type safety while ensuring compatibility.
+
 ### Vibe Kanban
 
 This project uses the VibeKanban WebCompanion, which allows you to render the local web UI

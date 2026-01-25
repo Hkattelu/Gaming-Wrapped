@@ -261,7 +261,7 @@ export function UploadForm({ file, onFileChange }: UploadFormProps) {
                     onFileChange(null);
                   }}
                 >
-                  [ REMOVE CARTRIDGE ]
+                  [ REMOVE FILE ]
                 </Button>
               </div>
             ) : (

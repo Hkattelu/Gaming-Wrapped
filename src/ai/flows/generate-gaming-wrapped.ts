@@ -46,7 +46,7 @@ const GenerateGamingWrappedInputSchema = z.object({
 type GenerateGamingWrappedInput = z.infer<typeof GenerateGamingWrappedInputSchema>;
 
 const PlatformStatsCardSchema = z.object({
-  type: z.literal('platform_stats'),
+  type: z.enum(['platform_stats']),
   title: z.string().describe('Title for the platform stats card'),
   description: z.string().describe('A short description of the platform stats'),
   data: z.array(z.object({
@@ -56,7 +56,7 @@ const PlatformStatsCardSchema = z.object({
 });
 
 const TopGameCardSchema = z.object({
-  type: z.literal('top_game'),
+  type: z.enum(['top_game']),
   title: z.string().describe('Title for the top game card'),
   description: z.string().describe('A short description of the top game'),
   game: z.object({
@@ -69,7 +69,7 @@ const TopGameCardSchema = z.object({
 });
 
 const SummaryCardSchema = z.object({
-  type: z.literal('summary'),
+  type: z.enum(['summary']),
   title: z.string().describe('Title for the summary card'),
   description: z.string().describe('A short description of the summary'),
   totalGames: z.number(),
@@ -80,7 +80,7 @@ const SummaryCardSchema = z.object({
 });
 
 const GenreBreakdownCardSchema = z.object({
-  type: z.literal('genre_breakdown'),
+  type: z.enum(['genre_breakdown']),
   title: z.string().describe('Title for the genre breakdown card'),
   description: z.string().describe('A short description of the genre breakdown'),
   data: z.array(z.object({
@@ -90,7 +90,7 @@ const GenreBreakdownCardSchema = z.object({
 });
 
 const ScoreDistributionCardSchema = z.object({
-  type: z.literal('score_distribution'),
+  type: z.enum(['score_distribution']),
   title: z.string().describe('Title for the score distribution card'),
   description: z.string().describe('A short description of the score distribution'),
   data: z.array(z.object({
@@ -100,21 +100,21 @@ const ScoreDistributionCardSchema = z.object({
 });
 
 const PlayerPersonaCardSchema = z.object({
-  type: z.literal('player_persona'),
+  type: z.enum(['player_persona']),
   title: z.string().describe('Title for the player persona card'),
   persona: z.string().describe('The assigned player persona'),
   description: z.string().describe('A description of the player persona'),
 });
 
 const RoastCardSchema = z.object({
-  type: z.literal('roast'),
+  type: z.enum(['roast']),
   title: z.string().describe('Title for the roast card'),
   roast: z.string().describe("A roast of the user's gaming habits"),
   trigger: z.string().describe("The specific data point that triggered this roast (e.g., 'Trigger: 4000 hours in Stardew Valley', 'Trigger: 0% completion rate')"),
 });
 
 const RecommendationsCardSchema = z.object({
-  type: z.literal('recommendations'),
+  type: z.enum(['recommendations']),
   title: z.string().describe('Title for the recommendations card'),
   recommendations: z.array(z.object({
     game: z.string().describe('The title of the recommended game'),

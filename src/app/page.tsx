@@ -377,7 +377,7 @@ export default function Home() {
                   <CardHeader className="text-center pb-2 border-b border-border/50 bg-muted/20">
                     <CardTitle className={cn(
                       "font-headline text-xl tracking-widest transition-colors duration-500 flex items-center justify-center gap-3",
-                      file ? "text-accent animate-pulse" : "text-foreground"
+                      file ? "text-accent" : "text-foreground"
                     )}>
                       {file ? <><Coins className="w-6 h-6" /> DATA LOADED</> : 'UPLOAD CSV'}
                     </CardTitle>
