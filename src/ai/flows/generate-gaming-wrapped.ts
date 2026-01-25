@@ -45,94 +45,52 @@ const GenerateGamingWrappedInputSchema = z.object({
 
 type GenerateGamingWrappedInput = z.infer<typeof GenerateGamingWrappedInputSchema>;
 
-const PlatformStatsCardSchema = z.object({
-  type: z.enum(['platform_stats']),
-  title: z.string().describe('Title for the platform stats card'),
-  description: z.string().describe('A short description of the platform stats'),
+// Flattened Card schema to avoid nesting depth issues with Gemini API
+const CardSchema = z.object({
+  type: z.enum(['platform_stats', 'top_game', 'summary', 'genre_breakdown', 'score_distribution', 'player_persona', 'roast', 'recommendations']).describe('The type of card'),
+  title: z.string().describe('Title for the card'),
+  description: z.string().optional().describe('A short description'),
+  
+  // Summary card fields
+  totalGames: z.number().optional(),
+  averageScore: z.number().optional(),
+  completionPercentage: z.number().optional(),
+  rank: z.string().optional(),
+  totalPlaytime: z.number().optional(),
+  
+  // Persona card fields
+  persona: z.string().optional(),
+  
+  // Roast card fields
+  roast: z.string().optional(),
+  trigger: z.string().optional(),
+  
+  // Data array fields (platform_stats, genre_breakdown, score_distribution)
   data: z.array(z.object({
-    platform: z.string(),
-    count: z.number(),
-  })).describe('Array of platform stats'),
-});
-
-const TopGameCardSchema = z.object({
-  type: z.enum(['top_game']),
-  title: z.string().describe('Title for the top game card'),
-  description: z.string().describe('A short description of the top game'),
+    platform: z.string().optional(),
+    genre: z.string().optional(),
+    count: z.number().optional(),
+    range: z.string().optional(),
+  })).optional(),
+  
+  // Top game fields
   game: z.object({
-    title: z.string(),
-    platform: z.string(),
-    score: z.number(),
-    formattedScore: z.string().optional().describe("The score formatted with the maximum scale, e.g., '9/10', '4.5/5', '95/100'."),
-    notes: z.string(),
-  }),
-});
-
-const SummaryCardSchema = z.object({
-  type: z.enum(['summary']),
-  title: z.string().describe('Title for the summary card'),
-  description: z.string().describe('A short description of the summary'),
-  totalGames: z.number(),
-  averageScore: z.number(),
-  completionPercentage: z.number().optional().describe('Percentage of games completed'),
-  rank: z.string().optional().describe('The player rank based on volume (e.g., Bronze, Gold, Diamond)'),
-  totalPlaytime: z.number().optional().describe('Total playtime in minutes'),
-});
-
-const GenreBreakdownCardSchema = z.object({
-  type: z.enum(['genre_breakdown']),
-  title: z.string().describe('Title for the genre breakdown card'),
-  description: z.string().describe('A short description of the genre breakdown'),
-  data: z.array(z.object({
-    genre: z.string(),
-    count: z.number(),
-  })).describe('Array of genre stats'),
-});
-
-const ScoreDistributionCardSchema = z.object({
-  type: z.enum(['score_distribution']),
-  title: z.string().describe('Title for the score distribution card'),
-  description: z.string().describe('A short description of the score distribution'),
-  data: z.array(z.object({
-    range: z.string(),
-    count: z.number(),
-  })).describe('Array of score distribution stats'),
-});
-
-const PlayerPersonaCardSchema = z.object({
-  type: z.enum(['player_persona']),
-  title: z.string().describe('Title for the player persona card'),
-  persona: z.string().describe('The assigned player persona'),
-  description: z.string().describe('A description of the player persona'),
-});
-
-const RoastCardSchema = z.object({
-  type: z.enum(['roast']),
-  title: z.string().describe('Title for the roast card'),
-  roast: z.string().describe("A roast of the user's gaming habits"),
-  trigger: z.string().describe("The specific data point that triggered this roast (e.g., 'Trigger: 4000 hours in Stardew Valley', 'Trigger: 0% completion rate')"),
-});
-
-const RecommendationsCardSchema = z.object({
-  type: z.enum(['recommendations']),
-  title: z.string().describe('Title for the recommendations card'),
+    title: z.string().optional(),
+    platform: z.string().optional(),
+    score: z.number().optional(),
+    formattedScore: z.string().optional(),
+    notes: z.string().optional(),
+  }).optional(),
+  
+  // Recommendations fields
   recommendations: z.array(z.object({
-    game: z.string().describe('The title of the recommended game'),
-    blurb: z.string().describe('A short, personalized reason why this game is recommended based on the user\'s gaming history'),
-  })).describe('A list of game recommendations with personalized explanations'),
+    game: z.string().optional(),
+    blurb: z.string().optional(),
+  })).optional(),
 });
 
 const GenerateGamingWrappedOutputSchema = z.object({
-  cards: z.array(z.union([
-    PlatformStatsCardSchema,
-    TopGameCardSchema,
-    SummaryCardSchema,
-    GenreBreakdownCardSchema,
-    ScoreDistributionCardSchema,
-    PlayerPersonaCardSchema,
-    RoastCardSchema,
-    RecommendationsCardSchema,
-  ])),
+  cards: z.array(CardSchema),
 });
 
 export type GenerateGamingWrappedOutput = z.infer<typeof GenerateGamingWrappedOutputSchema>;
@@ -324,7 +282,7 @@ const generateGamingWrappedFlow = ai.defineFlow(
 
     // Post-processing: Inject accurate stats if available
     if (output && output.cards) {
-      const summaryCard = output.cards.find(c => c.type === 'summary') as z.infer<typeof SummaryCardSchema> | undefined;
+      const summaryCard = output.cards.find(c => c.type === 'summary') as z.infer<typeof CardSchema> | undefined;
       
       if (summaryCard) {
         // Determine rank based on total games
