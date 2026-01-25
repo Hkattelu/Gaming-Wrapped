@@ -115,25 +115,17 @@ You can test the AI generation flow directly from the terminal without using the
     ```bash
     npm run dev:harness -- <cardType> "<gameTitle>"
     ```
-    - `<cardType>`: One of the supported card types (e.g., `summary`, `top_game`, `roast`, `player_persona`).
-    - `<gameTitle>`: The title of a game defined in `src/ai/dev-games.ts`.
+    - `<cardType>`: One of the supported card types (see [CARD_TYPES](src/ai/flows/types.ts#L3-L11) for the complete list).
+    - `<gameTitle>`: The title of a game defined in [src/ai/dev-games.ts](src/ai/dev-games.ts).
 
     **Example**:
     ```bash
     # Test the summary card generation for Cyberpunk 2077
     npm run dev:harness -- summary "Cyberpunk 2077"
     ```
+    The harness script is located at [src/ai/harness.ts](src/ai/harness.ts) and validates card types against the source of truth defined in [src/ai/flows/types.ts](src/ai/flows/types.ts#L3-L11).
 
-> **Note on Schema Fixes**: If you encounter an "Unknown name 'const'" error from the Gemini API, it is likely due to the use of `z.literal()` in a Zod schema. The Gemini API (via Vertex/Genkit) does not support the JSON Schema `const` field. Replace `z.literal('value')` with `z.enum(['value'])` to maintain type safety while ensuring compatibility.
-
-## Validation Points
-
-- **Card Types**: Ensure that the card type provided in the input matches one of the following: `platform_stats`, `top_game`, `summary`, `genre_breakdown`, `score_distribution`, `player_persona`, `roast`, `recommendations`. Invalid types will result in a validation error.
-- **Expected Behavior**: If an invalid card type is provided, the system will return an error indicating the expected types. This helps in debugging and ensures that users are aware of the valid inputs.
-
-## Harness Instructions
-
-- The harness can be found in the `src/ai/flows/generate-gaming-wrapped.ts` file. It contains the validation logic for each card type. Refer to this file for detailed validation rules and examples of valid inputs.
+> **Note on Gemini API Schema Compatibility**: If you encounter errors like "Unknown name 'const'" or "Unknown name '$ref'" from the Gemini API, it indicates JSON Schema keywords that Gemini doesn't support. The fix is to use `z.enum(['value'])` instead of `z.literal('value')` and avoid schema composition patterns like `.extend()`. All schemas should be defined inline in [src/ai/flows/generate-gaming-wrapped.ts](src/ai/flows/generate-gaming-wrapped.ts) to prevent `$ref` generation.
 
 ### Vibe Kanban
 
