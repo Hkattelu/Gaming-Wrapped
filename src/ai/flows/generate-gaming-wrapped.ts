@@ -39,31 +39,30 @@ const GenerateGamingWrappedInputSchema = z.object({
     reviewNotes: z.string().optional().describe("Review Notes"),
     added: z.string().optional().describe("The date this game was added"),
     updated: z.string().optional().describe("The date this entry was updaeted"),
-    playtime: z.union([z.string(), z.number()]).optional().describe("Playtime in minutes"),
+    playtime: z.number().optional().describe("Playtime in minutes"),
   })).describe('Array of game objects'),
 });
 
 type GenerateGamingWrappedInput = z.infer<typeof GenerateGamingWrappedInputSchema>;
 
-const BaseCardSchema = z.object({
-  title: z.string().describe('Title for the card'),
-  description: z.string().describe('A short description of the card'),
-});
-
-const PlatformStatsCardSchema = BaseCardSchema.extend({
+const PlatformStatsCardSchema = z.object({
   type: z.enum(['platform_stats']),
+  title: z.string().describe('Title for the platform stats card'),
+  description: z.string().describe('A short description of the platform stats'),
   data: z.array(z.object({
     platform: z.string(),
     count: z.number(),
   })).describe('Array of platform stats'),
 });
 
-const TopGameCardSchema = BaseCardSchema.extend({
+const TopGameCardSchema = z.object({
   type: z.enum(['top_game']),
+  title: z.string().describe('Title for the top game card'),
+  description: z.string().describe('A short description of the top game'),
   game: z.object({
     title: z.string(),
     platform: z.string(),
-    score: z.union([z.string(), z.number()]),
+    score: z.number(),
     formattedScore: z.string().optional().describe("The score formatted with the maximum scale, e.g., '9/10', '4.5/5', '95/100'."),
     notes: z.string(),
   }),
@@ -315,9 +314,9 @@ const generateGamingWrappedFlow = ai.defineFlow(
 
     // Post-processing: Inject accurate stats if available
     if (output && output.cards) {
-      const summaryCard = output.cards.find(c => c.type === 'summary');
+      const summaryCard = output.cards.find(c => c.type === 'summary') as z.infer<typeof SummaryCardSchema> | undefined;
       
-      if (summaryCard && summaryCard.type === 'summary') {
+      if (summaryCard) {
         // Determine rank based on total games
         const total = totalGames;
         let rank = "BRONZE";

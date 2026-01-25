@@ -126,6 +126,15 @@ You can test the AI generation flow directly from the terminal without using the
 
 > **Note on Schema Fixes**: If you encounter an "Unknown name 'const'" error from the Gemini API, it is likely due to the use of `z.literal()` in a Zod schema. The Gemini API (via Vertex/Genkit) does not support the JSON Schema `const` field. Replace `z.literal('value')` with `z.enum(['value'])` to maintain type safety while ensuring compatibility.
 
+## Validation Points
+
+- **Card Types**: Ensure that the card type provided in the input matches one of the following: `platform_stats`, `top_game`, `summary`, `genre_breakdown`, `score_distribution`, `player_persona`, `roast`, `recommendations`. Invalid types will result in a validation error.
+- **Expected Behavior**: If an invalid card type is provided, the system will return an error indicating the expected types. This helps in debugging and ensures that users are aware of the valid inputs.
+
+## Harness Instructions
+
+- The harness can be found in the `src/ai/flows/generate-gaming-wrapped.ts` file. It contains the validation logic for each card type. Refer to this file for detailed validation rules and examples of valid inputs.
+
 ### Vibe Kanban
 
 This project uses the VibeKanban WebCompanion, which allows you to render the local web UI
