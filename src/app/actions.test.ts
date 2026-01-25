@@ -2,7 +2,7 @@ import { jest, describe, expect, it, beforeAll, beforeEach } from '@jest/globals
 import type { ManualGame } from '@/types';
 
 // Mock the fetch function
-global.fetch = jest.fn() as unknown as typeof fetch;
+global.fetch = jest.fn() as unknown as jest.MockedFunction<typeof fetch>;
 
 // Declare mockParseCsv with 'mock' prefix
 let mockParseCsv: jest.Mock;
@@ -34,7 +34,7 @@ describe('generateWrappedData', () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     generateWrappedData = require('./actions').generateWrappedData;
 
-    global.fetch = jest.fn() as unknown as typeof fetch; // Re-assign fetch to a new mock for each test
+    global.fetch = jest.fn() as unknown as jest.MockedFunction<typeof fetch>; // Re-assign fetch to a new mock for each test
   });
 
   it('should generate wrapped data successfully', async () => {
@@ -46,10 +46,10 @@ describe('generateWrappedData', () => {
     const mockId = 'test-id';
 
     mockParseCsv.mockReturnValue(mockGames);
-    (global.fetch as jest.Mock).mockResolvedValue({
+    (global.fetch as unknown as jest.MockedFunction<typeof fetch>).mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ id: mockId }),
-    });
+    } as unknown as Response);
 
     const result = await generateWrappedData(mockCsvText);
 
@@ -88,10 +88,10 @@ describe('generateWrappedData', () => {
     const mockErrorData = { error: 'API error message' };
 
     mockParseCsv.mockReturnValue(mockGames);
-    (global.fetch as jest.Mock).mockResolvedValue({
+    (global.fetch as unknown as jest.MockedFunction<typeof fetch>).mockResolvedValue({
       ok: false,
       json: () => Promise.resolve(mockErrorData),
-    });
+    } as unknown as Response);
 
     await expect(generateWrappedData(mockCsvText)).rejects.toThrow(
       'Failed to generate your Rewind. API error message'
@@ -125,7 +125,10 @@ describe('generateWrappedDataFromManual', () => {
 
     // parseCsv is called inside generateWrappedData with the CSV derived from manual games
     mockParseCsv.mockReturnValue(parsedGames as unknown as typeof parsedGames);
-    (global.fetch as jest.Mock).mockResolvedValue({ ok: true, json: async () => ({ id: mockId }) });
+    (global.fetch as unknown as jest.MockedFunction<typeof fetch>).mockResolvedValue({
+      ok: true,
+      json: async () => ({ id: mockId }),
+    } as unknown as Response);
 
     const result = await generateWrappedDataFromManual(mockManualGames);
 

@@ -86,16 +86,17 @@ describe('lib/igdb integration', () => {
     // Advance time close to expiry: expires_at = 300s; safety window is 60s → token becomes invalid when now >= 240s
     nowSpy.mockReturnValue(250_000);
     // Next call should trigger a new token fetch before hitting IGDB
-    (global.fetch as unknown as jest.Mock).mockImplementationOnce(async (input: string) => {
+    const fetchMockFn = global.fetch as unknown as jest.MockedFunction<typeof fetch>;
+    fetchMockFn.mockImplementationOnce(async (input: Parameters<typeof fetch>[0]) => {
       expect(String(input)).toContain('https://id.twitch.tv/oauth2/token');
       return { ok: true, json: async () => ({ access_token: 't2', expires_in: 300 }) } as unknown as Response;
     });
-    (global.fetch as unknown as jest.Mock).mockImplementationOnce(async () => ({ ok: true, json: async () => gameRows }) as unknown as Response);
+    fetchMockFn.mockImplementationOnce(async () => ({ ok: true, json: async () => gameRows }) as unknown as Response);
 
     const url3 = await (await import(IGDB_MODULE_PATH)).searchCoverByTitle('Halo Infinite');
     expect(url3).toMatch(/^https:\/\/images\.igdb\.com\/igdb\/image\/upload\/t_cover_big\//);
     // Now total calls: 3 previous + 2 more (new token + IGDB)
-    expect((global.fetch as unknown as jest.Mock).mock.calls.length).toBe(5);
+    expect(fetchMockFn.mock.calls.length).toBe(5);
   });
 
   it('fetchTwitchAppToken: returns null on non-OK Twitch token response (covered via getTopGamesOfYear)', async () => {
