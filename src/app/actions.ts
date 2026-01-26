@@ -24,8 +24,15 @@ export async function generateWrappedData(csvText: string): Promise<StoryIdentif
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to generate wrapped content');
+      let errorMessage = 'Failed to generate wrapped content';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+      } catch {
+        // If response isn't JSON, use status text
+        errorMessage = response.statusText || errorMessage;
+      }
+      throw new Error(errorMessage);
     }
 
     // While the data story data is actually here, we just route to the
