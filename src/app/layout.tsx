@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     default: 'Gaming Wrapped',
     template: '%s | Gaming Wrapped',
   },
-  description: 'Upload your play history and get a shareable, AI‑generated year‑in‑review.',
+  description: 'Upload your play history and get a shareable story.',
   alternates: {
     canonical: '/',
   },

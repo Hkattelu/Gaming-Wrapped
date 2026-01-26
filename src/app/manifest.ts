@@ -11,7 +11,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name,
     short_name,
-    description: 'Upload your play history and get a shareable, AI‑generated year‑in‑review.',
+    description: 'Upload your play history and get a shareable story.',
     start_url,
     display,
     background_color,
