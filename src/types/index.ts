@@ -64,7 +64,7 @@ export interface PlayerPersonaCard {
   type: 'player_persona';
   title: string;
   persona: string;
-  description: string;
+  description?: string; // Handled by client config
 }
 
 

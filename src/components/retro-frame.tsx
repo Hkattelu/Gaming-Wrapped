@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Volume2, VolumeX } from "lucide-react";
+import { useSoundEffect } from "@/hooks/useSoundEffect";
 
 interface RetroFrameProps {
   children: React.ReactNode;
@@ -36,6 +37,7 @@ export function RetroFrame({
 }: RetroFrameProps) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { playSound } = useSoundEffect();
 
   useEffect(() => {
     setMounted(true);
@@ -45,6 +47,21 @@ export function RetroFrame({
 
   const handleThemeToggle = () => {
     setTheme(isDark ? "light" : "dark");
+  };
+
+  const handleSelectClick = () => {
+    playSound('select');
+    onSelect?.();
+  };
+
+  const handleStartClick = () => {
+    playSound('start');
+    onStart?.();
+  };
+
+  const handleCoinClick = () => {
+    playSound('coin');
+    onCoin?.();
   };
 
   return (
@@ -150,7 +167,7 @@ export function RetroFrame({
       <div className="flex absolute -bottom-12 left-1/2 -translate-x-1/2 w-[400px] h-10 bg-gray-200 dark:bg-[#18181b] border-2 border-gray-400 dark:border-[#3f3f46] rounded-b-xl flex items-center justify-around px-4">
         <div className="flex flex-col items-center gap-1">
           <div 
-            onClick={onSelect}
+            onClick={handleSelectClick}
             className="w-8 h-3 bg-gray-400 dark:bg-[#3f3f46] rounded-sm border-b-2 border-gray-600 dark:border-black active:border-b-0 active:translate-y-0.5 cursor-pointer hover:bg-gray-500 dark:hover:bg-[#52525b]" 
           />
           <span className="text-[6px] font-headline text-gray-600 dark:text-[#71717a]">SELECT</span>
@@ -158,7 +175,7 @@ export function RetroFrame({
         
         {/* Coin Slot */}
         <div 
-          onClick={onCoin}
+          onClick={handleCoinClick}
           className="retro-frame-coin-slot flex items-center justify-center gap-2 px-4 border-x border-gray-400 dark:border-[#3f3f46] group/coin hover:bg-yellow-500/5 transition-colors"
         >
            <div className="w-4 h-6 bg-gray-100 dark:bg-black rounded-sm border-2 border-gray-400 dark:border-[#3f3f46] flex flex-col items-center justify-center gap-1 group-hover/coin:border-yellow-600 transition-colors">
@@ -169,7 +186,7 @@ export function RetroFrame({
 
         <div className="flex flex-col items-center gap-1">
           <div 
-            onClick={onStart}
+            onClick={handleStartClick}
             className="w-8 h-3 bg-gray-400 dark:bg-[#3f3f46] rounded-sm border-b-2 border-gray-600 dark:border-black active:border-b-0 active:translate-y-0.5 cursor-pointer hover:bg-gray-500 dark:hover:bg-[#52525b]" 
           />
           <span className="text-[6px] font-headline text-gray-600 dark:text-[#71717a]">START</span>

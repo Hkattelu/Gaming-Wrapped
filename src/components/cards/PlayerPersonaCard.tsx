@@ -11,29 +11,29 @@ interface PlayerPersonaCardProps {
   isActive?: boolean;
 }
 
-const PERSONA_CONFIG: Record<string, { seed: string; tag: string }> = {
-  "The Loyal Legend": { seed: "Loyal Legend", tag: "LEGEND" },
-  "The Platinum Plunderer": { seed: "Platinum Plunderer", tag: "PLUNDERER" },
-  "The Squadron Leader": { seed: "Squadron Leader", tag: "LEADER" },
-  "The Narrative Navigator": { seed: "Narrative Navigator", tag: "NARRATOR" },
-  "The Apex Predator": { seed: "Apex Predator", tag: "PREDATOR" },
-  "The Cozy Cultivator": { seed: "Cozy Cultivator", tag: "CULTIVATOR" },
-  "The Artisan Adventurer": { seed: "lsjda", tag: "ARTISAN" },
-  "The Master Architect": { seed: "jhsakdhjasduheu", tag: "ARCHITECT" },
-  "The High-Octane Hero": { seed: "High-Octane Hero", tag: "HERO" },
-  "The Vanguard Gamer": { seed: "Vanguard Gamer", tag: "VANGUARD" },
-  "The Backlog Baron": { seed: "Backlog Baron", tag: "HOARDER" },
-  "The Digital Hoarder": { seed: "Digital Hoarder", tag: "TOURIST" },
-  "The Completionist Cultist": { seed: "Completionist Cultist", tag: "ZEALOT" },
-  "The Early Access Enthusiast": { seed: "Early Access Enthusiast", tag: "PIONEER" },
-  "The Diamond in the Rough Digger": { seed: "diamondint", tag: "TREASURE" },
-  "The Speedrun Sorcerer": { seed: "Speedrun Specialist", tag: "OPTIMIZER" },
-  "The Modded Maestro": { seed: "Community Coordinator", tag: "MECHANIC" },
-  "The Digital Monogamist": { seed: "Master Architect", tag: "FAITHFUL" },
+const PERSONA_CONFIG: Record<string, { seed: string; tag: string; description: string }> = {
+  "The Loyal Legend": { seed: "Loyal Legend", tag: "LEGEND", description: "For the player who dedicates hundreds of hours to a single game." },
+  "The Platinum Plunderer": { seed: "Platinum Plunderer", tag: "PLUNDERER", description: "For the player who is a dedicated achievement hunter and completionist." },
+  "The Squadron Leader": { seed: "Squadron Leader", tag: "LEADER", description: "For the player who primarily plays co-op and multiplayer games with friends." },
+  "The Narrative Navigator": { seed: "Narrative Navigator", tag: "NARRATOR", description: "For the player who loves deep, story-driven, single-player experiences." },
+  "The Apex Predator": { seed: "Apex Predator", tag: "PREDATOR", description: "For the player who thrives in competitive, high-stakes, ranked gameplay." },
+  "The Cozy Cultivator": { seed: "Cozy Cultivator", tag: "CULTIVATOR", description: "For the player who enjoys relaxing, low-stakes games like farming sims and life sims." },
+  "The Artisan Adventurer": { seed: "lsjda", tag: "ARTISAN", description: "For the player who predominantly plays and discovers unique indie titles." },
+  "The Master Architect": { seed: "jhsakdhjasduheu", tag: "ARCHITECT", description: "For the player who loves building, management, and strategy games." },
+  "The High-Octane Hero": { seed: "High-Octane Hero", tag: "HERO", description: "For the player who loves fast-paced, non-stop action games." },
+  "The Vanguard Gamer": { seed: "Vanguard Gamer", tag: "VANGUARD", description: "For the player who is always playing the newest, hottest releases." },
+  "The Backlog Baron": { seed: "Backlog Baron", tag: "HOARDER", description: "For the player with hundreds of games but only a handful played." },
+  "The Digital Hoarder": { seed: "Digital Hoarder", tag: "TOURIST", description: "For the player who plays a little bit of everything but finishes nothing." },
+  "The Completionist Cultist": { seed: "Completionist Cultist", tag: "ZEALOT", description: "For the player who doesn't just play games, they colonize them." },
+  "The Early Access Enthusiast": { seed: "Early Access Enthusiast", tag: "PIONEER", description: "For the player who lives on the bleeding edge of bugs and unfinished features." },
+  "The Diamond in the Rough Digger": { seed: "diamondint", tag: "TREASURE", description: "For the player who finds beauty in the underrated." },
+  "The Speedrun Sorcerer": { seed: "Speedrun Specialist", tag: "OPTIMIZER", description: "For the player who views games as obstacle courses." },
+  "The Modded Maestro": { seed: "Community Coordinator", tag: "MECHANIC", description: "For the player who doesn't play the game; they play the 400 mods they installed." },
+  "The Digital Monogamist": { seed: "Master Architect", tag: "FAITHFUL", description: "For the player who marries one game and treats all others like side-flings." },
 };
 
 export default function PlayerPersonaCard({ card, isActive }: PlayerPersonaCardProps) {
-  const config = PERSONA_CONFIG[card.persona] || { seed: 'gamer', tag: 'GAMER' };
+  const config = PERSONA_CONFIG[card.persona] || { seed: 'gamer', tag: 'GAMER', description: '' };
 
   return (
     <div className="relative min-h-[400px] flex flex-col items-center justify-center p-4 overflow-hidden">
@@ -138,7 +138,7 @@ export default function PlayerPersonaCard({ card, isActive }: PlayerPersonaCardP
               <div className="relative">
                 <div className="absolute -left-4 top-0 bottom-0 w-1 bg-primary/20 hidden md:block" />
                 <p className="font-body text-sm md:text-base lg:text-lg leading-relaxed text-muted-foreground italic pl-0 md:pl-4">
-                  &quot;{card.description}&quot;
+                  &quot;{config.description}&quot;
                 </p>
               </div>
               

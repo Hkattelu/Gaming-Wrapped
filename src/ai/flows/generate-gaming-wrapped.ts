@@ -78,7 +78,7 @@ const CardSchema = z.object({
     "The Speedrun Sorcerer",
     "The Modded Maestro",
     "The Digital Monogamist"
-  ]).optional(),
+  ]).optional().describe('The player persona name'),
   
   // Roast card fields
   roast: z.string().optional(),
@@ -227,7 +227,7 @@ CRITICAL: Each card type has specific required fields ONLY. Do not include extra
 - top_game: ONLY {type, title, description, game}
 - genre_breakdown: ONLY {type, title, description, data: [{genre, count}, ...]}}
 - score_distribution: ONLY {type, title, description, data: [{range, count}, ...]} — "range" MUST be a short string representing the score range (e.g., "9-10", "90-100"). NO descriptions or extra text in range. "count" is a separate number.
-- player_persona: ONLY {type, title, persona, description} — "persona" MUST be one of the exact strings from the list below. 
+- player_persona: ONLY {type, title, persona} — "persona" MUST be one of the exact strings from the list below. 
 - roast: ONLY {type, title, roast, trigger} — NO persona field, NO description field. This is a SEPARATE card from player_persona. 
 - recommendations: ONLY {type, title, recommendations}
 
@@ -250,8 +250,7 @@ Additional guidance:
 ### Player Persona Taxonomy
 Choose exactly one persona below. Set the card fields as:
 - title: A short, punchy title (e.g., "YOUR PLAYER PERSONA").
-- persona: Must be exactly one of the names below.
-- description: Use the provided description verbatim or lightly adapt to fit the user's data without changing its meaning.
+- persona: Must be exactly one of the names below (descriptions are handled by the client).
 
 Personas:
 - The Loyal Legend — For the player who dedicates hundreds of hours to a single game.
