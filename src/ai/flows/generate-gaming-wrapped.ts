@@ -39,7 +39,7 @@ const GenerateGamingWrappedInputSchema = z.object({
     reviewNotes: z.string().optional().describe("Review Notes"),
     added: z.string().optional().describe("The date this game was added"),
     updated: z.string().optional().describe("The date this entry was updaeted"),
-    playtime: z.number().optional().describe("Playtime in minutes"),
+    playtime: z.coerce.number().optional().describe("Playtime in minutes"),
   })).describe('Array of game objects'),
 });
 
