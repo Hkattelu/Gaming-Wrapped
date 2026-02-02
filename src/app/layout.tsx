@@ -85,7 +85,7 @@ export default function RootLayout({
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5108380761431058"
-          crossorigin="anonymous"
+          crossOrigin="anonymous"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">

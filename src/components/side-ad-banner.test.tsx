@@ -1,5 +1,5 @@
 /** @jest-environment jsdom */
-import { describe, it, expect, cleanup } from '@jest/globals';
+import { describe, it, expect } from '@jest/globals';
 import React from 'react';
 import { render, screen, cleanup as rtlCleanup } from '@testing-library/react';
 import { SideAdBanner } from './side-ad-banner';

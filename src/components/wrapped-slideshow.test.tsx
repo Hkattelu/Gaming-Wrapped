@@ -1,5 +1,5 @@
 /** @jest-environment jsdom */
-import { describe, it, expect, cleanup, jest } from '@jest/globals';
+import { describe, it, expect, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, cleanup as rtlCleanup } from '@testing-library/react';
 import { WrappedSlideshow } from './wrapped-slideshow';
@@ -91,7 +91,6 @@ const mockData: WrappedData = {
   cards: [
     { type: 'player_persona', persona: 'Gamer', title: 'Persona', description: 'Desc' }
   ] as any,
-  totalGames: 10,
   averageScore: 8
 };
 
