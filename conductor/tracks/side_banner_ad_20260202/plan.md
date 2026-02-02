@@ -19,10 +19,10 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Layout Integration' (Protocol in workflow.md) [checkpoint: 10b90ff]
 
 ## Phase 3: Final Polish & Verification
-- [~] Task: Add "Coming Soon" Placeholder Graphic.
-    - [ ] Write tests for the placeholder state.
-    - [ ] Implement a stylized retro "Coming Soon" graphic for the ad area.
-- [ ] Task: Final Quality Audit.
-    - [ ] Run all tests and verify >80% coverage for new components.
-    - [ ] Check for linting/type errors.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Final Polish' (Protocol in workflow.md) [checkpoint: ]
+- [x] Task: Add "Coming Soon" Placeholder Graphic. 1b68a84
+    - [x] Write tests for the placeholder state.
+    - [x] Implement a stylized retro "Coming Soon" graphic for the ad area.
+- [x] Task: Final Quality Audit. f792529
+    - [x] Run all tests and verify >80% coverage for new components.
+    - [x] Check for linting/type errors.
+- [~] Task: Conductor - User Manual Verification 'Phase 3: Final Polish' (Protocol in workflow.md) [checkpoint: ]
