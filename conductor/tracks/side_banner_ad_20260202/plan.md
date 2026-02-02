@@ -1,12 +1,12 @@
 # Implementation Plan: Side Banner Ad System
 
 ## Phase 1: Foundation & Component Creation
-- [ ] Task: Create a basic `SideAdBanner` component.
-    - [ ] Write unit tests to verify the component renders a placeholder.
-    - [ ] Implement the `SideAdBanner` component with basic styling.
-- [ ] Task: Apply Retro Styling to the Ad Container.
-    - [ ] Write tests for retro-specific CSS classes (pixel borders, CRT glow).
-    - [ ] Implement pixel-art borders and glow effects in `SideAdBanner`.
+- [x] Task: Create a basic `SideAdBanner` component. afd7182
+    - [x] Write unit tests to verify the component renders a placeholder.
+    - [x] Implement the `SideAdBanner` component with basic styling.
+- [x] Task: Apply Retro Styling to the Ad Container. afd7182
+    - [x] Write tests for retro-specific CSS classes (pixel borders, CRT glow).
+    - [x] Implement pixel-art borders and glow effects in `SideAdBanner`.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Foundation' (Protocol in workflow.md) [checkpoint: ]
 
 ## Phase 2: Layout Integration
