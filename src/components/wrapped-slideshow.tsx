@@ -27,6 +27,7 @@ import { motion } from "framer-motion";
 import { RetroFrame } from "./retro-frame";
 import { TiltCard } from "./tilt-card";
 import { SideAdBanner } from "./side-ad-banner";
+import Link from "next/link";
 
 export function WrappedSlideshow({ data, id, isGenerating = false }: { data: WrappedData, id: string | null, isGenerating?: boolean }) {
   const { toast } = useToast();
@@ -264,7 +265,14 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
   };
 
   return (
-    <div className="wrapped-slideshow-root w-full min-h-screen flex flex-col items-center justify-center p-4 relative font-body overflow-hidden">
+    <div className="wrapped-slideshow-root w-full min-h-screen flex flex-col items-center justify-start xl:justify-center p-2 lg:p-4 relative font-body overflow-hidden">
+      {/* Back Button (Integrated) */}
+      <div className="w-full flex justify-start p-2 xl:absolute xl:top-4 xl:left-4 z-50">
+        <Button asChild variant="ghost" size="sm" className="font-mono text-xs uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity">
+          <Link href="/"><ArrowLeft className="mr-2 h-3 w-3" /> Back</Link>
+        </Button>
+      </div>
+
       {/* Dynamic Background Elements (Desktop Only) */}
       <div className="hidden lg:block absolute inset-0 z-0">
         <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-primary/5 rounded-full blur-[100px] animate-pulse" />
@@ -334,7 +342,7 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
       )}
 
       {/* Top Ad Banner (Mobile Only) */}
-      <div className="xl:hidden w-full max-w-md mt-2 mb-2 z-10 px-2">
+      <div className="xl:hidden w-full max-w-md mt-0 mb-4 z-10 px-2">
         <SideAdBanner orientation="horizontal" />
       </div>
 
