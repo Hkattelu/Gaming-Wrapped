@@ -26,6 +26,8 @@ import { RecommendationsCardComponent } from "./cards/RecommendationsCard";
 import { motion } from "framer-motion";
 import { RetroFrame } from "./retro-frame";
 import { TiltCard } from "./tilt-card";
+import { SideAdBanner } from "./side-ad-banner";
+import Link from "next/link";
 
 export function WrappedSlideshow({ data, id, isGenerating = false }: { data: WrappedData, id: string | null, isGenerating?: boolean }) {
   const { toast } = useToast();
@@ -263,7 +265,14 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
   };
 
   return (
-    <div className="wrapped-slideshow-root w-full min-h-screen flex flex-col items-center justify-center p-4 relative font-body overflow-hidden">
+    <div className="wrapped-slideshow-root w-full min-h-screen flex flex-col items-center justify-start xl:justify-center p-2 lg:p-4 relative font-body overflow-hidden">
+      {/* Back Button (Integrated) */}
+      <div className="w-full flex justify-start p-2 xl:absolute xl:top-4 xl:left-4 z-50">
+        <Button asChild variant="ghost" size="sm" className="font-mono text-xs uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity">
+          <Link href="/"><ArrowLeft className="mr-2 h-3 w-3" /> Back</Link>
+        </Button>
+      </div>
+
       {/* Dynamic Background Elements (Desktop Only) */}
       <div className="hidden lg:block absolute inset-0 z-0">
         <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-primary/5 rounded-full blur-[100px] animate-pulse" />
@@ -332,21 +341,33 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
         </>
       )}
 
-      <RetroFrame
-        className="w-full max-w-xl lg:max-w-4xl z-10"
-        onPrev={() => { api?.scrollPrev(); setIsAutoPlaying(false); }}
-        onNext={() => { api?.scrollNext(); setIsAutoPlaying(false); }}
-        onStart={() => setIsAutoPlaying(!isAutoPlaying)}
-        onSelect={() => setShowCrt(!showCrt)}
-        onCoin={handleCoin}
-        onToggleMute={handleToggleMute}
-        onToggleAutoPlay={handleToggleAutoPlay}
-        isMuted={isMuted}
-        isAutoPlaying={isAutoPlaying}
-      >
-        <div className="relative">
-          <Carousel className="w-full" setApi={setApi}>
-            <CarouselContent>
+      {/* Top Ad Banner (Mobile Only) */}
+      <div className="xl:hidden w-full max-w-md mt-0 mb-4 z-10 px-2">
+        <SideAdBanner orientation="horizontal" />
+      </div>
+
+      {/* Main Layout Container */}
+      <div className="flex flex-row items-center justify-center gap-4 xl:gap-24 2xl:gap-32 w-full max-w-[95vw] lg:max-w-[98vw] z-10">
+        {/* Left Ad Banner (Desktop Only) */}
+        <div className="hidden xl:block w-48 h-[600px] shrink-0">
+          <SideAdBanner />
+        </div>
+
+        <RetroFrame
+          className="w-full max-w-xl lg:max-w-4xl"
+          onPrev={() => { api?.scrollPrev(); setIsAutoPlaying(false); }}
+          onNext={() => { api?.scrollNext(); setIsAutoPlaying(false); }}
+          onStart={() => setIsAutoPlaying(!isAutoPlaying)}
+          onSelect={() => setShowCrt(!showCrt)}
+          onCoin={handleCoin}
+          onToggleMute={handleToggleMute}
+          onToggleAutoPlay={handleToggleAutoPlay}
+          isMuted={isMuted}
+          isAutoPlaying={isAutoPlaying}
+        >
+          <div className="relative">
+            <Carousel className="w-full" setApi={setApi}>
+              <CarouselContent>
               {/* Slide 1: Intro */}
               <CarouselItem className="basis-full">
                 <motion.div
@@ -585,6 +606,12 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
           </Carousel>
         </div>
       </RetroFrame>
+
+      {/* Right Ad Banner (Desktop Only) */}
+      <div className="hidden xl:block w-48 h-[600px] shrink-0">
+        <SideAdBanner />
+      </div>
+    </div>
     </div>
   );
 }

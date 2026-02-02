@@ -93,14 +93,7 @@ export default function WrappedPageClient({ initialData, initialId }: { initialD
 
   if (data) {
     return (
-        <>
-          <div className="w-full flex justify-start p-4 z-50 relative">
-             <Button asChild variant="ghost">
-                <Link href="/"><ArrowLeft className="mr-2"/> Back to Home</Link>
-             </Button>
-          </div>
-          <WrappedSlideshow data={data} id={id} />
-        </>
+      <WrappedSlideshow data={data} id={id} />
     );
   }
 
