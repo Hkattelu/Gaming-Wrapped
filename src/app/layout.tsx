@@ -82,6 +82,12 @@ export default function RootLayout({
           src="https://www.googletagmanager.com/gtag/js?id=G-X8VX0FC0D2"
           strategy="afterInteractive"
         />
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5108380761431058"
+          crossorigin="anonymous"
+          strategy="afterInteractive"
+        />
         <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];

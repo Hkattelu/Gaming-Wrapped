@@ -26,6 +26,7 @@ import { RecommendationsCardComponent } from "./cards/RecommendationsCard";
 import { motion } from "framer-motion";
 import { RetroFrame } from "./retro-frame";
 import { TiltCard } from "./tilt-card";
+import { SideAdBanner } from "./side-ad-banner";
 
 export function WrappedSlideshow({ data, id, isGenerating = false }: { data: WrappedData, id: string | null, isGenerating?: boolean }) {
   const { toast } = useToast();
@@ -332,21 +333,28 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
         </>
       )}
 
-      <RetroFrame
-        className="w-full max-w-xl lg:max-w-4xl z-10"
-        onPrev={() => { api?.scrollPrev(); setIsAutoPlaying(false); }}
-        onNext={() => { api?.scrollNext(); setIsAutoPlaying(false); }}
-        onStart={() => setIsAutoPlaying(!isAutoPlaying)}
-        onSelect={() => setShowCrt(!showCrt)}
-        onCoin={handleCoin}
-        onToggleMute={handleToggleMute}
-        onToggleAutoPlay={handleToggleAutoPlay}
-        isMuted={isMuted}
-        isAutoPlaying={isAutoPlaying}
-      >
-        <div className="relative">
-          <Carousel className="w-full" setApi={setApi}>
-            <CarouselContent>
+      {/* Main Layout Container */}
+      <div className="flex flex-row items-center justify-center gap-4 xl:gap-12 w-full max-w-[95vw] lg:max-w-[98vw] z-10">
+        {/* Left Ad Banner (Desktop Only) */}
+        <div className="hidden xl:block w-48 h-[600px] shrink-0">
+          <SideAdBanner />
+        </div>
+
+        <RetroFrame
+          className="w-full max-w-xl lg:max-w-4xl"
+          onPrev={() => { api?.scrollPrev(); setIsAutoPlaying(false); }}
+          onNext={() => { api?.scrollNext(); setIsAutoPlaying(false); }}
+          onStart={() => setIsAutoPlaying(!isAutoPlaying)}
+          onSelect={() => setShowCrt(!showCrt)}
+          onCoin={handleCoin}
+          onToggleMute={handleToggleMute}
+          onToggleAutoPlay={handleToggleAutoPlay}
+          isMuted={isMuted}
+          isAutoPlaying={isAutoPlaying}
+        >
+          <div className="relative">
+            <Carousel className="w-full" setApi={setApi}>
+              <CarouselContent>
               {/* Slide 1: Intro */}
               <CarouselItem className="basis-full">
                 <motion.div
@@ -585,6 +593,12 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
           </Carousel>
         </div>
       </RetroFrame>
+
+      {/* Right Ad Banner (Desktop Only) */}
+      <div className="hidden xl:block w-48 h-[600px] shrink-0">
+        <SideAdBanner />
+      </div>
+    </div>
     </div>
   );
 }
