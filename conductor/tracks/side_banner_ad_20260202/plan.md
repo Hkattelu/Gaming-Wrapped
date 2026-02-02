@@ -1,0 +1,28 @@
+# Implementation Plan: Side Banner Ad System
+
+## Phase 1: Foundation & Component Creation
+- [ ] Task: Create a basic `SideAdBanner` component.
+    - [ ] Write unit tests to verify the component renders a placeholder.
+    - [ ] Implement the `SideAdBanner` component with basic styling.
+- [ ] Task: Apply Retro Styling to the Ad Container.
+    - [ ] Write tests for retro-specific CSS classes (pixel borders, CRT glow).
+    - [ ] Implement pixel-art borders and glow effects in `SideAdBanner`.
+- [ ] Task: Conductor - User Manual Verification 'Phase 1: Foundation' (Protocol in workflow.md) [checkpoint: ]
+
+## Phase 2: Layout Integration
+- [ ] Task: Integrate `SideAdBanner` into the `wrapped` page layout.
+    - [ ] Write tests to ensure the banner is hidden on mobile and visible on desktop.
+    - [ ] Modify `src/app/wrapped/wrapped-page-client.tsx` (or appropriate layout) to include the banners.
+- [ ] Task: Ensure Responsive Safety.
+    - [ ] Write tests for different viewport widths.
+    - [ ] Refine CSS to ensure no overlap with the main Arcade Cabinet frame.
+- [ ] Task: Conductor - User Manual Verification 'Phase 2: Layout Integration' (Protocol in workflow.md) [checkpoint: ]
+
+## Phase 3: Final Polish & Verification
+- [ ] Task: Add "Coming Soon" Placeholder Graphic.
+    - [ ] Write tests for the placeholder state.
+    - [ ] Implement a stylized retro "Coming Soon" graphic for the ad area.
+- [ ] Task: Final Quality Audit.
+    - [ ] Run all tests and verify >80% coverage for new components.
+    - [ ] Check for linting/type errors.
+- [ ] Task: Conductor - User Manual Verification 'Phase 3: Final Polish' (Protocol in workflow.md) [checkpoint: ]
