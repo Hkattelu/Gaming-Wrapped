@@ -334,7 +334,7 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
       )}
 
       {/* Top Ad Banner (Mobile Only) */}
-      <div className="xl:hidden w-full max-w-md mb-4 z-10 px-4">
+      <div className="xl:hidden w-full max-w-md mt-2 mb-2 z-10 px-2">
         <SideAdBanner orientation="horizontal" />
       </div>
 
