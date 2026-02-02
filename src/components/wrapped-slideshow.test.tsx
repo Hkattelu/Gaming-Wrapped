@@ -51,6 +51,16 @@ jest.mock('./tilt-card', () => ({
   TiltCard: ({ children }: { children: React.ReactNode }) => <div data-testid="tilt-card">{children}</div>
 }));
 
+// Mock Card Components
+jest.mock('./cards/PlatformStatsCard', () => ({ PlatformStatsCard: () => <div /> }));
+jest.mock('./cards/TopGameCard', () => ({ TopGameCard: () => <div /> }));
+jest.mock('./cards/SummaryCard', () => ({ SummaryCard: () => <div /> }));
+jest.mock('./cards/GenreBreakdownCard', () => ({ GenreBreakdownCard: () => <div /> }));
+jest.mock('./cards/ScoreDistributionCard', () => ({ ScoreDistributionCard: () => <div /> }));
+jest.mock('./cards/PlayerPersonaCard', () => ({ __esModule: true, default: () => <div /> }));
+jest.mock('./cards/RoastCard', () => ({ RoastCardComponent: () => <div /> }));
+jest.mock('./cards/RecommendationsCard', () => ({ RecommendationsCardComponent: () => <div /> }));
+
 jest.mock('./ui/carousel', () => ({
   Carousel: ({ children, setApi }: any) => {
     mockReact.useEffect(() => {
@@ -93,15 +103,22 @@ describe('WrappedSlideshow Integration', () => {
   it('renders ad banners on desktop-like layouts', () => {
     render(<WrappedSlideshow data={mockData} id="test-id" />);
     const adBanners = screen.getAllByTestId('side-ad-banner');
-    expect(adBanners.length).toBe(2);
+    // 2 side banners + 1 top banner
+    expect(adBanners.length).toBe(3);
   });
 
-  it('has responsive classes to hide/show banners', () => {
+  it('has responsive classes for banners and spacing', () => {
     render(<WrappedSlideshow data={mockData} id="test-id" />);
     const adBanners = screen.getAllByTestId('side-ad-banner');
     
-    // Check if at least one container has hidden classes
-    const bannerContainer = adBanners[0].parentElement;
-    expect(bannerContainer?.className).toContain('hidden xl:block');
+    // Top banner (first in DOM)
+    expect(adBanners[0].parentElement?.className).toContain('xl:hidden');
+    
+    // Side banner
+    expect(adBanners[1].parentElement?.className).toContain('hidden xl:block');
+
+    // Check spacing container
+    const mainLayout = screen.getByTestId('retro-frame').parentElement;
+    expect(mainLayout?.className).toContain('xl:gap-24');
   });
 });

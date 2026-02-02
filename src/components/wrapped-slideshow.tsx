@@ -333,8 +333,13 @@ export function WrappedSlideshow({ data, id, isGenerating = false }: { data: Wra
         </>
       )}
 
+      {/* Top Ad Banner (Mobile Only) */}
+      <div className="xl:hidden w-full max-w-md mb-4 z-10 px-4">
+        <SideAdBanner orientation="horizontal" />
+      </div>
+
       {/* Main Layout Container */}
-      <div className="flex flex-row items-center justify-center gap-4 xl:gap-12 w-full max-w-[95vw] lg:max-w-[98vw] z-10">
+      <div className="flex flex-row items-center justify-center gap-4 xl:gap-24 2xl:gap-32 w-full max-w-[95vw] lg:max-w-[98vw] z-10">
         {/* Left Ad Banner (Desktop Only) */}
         <div className="hidden xl:block w-48 h-[600px] shrink-0">
           <SideAdBanner />
