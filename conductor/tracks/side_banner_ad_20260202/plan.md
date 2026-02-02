@@ -7,7 +7,7 @@
 - [x] Task: Apply Retro Styling to the Ad Container. afd7182
     - [x] Write tests for retro-specific CSS classes (pixel borders, CRT glow).
     - [x] Implement pixel-art borders and glow effects in `SideAdBanner`.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Foundation' (Protocol in workflow.md) [checkpoint: ]
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Foundation' (Protocol in workflow.md) [checkpoint: 9499cd8]
 
 ## Phase 2: Layout Integration
 - [ ] Task: Integrate `SideAdBanner` into the `wrapped` page layout.
