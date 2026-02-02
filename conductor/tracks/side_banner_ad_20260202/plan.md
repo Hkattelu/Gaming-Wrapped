@@ -16,7 +16,7 @@
 - [x] Task: Ensure Responsive Safety. 1f76d97
     - [x] Write tests for different viewport widths.
     - [x] Refine CSS to ensure no overlap with the main Arcade Cabinet frame.
-- [~] Task: Conductor - User Manual Verification 'Phase 2: Layout Integration' (Protocol in workflow.md) [checkpoint: ]
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Layout Integration' (Protocol in workflow.md) [checkpoint: 10b90ff]
 
 ## Phase 3: Final Polish & Verification
 - [~] Task: Add "Coming Soon" Placeholder Graphic.
