@@ -91,7 +91,6 @@ const mockData: WrappedData = {
   cards: [
     { type: 'player_persona', persona: 'Gamer', title: 'Persona', description: 'Desc' }
   ] as any,
-  averageScore: 8
 };
 
 describe('WrappedSlideshow Integration', () => {

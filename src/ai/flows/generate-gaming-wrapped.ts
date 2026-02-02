@@ -111,80 +111,80 @@ const CardSchema = z.object({
     ctx.addIssue({ code: z.ZodIssueCode.custom, path, message });
 
   switch (card.type) {
-    case 'summary':
-      if (card.totalGames == null) req(['totalGames'], 'summary requires totalGames');
-      if (card.averageScore == null) req(['averageScore'], 'summary requires averageScore');
-      break;
+  case 'summary':
+    if (card.totalGames == null) req(['totalGames'], 'summary requires totalGames');
+    if (card.averageScore == null) req(['averageScore'], 'summary requires averageScore');
+    break;
 
-    case 'top_game':
-      if (!card.game) {
-        req(['game'], 'top_game requires game');
-        break;
-      }
-      if (!card.game.title) req(['game', 'title'], 'top_game requires game.title');
-      if (!card.game.platform) req(['game', 'platform'], 'top_game requires game.platform');
-      break;
-
-    case 'platform_stats': {
-      const data = card.data;
-      if (!data?.length) {
-        req(['data'], 'platform_stats requires a non-empty data array');
-        break;
-      }
-      data.forEach((row, i) => {
-        if (!row.platform) req(['data', i, 'platform'], 'platform_stats requires data[].platform');
-        if (row.count == null) req(['data', i, 'count'], 'platform_stats requires data[].count');
-      });
+  case 'top_game':
+    if (!card.game) {
+      req(['game'], 'top_game requires game');
       break;
     }
+    if (!card.game.title) req(['game', 'title'], 'top_game requires game.title');
+    if (!card.game.platform) req(['game', 'platform'], 'top_game requires game.platform');
+    break;
 
-    case 'genre_breakdown': {
-      const data = card.data;
-      if (!data?.length) {
-        req(['data'], 'genre_breakdown requires a non-empty data array');
-        break;
-      }
-      data.forEach((row, i) => {
-        if (!row.genre) req(['data', i, 'genre'], 'genre_breakdown requires data[].genre');
-        if (row.count == null) req(['data', i, 'count'], 'genre_breakdown requires data[].count');
-      });
+  case 'platform_stats': {
+    const data = card.data;
+    if (!data?.length) {
+      req(['data'], 'platform_stats requires a non-empty data array');
       break;
     }
+    data.forEach((row, i) => {
+      if (!row.platform) req(['data', i, 'platform'], 'platform_stats requires data[].platform');
+      if (row.count == null) req(['data', i, 'count'], 'platform_stats requires data[].count');
+    });
+    break;
+  }
 
-    case 'score_distribution': {
-      const data = card.data;
-      if (!data?.length) {
-        req(['data'], 'score_distribution requires a non-empty data array');
-        break;
-      }
-      data.forEach((row, i) => {
-        if (!row.range) req(['data', i, 'range'], 'score_distribution requires data[].range');
-        if (row.count == null) req(['data', i, 'count'], 'score_distribution requires data[].count');
-      });
+  case 'genre_breakdown': {
+    const data = card.data;
+    if (!data?.length) {
+      req(['data'], 'genre_breakdown requires a non-empty data array');
       break;
     }
+    data.forEach((row, i) => {
+      if (!row.genre) req(['data', i, 'genre'], 'genre_breakdown requires data[].genre');
+      if (row.count == null) req(['data', i, 'count'], 'genre_breakdown requires data[].count');
+    });
+    break;
+  }
 
-    case 'player_persona':
-      if (!card.persona) req(['persona'], 'player_persona requires persona');
-      if (!card.description) req(['description'], 'player_persona requires description');
-      break;
-
-    case 'roast':
-      if (!card.roast) req(['roast'], 'roast requires roast');
-      break;
-
-    case 'recommendations': {
-      const recommendations = card.recommendations;
-      if (!recommendations?.length) {
-        req(['recommendations'], 'recommendations requires a non-empty list');
-        break;
-      }
-      recommendations.forEach((rec, i) => {
-        if (!rec.game) req(['recommendations', i, 'game'], 'recommendations requires recommendations[].game');
-        if (!rec.blurb) req(['recommendations', i, 'blurb'], 'recommendations requires recommendations[].blurb');
-      });
+  case 'score_distribution': {
+    const data = card.data;
+    if (!data?.length) {
+      req(['data'], 'score_distribution requires a non-empty data array');
       break;
     }
+    data.forEach((row, i) => {
+      if (!row.range) req(['data', i, 'range'], 'score_distribution requires data[].range');
+      if (row.count == null) req(['data', i, 'count'], 'score_distribution requires data[].count');
+    });
+    break;
+  }
+
+  case 'player_persona':
+    if (!card.persona) req(['persona'], 'player_persona requires persona');
+    if (!card.description) req(['description'], 'player_persona requires description');
+    break;
+
+  case 'roast':
+    if (!card.roast) req(['roast'], 'roast requires roast');
+    break;
+
+  case 'recommendations': {
+    const recommendations = card.recommendations;
+    if (!recommendations?.length) {
+      req(['recommendations'], 'recommendations requires a non-empty list');
+      break;
+    }
+    recommendations.forEach((rec, i) => {
+      if (!rec.game) req(['recommendations', i, 'game'], 'recommendations requires recommendations[].game');
+      if (!rec.blurb) req(['recommendations', i, 'blurb'], 'recommendations requires recommendations[].blurb');
+    });
+    break;
+  }
   }
 });
 

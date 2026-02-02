@@ -7,7 +7,7 @@ import {
   CarouselContent,
   CarouselItem
 } from "@/components/ui/carousel";
-import { Gift, Share2, Sparkles, Gamepad2, ArrowRight, Loader2 } from "lucide-react";
+import { Gift, Share2, Sparkles, Gamepad2, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
