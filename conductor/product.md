@@ -20,7 +20,7 @@ Gaming Wrapped is a personalized year-in-review for your gaming habits. Upload y
 - **Multi-Platform Analytics:** Deep dives into hardware usage, genre distribution, and score rankings via a "Hardware Laboratory."
 - **Social Integration:** Optimized sharing templates for Instagram Stories, X, and direct URL sharing.
 - **Flexible Data Entry:** Support for automated platform imports and manual CSV uploads.
+- **Integrated Monetization:** A dedicated retro-styled ad system with support for side banner and mobile top-banner placements.
 
 ## Vision for the Future
-- **Ad Integration:** Implementing a non-intrusive ad strategy (e.g., side banners) to support the platform.
 - **Community & Social:** Community leaderboards, multi-year comparisons, and potential physical "Wrapped" exports.
