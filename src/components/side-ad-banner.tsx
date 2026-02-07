@@ -1,5 +1,13 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect } from 'react';
 import { cn } from '@/lib/utils';
+
+declare global {
+  interface Window {
+    adsbygoogle: any[];
+  }
+}
 
 interface SideAdBannerProps {
   orientation?: 'vertical' | 'horizontal';
@@ -10,10 +18,20 @@ export const SideAdBanner: React.FC<SideAdBannerProps> = ({
   orientation = 'vertical',
   className 
 }) => {
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      }
+    } catch (err) {
+      console.error('Adsbygoogle push error:', err);
+    }
+  }, []);
+
   return (
     <div 
       className={cn(
-        "relative overflow-hidden flex items-center justify-center border-2 border-zinc-700 bg-zinc-900/50 p-4 pixel-corners group",
+        "relative overflow-hidden flex items-center justify-center border-2 border-zinc-700 bg-zinc-900/50 pixel-corners group min-h-[100px]",
         orientation === 'vertical' ? "w-full h-full" : "w-full h-24",
         className
       )}
@@ -28,40 +46,17 @@ export const SideAdBanner: React.FC<SideAdBannerProps> = ({
       
       {/* Ad Content */}
       <div className={cn(
-        "text-center relative z-20 flex items-center justify-center",
-        orientation === 'vertical' ? "flex-col" : "flex-row gap-8"
+        "relative z-20 w-full h-full flex items-center justify-center overflow-hidden",
+        orientation === 'vertical' ? "p-2" : "p-1"
       )}>
-        <div className={cn(
-          "relative",
-          orientation === 'vertical' ? "mb-6" : ""
-        )}>
-          {/* Stylized Icon Box */}
-          <div className="w-12 h-12 border-2 border-zinc-700 flex items-center justify-center relative bg-zinc-950/50">
-            <div className="absolute inset-0 bg-primary/5 animate-pulse-slow" />
-            <span className="text-primary font-mono text-xl font-bold animate-flicker">?</span>
-            
-            {/* Corner Accents */}
-            <div className="absolute -top-1 -left-1 w-2 h-2 border-t-2 border-l-2 border-primary/40" />
-            <div className="absolute -bottom-1 -right-1 w-2 h-2 border-b-2 border-r-2 border-primary/40" />
-          </div>
-        </div>
-
-        <div className="space-y-1">
-          <div className="relative">
-            <p className="text-zinc-400 font-mono text-sm uppercase tracking-[0.2em] animate-pulse-slow">
-              Coming Soon
-            </p>
-            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-zinc-700 to-transparent mt-1" />
-          </div>
-          <p className="text-zinc-600 font-mono text-[9px] uppercase tracking-widest">
-            Broadcast Channel [OFFLINE]
-          </p>
-          <div className="flex gap-1 justify-center mt-2 opacity-30">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="w-1 h-1 bg-zinc-500 rounded-full" />
-            ))}
-          </div>
-        </div>
+        <ins 
+          className="adsbygoogle"
+          style={{ display: 'block', width: '100%', height: '100%' }}
+          data-ad-client="ca-pub-5108380761431058"
+          data-ad-slot="4187351816"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
       </div>
 
       {/* Decorative Side Bars */}

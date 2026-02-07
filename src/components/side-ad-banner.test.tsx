@@ -9,9 +9,10 @@ describe('SideAdBanner', () => {
     rtlCleanup();
   });
 
-  it('renders a placeholder with "Coming Soon" text', () => {
+  it('renders the adsbygoogle element', () => {
     render(<SideAdBanner />);
-    expect(screen.getByText(/Coming Soon/i)).toBeTruthy();
+    const adElement = document.querySelector('.adsbygoogle');
+    expect(adElement).toBeTruthy();
   });
 
   it('has a specific data-testid for the ad container', () => {
