@@ -3,6 +3,7 @@ import { ScoreDistributionCard as ScoreDistributionCardType } from '@/types';
 import { Star, Hotel, StarHalf, PlayCircle, ShieldCheck, Zap, Trophy, TrendingUp } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { motion } from 'framer-motion';
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // More comprehensive category mapping
 function getScoreCategory(range: string) {
@@ -84,74 +85,76 @@ export function ScoreDistributionCard({ card, isActive }: { card: ScoreDistribut
       {/* Main Board Container */}
       <div className="w-full max-w-2xl relative z-10">
         <div className="relative bg-card border-4 border-border p-6 md:p-10 pixel-corners shadow-2xl">
-          <div className="grid grid-cols-1 gap-6">
-            {sortedData.map((item, index) => {
-              const config = getScoreCategory(item.range);
-              const percentage = totalCount > 0 ? Math.round((item.count / totalCount) * 100) : 0;
-              
-              const p = item.range.split(/[ -]/);
-              const r = p.length > 1 ? (parseFloat(p[0]) + parseFloat(p[1])) / 2 : parseFloat(item.range);
-              const val = r > 10 ? r / 10 : r;
+          <ScrollArea className="max-h-[380px] pr-4 -mr-2">
+            <div className="grid grid-cols-1 gap-6 py-2">
+              {sortedData.map((item, index) => {
+                const config = getScoreCategory(item.range);
+                const percentage = totalCount > 0 ? Math.round((item.count / totalCount) * 100) : 0;
+                
+                const p = item.range.split(/[ -]/);
+                const r = p.length > 1 ? (parseFloat(p[0]) + parseFloat(p[1])) / 2 : parseFloat(item.range);
+                const val = r > 10 ? r / 10 : r;
 
-              let rankLabel = "D";
-              if (val >= 9) rankLabel = "S";
-              else if (val >= 7) rankLabel = "A";
-              else if (val >= 5) rankLabel = "B";
-              else if (val >= 3) rankLabel = "C";
-              else if (val >= 0) rankLabel = "F";
+                let rankLabel = "D";
+                if (val >= 9) rankLabel = "S";
+                else if (val >= 7) rankLabel = "A";
+                else if (val >= 5) rankLabel = "B";
+                else if (val >= 3) rankLabel = "C";
+                else if (val >= 0) rankLabel = "F";
 
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ 
-                    opacity: isActive ? 1 : 0, 
-                    x: isActive ? 0 : -50 
-                  }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="flex items-center gap-6 group"
-                >
-                  {/* Rank Badge */}
-                  <div className={cn(
-                    "w-16 h-16 md:w-20 md:h-20 flex-shrink-0 flex items-center justify-center border-4 border-foreground pixel-corners shadow-[4px_4px_0px_rgba(0,0,0,1)] group-hover:scale-110 transition-transform",
-                    config.color.split(' ')[0]
-                  )}>
-                    <span className="font-headline text-3xl md:text-4xl text-black drop-shadow-[2px_2px_0px_rgba(255,255,255,0.5)]">
-                      {rankLabel}
-                    </span>
-                  </div>
-
-                  {/* Info and Bar */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-end mb-2">
-                      <div className="flex flex-col">
-                        <span className="font-headline text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest">
-                          {config.label}
-                        </span>
-                        <span className="font-headline text-sm md:text-base text-foreground uppercase">
-                          Score {item.range}
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <span className="font-headline text-xl md:text-2xl text-foreground">{percentage}%</span>
-                      </div>
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ 
+                      opacity: isActive ? 1 : 0, 
+                      x: isActive ? 0 : -50 
+                    }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="flex items-center gap-6 group"
+                  >
+                    {/* Rank Badge */}
+                    <div className={cn(
+                      "w-16 h-16 md:w-20 md:h-20 flex-shrink-0 flex items-center justify-center border-4 border-foreground pixel-corners shadow-[4px_4px_0px_rgba(0,0,0,1)] group-hover:scale-110 transition-transform",
+                      config.color.split(' ')[0]
+                    )}>
+                      <span className="font-headline text-3xl md:text-4xl text-black drop-shadow-[2px_2px_0px_rgba(255,255,255,0.5)]">
+                        {rankLabel}
+                      </span>
                     </div>
 
-                    <div className="h-6 w-full bg-secondary border-2 border-border p-0.5 pixel-corners overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: isActive ? `${percentage}%` : 0 }}
-                        transition={{ duration: 1, ease: "circOut", delay: 0.5 + (index * 0.1) }}
-                        className={cn("h-full bar-pattern", config.color.split(' ')[0])}
-                      >
-                        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </motion.div>
+                    {/* Info and Bar */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-end mb-2">
+                        <div className="flex flex-col">
+                          <span className="font-headline text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest">
+                            {config.label}
+                          </span>
+                          <span className="font-headline text-sm md:text-base text-foreground uppercase">
+                            Score {item.range}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-headline text-xl md:text-2xl text-foreground">{percentage}%</span>
+                        </div>
+                      </div>
+
+                      <div className="h-6 w-full bg-secondary border-2 border-border p-0.5 pixel-corners overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: isActive ? `${percentage}%` : 0 }}
+                          transition={{ duration: 1, ease: "circOut", delay: 0.5 + (index * 0.1) }}
+                          className={cn("h-full bar-pattern", config.color.split(' ')[0])}
+                        >
+                          <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </motion.div>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </ScrollArea>
 
           {/* Persona Insight */}
           <motion.div 
